@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Hayato">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Hayato">
+    <meta name="keywords" content="Hayato's Studio | Hayato">
+    <meta name="description" content="">
+    <meta name="Cache-Control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>深入理解计算机系统 · Hayato&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Hayato&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">深入理解计算机系统</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Hayato's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style=
+
+
+
+
+
+
+
+
+height:50vh;
+
+>
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            深入理解计算机系统
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "计算机系统">计算机系统</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">2,470</span> / Reading time: <span class="post-count">9 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2016/05/22</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="1-计算机系统漫游"><a href="#1-计算机系统漫游" class="headerlink" title="1.计算机系统漫游"></a>1.计算机系统漫游</h1><h2 id="1-编译器"><a href="#1-编译器" class="headerlink" title="1.编译器"></a>1.编译器</h2><p><code>gcc -o hello hello.c</code></p>
+<ul>
+<li>进程：操作系统对一个正在运行的程序的一种抽象</li>
+<li>并发：CPU交错执行不同进程/线程的指令</li>
+<li>线程：共享进程的所有信息</li>
+<li>上下文：进程运行所需要的所有状态信息</li>
+<li>内核：系统管理全部进程所用代码和数据结构的集合</li>
+</ul>
+<h2 id="2-信息的表示和处理"><a href="#2-信息的表示和处理" class="headerlink" title="2.信息的表示和处理"></a>2.信息的表示和处理</h2><ul>
+<li><p>不同位编译器对数据类型的影响</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> 在<span class="number">32</span>和<span class="number">64</span>位编译器都是<span class="number">4</span>位</span><br><span class="line"><span class="keyword">long</span> 在<span class="number">32</span>和<span class="number">64</span>位编译器都分别是<span class="number">4</span>位和<span class="number">8</span>位</span><br><span class="line">为了解决<span class="keyword">long</span>在不同编译器下的不同表现，在ISO C99引入</span><br><span class="line"><span class="keyword">int32_t</span> 在<span class="number">32</span>和<span class="number">64</span>位编译器都是<span class="number">4</span>位</span><br><span class="line"><span class="keyword">int64_t</span> 在<span class="number">32</span>和<span class="number">64</span>位编译器都是<span class="number">8</span>位</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>大小端法</p>
+<blockquote>
+<p>小端法：低位在前（与书写习惯相反，方便正负和大小比较）&lt; Andriod/iOS<br><br>大端法：高位在前（方便运算和类型强转（高位可能被舍弃））<br></p>
+</blockquote>
+</li>
+</ul>
+<p>例如：int32_t x = 0x01234567</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">地址1</th>
+<th style="text-align:center">地址2</th>
+<th style="text-align:center">地址3</th>
+<th style="text-align:center">地址4</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">地址</td>
+<td style="text-align:center">0x4000 8000(低地址)</td>
+<td style="text-align:center">0x4000 8001</td>
+<td style="text-align:center">0x4000 8002</td>
+<td style="text-align:center">0x4000 8003(高地址)</td>
+</tr>
+<tr>
+<td style="text-align:center">小端法</td>
+<td style="text-align:center">0x67</td>
+<td style="text-align:center">0x45</td>
+<td style="text-align:center">0x23</td>
+<td style="text-align:center">0x01</td>
+</tr>
+<tr>
+<td style="text-align:center">大端法</td>
+<td style="text-align:center">0x01</td>
+<td style="text-align:center">0x23</td>
+<td style="text-align:center">0x45</td>
+<td style="text-align:center">0x67</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-程序的机器级表示"><a href="#3-程序的机器级表示" class="headerlink" title="3.程序的机器级表示"></a>3.程序的机器级表示</h2><ul>
+<li>汇编<br><blockquote>
+<p><code>gcc -Og -S foo.c</code><br><br>-S 汇编<br><br>-Og 告诉编译器生成符合C源码的优化等级<br>-masm=intel 生成Intel格式的汇编语言</p>
+</blockquote>
+</li>
+<li>编译<br><blockquote>
+<p><code>gcc -Og -c foo.c</code><br><br>-c 编译<br></p>
+</blockquote>
+</li>
+<li><p>反汇编</p>
+<blockquote>
+<p><code>objdump -d bar.o</code></p>
+</blockquote>
+</li>
+<li><p>指令</p>
+<blockquote>
+<p>0.程序计数器寄存器，指向当前执行的指令所在内存地址<br>1.跳转指令jump 实现条件执行  </p>
+</blockquote>
+</li>
+<li><p>控制转移：函数调用</p>
+<blockquote>
+<p>1.原流水线指令地址压入程序栈中<br>2.将参数存入寄存器和栈中，保存程序计数器地址（寄存器最多可存入6个整型/指针型参数 &amp; 8个浮点型参数，放不下的压入栈顶）<br><br>3.上一指令上下文（被调用者保存寄存器.内容&lt;调用者保存寄存器由调用者决定如何处理&gt;）保存进栈（保存的寄存器内容：学术上属于被调用者的栈帧）<br><br>4.call指令指明即将调用的函数入口地址,调用函数<br><br>5.返回值存入寄存器中，加载程序栈中的上下文到被调用者保存寄存器，ret指令弹出存入栈中的指令地址</p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li>栈上的局部变量<blockquote>
+<p>运行时栈提供了一种简单的局部变量机制：在需要时分配、函数完成时释放<br>局部变量会优先保存在寄存器上，（6个整型 + 8个浮点型）</p>
+<ol>
+<li>寄存器存放不下</li>
+<li>局部变量使用&amp;取地址</li>
+<li>其他数据结构如数组/结构体等，必须能通过引用被访问</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<p>·* 缓冲区</p>
+<blockquote>
+<p>系统动态分配的栈区域<br>缓冲区溢出，操作内存范围超出了系统给其分配的大小，可以影响到调用者栈帧，如程序计数器地址，当ret时jump到该非正常地址执行指令<br>对抗缓冲区溢出的3种方法：1.ASLR 地址空间布局随机化；2.栈保护：金丝雀保护位；3.限制内存各部分的可执行与否</p>
+</blockquote>
+<ul>
+<li>可变长栈帧：引入基指针概念，由寄存器%rbp保存。和栈指针一起确定栈帧的边界，分别由不同的寄存器保存，此时寻址以基指针为参考。 </li>
+</ul>
+<ul>
+<li>处理器流水线SEQ阶段<blockquote>
+<p>1.取指阶段 <br><br>2.译码和写回阶段 <br><br>3.执行阶段 <br><br>4.访存阶段 <br><br>5.更新PC阶段 <br></p>
+</blockquote>
+</li>
+</ul>
+<h2 id="4-优化程序性能"><a href="#4-优化程序性能" class="headerlink" title="4.优化程序性能"></a>4.优化程序性能</h2><ul>
+<li><p>编译器优化：编译器会假设最糟的情况，安全优化。</p>
+</li>
+<li><p>分支预测和投机执行</p>
+</li>
+<li><p>运算开销</p>
+<blockquote>
+<p>加法 &lt; 乘法 &lt; 除法  (浮点运算会增大开销)</p>
+</blockquote>
+</li>
+</ul>
+<h1 id="2-在系统上运行程序"><a href="#2-在系统上运行程序" class="headerlink" title="2.在系统上运行程序"></a>2.在系统上运行程序</h1><h2 id="1-链接"><a href="#1-链接" class="headerlink" title="1.链接"></a>1.链接</h2><ol>
+<li><p>链接器处理的目标文件：</p>
+<blockquote>
+<p>1.可重定位的（–静态链接器–》可执行目标文件）<br><br>2.可执行的<br><br>3.共享的目标文件/库（-运行时由动态链接器链接和加载/程序被加载和执行时调用dlopen库函数–》）<br></p>
+</blockquote>
+</li>
+<li><p>链接器的主要任务</p>
+<blockquote>
+<p>1.符号解析（symbol resolution）：目标文件中的每个全局符号都绑定到一个唯一的定义（<em>目标文件定义和引用符号，每个符号对应于一个函数、一个全局变量或一个静态变量。符号解析的目的是将每个符号引用正好和一个符号定义关联起来</em>）。<br></p>
+<p>2.重定位(relocation)：确定每个符号的最终内存地址，并修改对那些目标的引用（<em>编译器和汇编器生成从地址0开始的代码和数据节。链接器通过把每个符号定义与一个内存位置关联起来，从而重定位这些节，然后修改所有这些符号的引用，使得它们指向这个内存位置。链接器使用汇编器产生的重定位条目的详细指令，不加甄别地执行这样的重定位</em>）。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="2-加载器"><a href="#2-加载器" class="headerlink" title="2.加载器"></a>2.加载器</h2><p>加载器将可执行文件的内容映射到内存，并执行这个程序。</p>
+<h1 id="3-异常控制"><a href="#3-异常控制" class="headerlink" title="3.异常控制"></a>3.异常控制</h1><ul>
+<li><p>4种异常</p>
+<blockquote>
+<p>中断<br>陷阱<br>错误<br>终止</p>
+</blockquote>
+</li>
+<li><p>非本地跳转<br>区别于正常的调用/返回栈规则，直接从一个函数分支到另一个函数</p>
+</li>
+</ul>
+<h1 id="4-虚拟内存（进程私有的是虚拟内存空间而不是物理内存空间）"><a href="#4-虚拟内存（进程私有的是虚拟内存空间而不是物理内存空间）" class="headerlink" title="4.虚拟内存（进程私有的是虚拟内存空间而不是物理内存空间）"></a>4.虚拟内存（进程私有的是虚拟内存空间而不是物理内存空间）</h1><ul>
+<li>虚拟地址–虚拟寻址–》return 物理地址 / （缺页 ？–磁盘copy到主存–&gt;return 物理地址）</li>
+<li>作用：<blockquote>
+<p>1.简化链接<br>2.简化加载<br>3.简化内存分配（加入保护位，简化内存保护）</p>
+</blockquote>
+</li>
+<li>虚拟内存提供了一种机制：进程的物理内存地址可以不连续，由页表映射串联</li>
+<li>页表（page table/PTE）：页表将虚拟页映射到物理页,由OS维护，地址翻译达成</li>
+<li>（CPU页表基址寄存器）</li>
+<li>虚拟页表状态<blockquote>
+<p>1.已分配&amp;缓存<br><br>2.已分配未缓存<br><br>3.未分配<br></p>
+</blockquote>
+</li>
+<li>页表其他许可标志位(如权限)<blockquote>
+<p>1.仅内核访问？ 2.读/写权限<br><br>2.如果超权限处理，CPU会出发保护故障，将控制传递给内核的异常处理程序</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="内存区域（每个区域都是起止标志）"><a href="#内存区域（每个区域都是起止标志）" class="headerlink" title="内存区域（每个区域都是起止标志）"></a>内存区域（每个区域都是起止标志）</h2><blockquote>
+<p>代码区 》 数据区 》堆区 》 共享库区 》 栈区</p>
+<ul>
+<li>堆区：动态内存分配器维护的进程的内存区域称为堆。<br>显示分配器 C：malloc/free; C++:new/delete<br>隐式分配器 分配器检测已分配的块何时不被使用，使用垃圾回收自动释放</li>
+</ul>
+</blockquote>
+<h2 id="内存碎片"><a href="#内存碎片" class="headerlink" title="内存碎片"></a>内存碎片</h2><ul>
+<li><p>空闲链表<br>–放置策略–》目标块 &gt;if no&gt;合并相邻空闲块 &gt; if no&gt;申请新堆区</p>
+</li>
+<li><p>垃圾回收</p>
+<blockquote>
+<ul>
+<li>不需要程序员手动调用free类似的堆内存释放函数，垃圾回收器会自动回收<br></li>
+<li>最经典的方法:可达图法（当存在任意一条从根节点出发并达到p的有向路径，则成p为reachable）</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<ul>
+<li>精确垃圾回收（Java) <br></li>
+<li>保守垃圾回收（C/C++):C语言不会用类型信息来标记内存位置，因此对于已分配块的value,无法知晓value是指针类型还是与指针类型同大小的数据类型（如64为编译 int），故只能保守的当作指针处理，标记*value为可达块</li>
+</ul>
+</blockquote>
+<ul>
+<li>管理和使用虚拟内存错误包括：<blockquote>
+<p>1.间接引用坏指针<br><br>2.读取未初始化的内存<br><br>3.允许栈缓冲溢出<br><br>4.假设指针和它们指向的对象大小相同，引用指针而不是它们所指向的对象 ：p与&amp;p<br><br>5.误解指针运算：<em>p++<br><br>6.引用不存在的变量：</em>p(p为原栈区,内容已被替换)<br><br>7.内存泄漏<br></p>
+</blockquote>
+</li>
+</ul>
+<h1 id="5-网络编程"><a href="#5-网络编程" class="headerlink" title="5.网络编程"></a>5.网络编程</h1><ul>
+<li>套接字<blockquote>
+<p>通讯连接的一个端点，连接的两端叫做套接字对<br><br>套接字地址是由一个因特网地址和一个16位的整数端口组成，如128.2.2.202:443</p>
+</blockquote>
+</li>
+</ul>
+<h1 id="6-并发编程"><a href="#6-并发编程" class="headerlink" title="6.并发编程"></a>6.并发编程</h1><ul>
+<li>进程：操作系统对一个正在运行的程序的一种抽象，表示正在运行的一个程序的实例，由内核自动统一调度(有父子层级关系)</li>
+<li><p>线程：运行在单一进程上下文中的逻辑流，由内核自动进行调度，为cpu实际执行的路径（无层级关系，地位对等，可以stop或等待其他线程）</p>
+<blockquote>
+<p>每个线程都有它<code>自己的线程上下文</code>，包括一个唯一的整数线程ID(TID)、栈、栈指针、程序计数器、通用目的寄存器和条件码<br><br>所有线程<code>共享</code>所在进程的整个<code>虚拟地址空间</code></p>
+</blockquote>
+</li>
+<li><p>IPC（进程间通讯）机制</p>
+</li>
+<li><p>并行实现方式</p>
+<blockquote>
+<p>1.多进程fork()<br><br>2.基于I/O多路复用的事件驱动编程（优点：易于对程序的行为控制，缺点：编码复杂&amp;不能充分利用多核）<br><br>3.多线程</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h2><ol>
+<li>多线程每个线程维护自己的运行时栈，对于共享变量需要考虑线程安全。</li>
+<li>信号量：<blockquote>
+<p>P操作：semaphore - 1,如果s == 0，就挂起这个线程 <br><br>V操作：semaphore + 1,如果有任何线程阻塞在P操作等待s&gt;0,那么P操作会重启1个正在等待的线程（随机的线程)<br><br>互斥锁：当semaphore初始化=1,则该信号量称为二元信号量，即为互斥锁。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="4种线程不安全函数类"><a href="#4种线程不安全函数类" class="headerlink" title="4种线程不安全函数类"></a>4种线程不安全函数类</h2><ol>
+<li>不保护共享变量的函数</li>
+<li>保持跨越多个调用的状态的函数</li>
+<li>返回指向静态变量的指针的函数</li>
+<li>调用线程不安全函数的函数</li>
+</ol>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="https://haojiaqiang.github.io">Hayato</a>
+            <p>原文链接: <a href="https://haojiaqiang.github.io/2016/05/22/Computer-Systems-A-Programmer-s-Perspective/">https://haojiaqiang.github.io/2016/05/22/Computer-Systems-A-Programmer-s-Perspective/</a>
+            <p>发表日期: <a href="https://haojiaqiang.github.io/2016/05/22/Computer-Systems-A-Programmer-s-Perspective/">May 22nd 2016, 12:10:28 pm</a>
+            <p>版权声明: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC-SA 4.0</a></p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2016/08/03/SwiftGrammar/" title= SwiftGrammar >
+                    <div class="nextTitle">SwiftGrammar</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2016/04/22/Pro-multithreading-and-memory-management-for-iOS-and-OS-X/" title= Object-C 高级编程 iOS和OS X多线程和内存管理 >
+                    <div class="prevTitle">Object-C 高级编程 iOS和OS X多线程和内存管理</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+    
+        
+            
+                <a href="https://github.com/haojiaqiang" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://about.me/haojiaqiang" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-计算机系统漫游"><span class="toc-number">1.</span> <span class="toc-text">1.计算机系统漫游</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-编译器"><span class="toc-number">1.1.</span> <span class="toc-text">1.编译器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-信息的表示和处理"><span class="toc-number">1.2.</span> <span class="toc-text">2.信息的表示和处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-程序的机器级表示"><span class="toc-number">1.3.</span> <span class="toc-text">3.程序的机器级表示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-优化程序性能"><span class="toc-number">1.4.</span> <span class="toc-text">4.优化程序性能</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-在系统上运行程序"><span class="toc-number">2.</span> <span class="toc-text">2.在系统上运行程序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-链接"><span class="toc-number">2.1.</span> <span class="toc-text">1.链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-加载器"><span class="toc-number">2.2.</span> <span class="toc-text">2.加载器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-异常控制"><span class="toc-number">3.</span> <span class="toc-text">3.异常控制</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-虚拟内存（进程私有的是虚拟内存空间而不是物理内存空间）"><span class="toc-number">4.</span> <span class="toc-text">4.虚拟内存（进程私有的是虚拟内存空间而不是物理内存空间）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#内存区域（每个区域都是起止标志）"><span class="toc-number">4.1.</span> <span class="toc-text">内存区域（每个区域都是起止标志）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内存碎片"><span class="toc-number">4.2.</span> <span class="toc-text">内存碎片</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-网络编程"><span class="toc-number">5.</span> <span class="toc-text">5.网络编程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-并发编程"><span class="toc-number">6.</span> <span class="toc-text">6.并发编程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程"><span class="toc-number">6.1.</span> <span class="toc-text">多线程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4种线程不安全函数类"><span class="toc-number">6.2.</span> <span class="toc-text">4种线程不安全函数类</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 20
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span><a class="archive-post-title" href= "/2020/11/19/网游加速器原理/" >网游加速器原理、技术与实现</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/30</span><a class="archive-post-title" href= "/2017/11/30/关于死锁的几个经典问题/" >关于死锁的几个经典问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/03</span><a class="archive-post-title" href= "/2017/09/03/howRuntimeWorks/" >彻底理解Runtime</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/29</span><a class="archive-post-title" href= "/2017/06/29/Runloop/" >Runloop</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2017/05/08/Computer-Networking-A-Top-Down-Approach-NOTES/" >计算机网络 自顶向下方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span><a class="archive-post-title" href= "/2017/04/19/GCD-queue-and-sync-async/" >GCD队列与同步异步的组合</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/02</span><a class="archive-post-title" href= "/2017/01/02/iOS-Core-Animation/" >iOS Core Animation</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/20</span><a class="archive-post-title" href= "/2016/11/20/Design-Pattern-Odyssey/" >大话设计模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/Algorithms/" >Algorithms</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/操作系统原理/" >操作系统原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2016/09/08/Effective-Objective-C-2-0/" >Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/03</span><a class="archive-post-title" href= "/2016/08/03/SwiftGrammar/" >SwiftGrammar</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/22</span><a class="archive-post-title" href= "/2016/05/22/Computer-Systems-A-Programmer-s-Perspective/" >深入理解计算机系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/2016/04/22/Pro-multithreading-and-memory-management-for-iOS-and-OS-X/" >Object-C 高级编程 iOS和OS X多线程和内存管理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/12</span><a class="archive-post-title" href= "/2016/03/12/git/" >Git</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/25</span><a class="archive-post-title" href= "/2015/06/25/special-kind-of-pointer/" >几种特殊指针的含义区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2015/05/08/InstallShadowsocks/" >部署Shadowsocks</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2015/03/30/SQL查询实现方式/" >SQL查询实现方式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span><a class="archive-post-title" href= "/2015/03/11/SQL/" >SQL</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2015/01/01/How-does-the-program-run/" >程序是怎样跑起来的</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="app"><span class="iconfont-archer">&#xe606;</span>app</span>
+    
+        <span class="sidebar-tag-name" data-tags="async"><span class="iconfont-archer">&#xe606;</span>async</span>
+    
+        <span class="sidebar-tag-name" data-tags="sync"><span class="iconfont-archer">&#xe606;</span>sync</span>
+    
+        <span class="sidebar-tag-name" data-tags="queue"><span class="iconfont-archer">&#xe606;</span>queue</span>
+    
+        <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存管理"><span class="iconfont-archer">&#xe606;</span>内存管理</span>
+    
+        <span class="sidebar-tag-name" data-tags="SQL"><span class="iconfont-archer">&#xe606;</span>SQL</span>
+    
+        <span class="sidebar-tag-name" data-tags="pointer"><span class="iconfont-archer">&#xe606;</span>pointer</span>
+    
+        <span class="sidebar-tag-name" data-tags="id"><span class="iconfont-archer">&#xe606;</span>id</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSObject"><span class="iconfont-archer">&#xe606;</span>NSObject</span>
+    
+        <span class="sidebar-tag-name" data-tags="id<NSObject>"><span class="iconfont-archer">&#xe606;</span>id<NSObject></span>
+    
+        <span class="sidebar-tag-name" data-tags="void *"><span class="iconfont-archer">&#xe606;</span>void *</span>
+    
+        <span class="sidebar-tag-name" data-tags="nil"><span class="iconfont-archer">&#xe606;</span>nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="Nil"><span class="iconfont-archer">&#xe606;</span>Nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSNull"><span class="iconfont-archer">&#xe606;</span>NSNull</span>
+    
+        <span class="sidebar-tag-name" data-tags="deadLock"><span class="iconfont-archer">&#xe606;</span>deadLock</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机系统"><span class="iconfont-archer">&#xe606;</span>计算机系统</span>
+    
+        <span class="sidebar-tag-name" data-tags="消息"><span class="iconfont-archer">&#xe606;</span>消息</span>
+    
+        <span class="sidebar-tag-name" data-tags="load"><span class="iconfont-archer">&#xe606;</span>load</span>
+    
+        <span class="sidebar-tag-name" data-tags="Shadowsocks"><span class="iconfont-archer">&#xe606;</span>Shadowsocks</span>
+    
+        <span class="sidebar-tag-name" data-tags="CentOS"><span class="iconfont-archer">&#xe606;</span>CentOS</span>
+    
+        <span class="sidebar-tag-name" data-tags="AWS root"><span class="iconfont-archer">&#xe606;</span>AWS root</span>
+    
+        <span class="sidebar-tag-name" data-tags="Swift"><span class="iconfont-archer">&#xe606;</span>Swift</span>
+    
+        <span class="sidebar-tag-name" data-tags="Git"><span class="iconfont-archer">&#xe606;</span>Git</span>
+    
+        <span class="sidebar-tag-name" data-tags="proxy"><span class="iconfont-archer">&#xe606;</span>proxy</span>
+    
+        <span class="sidebar-tag-name" data-tags="加速器"><span class="iconfont-archer">&#xe606;</span>加速器</span>
+    
+        <span class="sidebar-tag-name" data-tags="OS"><span class="iconfont-archer">&#xe606;</span>OS</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机网络"><span class="iconfont-archer">&#xe606;</span>计算机网络</span>
+    
+        <span class="sidebar-tag-name" data-tags="Runloop"><span class="iconfont-archer">&#xe606;</span>Runloop</span>
+    
+        <span class="sidebar-tag-name" data-tags="runtime"><span class="iconfont-archer">&#xe606;</span>runtime</span>
+    
+        <span class="sidebar-tag-name" data-tags="Core Animation"><span class="iconfont-archer">&#xe606;</span>Core Animation</span>
+    
+        <span class="sidebar-tag-name" data-tags="Algorithms"><span class="iconfont-archer">&#xe606;</span>Algorithms</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Hayato"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

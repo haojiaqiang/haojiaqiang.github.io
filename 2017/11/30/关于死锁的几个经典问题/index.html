@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Hayato">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Hayato">
+    <meta name="keywords" content="Hayato's Studio | Hayato">
+    <meta name="description" content="">
+    <meta name="Cache-Control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>关于死锁的几个经典问题 · Hayato&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Hayato&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">关于死锁的几个经典问题</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Hayato's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style=
+
+
+
+
+
+
+
+
+height:50vh;
+
+>
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            关于死锁的几个经典问题
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "deadLock">deadLock</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">1,562</span> / Reading time: <span class="post-count">7 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2017/11/30</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="经典问题的实现"><a href="#经典问题的实现" class="headerlink" title="经典问题的实现"></a>经典问题的实现</h1><h2 id="生产者-消费者问题"><a href="#生产者-消费者问题" class="headerlink" title="生产者 消费者问题"></a>生产者 消费者问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">semaphore mutex = 1;//互斥多个生产者与生产者、消费者与消费者semaphore fill = 0;//缓冲区填充的数据</span><br><span class="line">semaphore empty = CONST_BUFFER_SIZE;//缓冲区剩余空闲区域</span><br><span class="line"></span><br><span class="line">void producer () &#123;</span><br><span class="line">    while (ture) &#123;</span><br><span class="line">        Item item = produce();</span><br><span class="line">        wait(empty);</span><br><span class="line">        wait(mutex);</span><br><span class="line">        bufferPush(item);</span><br><span class="line">        signal(mutex);</span><br><span class="line">        signal(fill);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void consumer () &#123;</span><br><span class="line">    while(ture) &#123;</span><br><span class="line">        wait(fill);</span><br><span class="line">        wait(mutex)</span><br><span class="line">        Item item = bufferPop(item);</span><br><span class="line">        signal(mutex)</span><br><span class="line">        signal(empty)</span><br><span class="line">        consume(item);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="读者-写者问题"><a href="#读者-写者问题" class="headerlink" title="读者 写者问题"></a>读者 写者问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">// 写者优先：</span><br><span class="line">//  写者互斥写着&amp;读者，读者与读者共享;</span><br><span class="line">//  当有读者时，写者等待；</span><br><span class="line">//  当有写者等待时，不会有新的读者进入，防止写者饥饿</span><br><span class="line">int readerCount = 0;//当前读者数量</span><br><span class="line">semaphore mutex = 1;//用于保护更新readerCount 变量时的互斥</span><br><span class="line">semaphore readWrite = 1;// 互斥读者&amp;写者访问文件</span><br><span class="line">semaphore writeFirst = 1;// 用于实现“写优先”</span><br><span class="line"></span><br><span class="line">void writer () &#123;</span><br><span class="line">    P(writeFirst);//在无写进程请求时进入</span><br><span class="line">    P(readWrite);//互斥访问共享文件</span><br><span class="line">        write();//写入</span><br><span class="line">    V(readWrite); //释放共享文件</span><br><span class="line">    V(writeFirst);//恢复对共享支件的访问</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void reader() &#123;</span><br><span class="line">    P(writeFirst); // 在无写进程请求时进入</span><br><span class="line">    P(mutex);// 互斥访问count变量</span><br><span class="line">        if (readerCount == 0) &#123;//当第一个读进程读共享文件时</span><br><span class="line">            P(readWrite);//阻止写进程写</span><br><span class="line">        &#125;</span><br><span class="line">        readerCount++;//读者计数器加1</span><br><span class="line">    V(mutex);//释放互斥变量count</span><br><span class="line">    V(writeFirst);//恢复对共享文件的访问</span><br><span class="line">    read();//读取</span><br><span class="line">    P(mutex);//互斥访问count变量</span><br><span class="line">        readerCount--;//读者计数器减1</span><br><span class="line">        if (readerCount == 0) &#123; //当最后一个读进程读完共享文件</span><br><span class="line">            V(readWrite); //允许写进程写</span><br><span class="line">        &#125;</span><br><span class="line">    P(mutex);//释放互斥变量count</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="哲学家进餐问题-死锁防止"><a href="#哲学家进餐问题-死锁防止" class="headerlink" title="哲学家进餐问题 - 死锁防止"></a>哲学家进餐问题 - 死锁防止</h2><h3 id="方式1"><a href="#方式1" class="headerlink" title="方式1"></a>方式1</h3><p>至多只允许四个哲学家同时进餐,以保证至少有一个哲学家能够进餐,最终总会释<br>放出他所使用过的两支筷子,从而可使更多的哲学家进餐。<br>以下将room 作为信号量，只允许4个哲学家同时进入餐厅就餐，这样就能保证至少有一个哲学家可以就餐，而申请进入餐厅的哲学家进入room的等待队列，根据FIFO的原则，总会进入到餐厅就餐，因此不会出现饿死和死锁的现象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">semaphore chopstick[5]=&#123;1，1，1，1，1&#125;; </span><br><span class="line">semaphore room = 4; </span><br><span class="line">void philosopher(int i) &#123; </span><br><span class="line">    while(true) &#123; </span><br><span class="line">        think(); </span><br><span class="line">        wait(room); //请求进入房间进餐 </span><br><span class="line">        wait(chopstick[i]); //请求左手边的筷子 </span><br><span class="line">        wait(chopstick[(i+1)%5]); //请求右手边的筷子 </span><br><span class="line">        eat(); </span><br><span class="line">        signal(chopstick[(i+1)%5]); //释放右手边的筷子 </span><br><span class="line">        signal(chopstick[i]); //释放左手边的筷子 </span><br><span class="line">        signal(room); //退出房间释放信号量room </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="方式2"><a href="#方式2" class="headerlink" title="方式2"></a>方式2</h3><p>仅当哲学家的左右两支筷子都可用时,才允许他拿起筷子进餐。 </p>
+<h4 id="方案1"><a href="#方案1" class="headerlink" title="方案1"></a>方案1</h4><p>利用AND型信号量机制实现：在一个原语中，将一段代码同时需要的多个临界资源，要么全部分配给它，要么一个都不分配，因此不会出现死锁的情形。当某些资源不够时阻塞调用进程;由于等待队列的存在，使得对资源的请求满足FIFO的要求，因此不会出现饥饿的情形。 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">semaphore chopstick[5]=&#123;1，1，1，1，1&#125;; </span><br><span class="line">void philosopher(int i) &#123; </span><br><span class="line">    while(true) &#123; </span><br><span class="line">        think(); </span><br><span class="line">        Swait(chopstick[(i+1)]%5,chopstick[i]); </span><br><span class="line">        eat(); </span><br><span class="line">        Ssignal(chopstick[(i+1)]%5,chopstick[i]); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="方案2"><a href="#方案2" class="headerlink" title="方案2"></a>方案2</h4><p>利用信号量的保护机制实现:通过信号量mutex对eat()之前的取左侧和右侧筷子的操作进行保护，使之成为一个原子操作，这样可以防止死锁的出现。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">semaphore mutex = 1 ; semaphore chopstick[5]=&#123;1，1，1，1，1&#125;; </span><br><span class="line">void philosopher(int I) &#123; </span><br><span class="line">    while(true) &#123; </span><br><span class="line">        think(); </span><br><span class="line">        wait(mutex); </span><br><span class="line">        wait(chopstick[(I+1)]%5); </span><br><span class="line">        wait(chopstick[I]); </span><br><span class="line">        signal(mutex); </span><br><span class="line">        eat(); </span><br><span class="line">        signal(chopstick[(I+1)]%5); </span><br><span class="line">        signal(chopstick[I]); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="方案3"><a href="#方案3" class="headerlink" title="方案3"></a>方案3</h4><p>规定奇数号的哲学家先拿起他左边的筷子,然后再去拿他右边的筷子;而偶数号的哲学家则相反。按此规定,将是1,2号哲学家竞争1号筷子,3,4号哲学家竞争3号筷子。即五个哲学家都竞争奇数号筷子,获得后,再去竞争偶数号筷子,最后总会有一个哲学家能获 得两支筷子而进餐。而申请不到的哲学家进入阻塞等待队列，根FIFO原则，则先申请的哲学家会较先可以吃饭，因此不会出现饿死的哲学家。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">semaphore chopstick[5]=&#123;1，1，1，1，1&#125;; </span><br><span class="line">void philosopher(int i) </span><br><span class="line">&#123; </span><br><span class="line">    while(true) </span><br><span class="line">    &#123; </span><br><span class="line">        think(); </span><br><span class="line">        if(i%2 == 0) //偶数哲学家，先右后左。 </span><br><span class="line">        &#123; </span><br><span class="line">            wait (chopstick[ i + 1 ] mod 5) ; </span><br><span class="line">            wait (chopstick[i]) ; </span><br><span class="line">            eat(); </span><br><span class="line">            signal (chopstick[ i + 1 ] mod 5) ; </span><br><span class="line">            signal (chopstick[i]) ; </span><br><span class="line">        &#125; </span><br><span class="line">        Else //奇数哲学家，先左后右。  </span><br><span class="line">        &#123;</span><br><span class="line">            wait (chopstick[i]) ; </span><br><span class="line">            wait (chopstick[ i + 1 ] mod 5) ; </span><br><span class="line">            eat(); </span><br><span class="line">            signal (chopstick[i]) ; </span><br><span class="line">            signal (chopstick[ i + 1 ] mod 5) ; </span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="理发师睡觉问题"><a href="#理发师睡觉问题" class="headerlink" title="理发师睡觉问题"></a>理发师睡觉问题</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">//这个计数器才是共享资源</span><br><span class="line">int waiting=0;    //控制变量, 用来记录等候理发的顾客数</span><br><span class="line"></span><br><span class="line">semaphore customers;    //用来记录等候理发的顾客数，并用作阻塞理发师进程</span><br><span class="line">semaphore barbers;    //用来记录正在等候顾客的理发师数，并用作阻塞顾客进程</span><br><span class="line">semaphore mutex;    //用于线程互斥</span><br><span class="line"></span><br><span class="line">void barber()</span><br><span class="line">&#123;</span><br><span class="line">    while(true)&#123;</span><br><span class="line">        P(customers);//若无顾客,理发师睡眠</span><br><span class="line">        P(mutex);</span><br><span class="line">        waiting--;</span><br><span class="line">        printf(&quot;理发师：等待顾客-1，还剩%d人等待 \n&quot;, waiting);</span><br><span class="line">        V(barbers);</span><br><span class="line">        V(mutex);</span><br><span class="line">        cut_hair();//理发ing, 这个时候顾客已经独享理发师了，所以不在临界区</span><br><span class="line">        </span><br><span class="line">        P(mutex);</span><br><span class="line">        if(waiting==0)&#123;        //没人就长眠去呗</span><br><span class="line">            V(mutex);</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        V(mutex);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void customer()</span><br><span class="line">&#123;</span><br><span class="line">    P(mutex);    //互斥</span><br><span class="line">    if(waiting &lt; CHAIRS)&#123;    //等候的人比椅子少    </span><br><span class="line">        waiting++;    //等候的人+1</span><br><span class="line">        V(customers);    //多了一个顾客</span><br><span class="line">        V(mutex);</span><br><span class="line">        P(barbers);    //如果没有理发师了，那顾客就在椅子上等着</span><br><span class="line">        get_cut();</span><br><span class="line">    &#125;</span><br><span class="line">    else&#123;</span><br><span class="line">        printf(&quot;顾客%u: 没椅子了，走人 \n&quot;, (unsigned int)pthread_self());</span><br><span class="line">        V(mutex);</span><br><span class="line">    &#125;</span><br><span class="line">    V(mutex);    //如果前面没有椅子了，就直接走了</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="https://haojiaqiang.github.io">Hayato</a>
+            <p>原文链接: <a href="https://haojiaqiang.github.io/2017/11/30/关于死锁的几个经典问题/">https://haojiaqiang.github.io/2017/11/30/关于死锁的几个经典问题/</a>
+            <p>发表日期: <a href="https://haojiaqiang.github.io/2017/11/30/关于死锁的几个经典问题/">November 30th 2017, 10:12:19 am</a>
+            <p>版权声明: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC-SA 4.0</a></p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2020/11/19/网游加速器原理/" title= 网游加速器原理、技术与实现 >
+                    <div class="nextTitle">网游加速器原理、技术与实现</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2017/09/03/howRuntimeWorks/" title= 彻底理解Runtime >
+                    <div class="prevTitle">彻底理解Runtime</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+    
+        
+            
+                <a href="https://github.com/haojiaqiang" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://about.me/haojiaqiang" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#经典问题的实现"><span class="toc-number">1.</span> <span class="toc-text">经典问题的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#生产者-消费者问题"><span class="toc-number">1.1.</span> <span class="toc-text">生产者 消费者问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#读者-写者问题"><span class="toc-number">1.2.</span> <span class="toc-text">读者 写者问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#哲学家进餐问题-死锁防止"><span class="toc-number">1.3.</span> <span class="toc-text">哲学家进餐问题 - 死锁防止</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方式1"><span class="toc-number">1.3.1.</span> <span class="toc-text">方式1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方式2"><span class="toc-number">1.3.2.</span> <span class="toc-text">方式2</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#方案1"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">方案1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方案2"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">方案2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方案3"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">方案3</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#理发师睡觉问题"><span class="toc-number">1.4.</span> <span class="toc-text">理发师睡觉问题</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 20
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span><a class="archive-post-title" href= "/2020/11/19/网游加速器原理/" >网游加速器原理、技术与实现</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/30</span><a class="archive-post-title" href= "/2017/11/30/关于死锁的几个经典问题/" >关于死锁的几个经典问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/03</span><a class="archive-post-title" href= "/2017/09/03/howRuntimeWorks/" >彻底理解Runtime</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/29</span><a class="archive-post-title" href= "/2017/06/29/Runloop/" >Runloop</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2017/05/08/Computer-Networking-A-Top-Down-Approach-NOTES/" >计算机网络 自顶向下方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span><a class="archive-post-title" href= "/2017/04/19/GCD-queue-and-sync-async/" >GCD队列与同步异步的组合</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/02</span><a class="archive-post-title" href= "/2017/01/02/iOS-Core-Animation/" >iOS Core Animation</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/20</span><a class="archive-post-title" href= "/2016/11/20/Design-Pattern-Odyssey/" >大话设计模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/Algorithms/" >Algorithms</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/操作系统原理/" >操作系统原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2016/09/08/Effective-Objective-C-2-0/" >Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/03</span><a class="archive-post-title" href= "/2016/08/03/SwiftGrammar/" >SwiftGrammar</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/22</span><a class="archive-post-title" href= "/2016/05/22/Computer-Systems-A-Programmer-s-Perspective/" >深入理解计算机系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/2016/04/22/Pro-multithreading-and-memory-management-for-iOS-and-OS-X/" >Object-C 高级编程 iOS和OS X多线程和内存管理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/12</span><a class="archive-post-title" href= "/2016/03/12/git/" >Git</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/25</span><a class="archive-post-title" href= "/2015/06/25/special-kind-of-pointer/" >几种特殊指针的含义区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2015/05/08/InstallShadowsocks/" >部署Shadowsocks</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2015/03/30/SQL查询实现方式/" >SQL查询实现方式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span><a class="archive-post-title" href= "/2015/03/11/SQL/" >SQL</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2015/01/01/How-does-the-program-run/" >程序是怎样跑起来的</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="app"><span class="iconfont-archer">&#xe606;</span>app</span>
+    
+        <span class="sidebar-tag-name" data-tags="async"><span class="iconfont-archer">&#xe606;</span>async</span>
+    
+        <span class="sidebar-tag-name" data-tags="sync"><span class="iconfont-archer">&#xe606;</span>sync</span>
+    
+        <span class="sidebar-tag-name" data-tags="queue"><span class="iconfont-archer">&#xe606;</span>queue</span>
+    
+        <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存管理"><span class="iconfont-archer">&#xe606;</span>内存管理</span>
+    
+        <span class="sidebar-tag-name" data-tags="SQL"><span class="iconfont-archer">&#xe606;</span>SQL</span>
+    
+        <span class="sidebar-tag-name" data-tags="pointer"><span class="iconfont-archer">&#xe606;</span>pointer</span>
+    
+        <span class="sidebar-tag-name" data-tags="id"><span class="iconfont-archer">&#xe606;</span>id</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSObject"><span class="iconfont-archer">&#xe606;</span>NSObject</span>
+    
+        <span class="sidebar-tag-name" data-tags="id<NSObject>"><span class="iconfont-archer">&#xe606;</span>id<NSObject></span>
+    
+        <span class="sidebar-tag-name" data-tags="void *"><span class="iconfont-archer">&#xe606;</span>void *</span>
+    
+        <span class="sidebar-tag-name" data-tags="nil"><span class="iconfont-archer">&#xe606;</span>nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="Nil"><span class="iconfont-archer">&#xe606;</span>Nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSNull"><span class="iconfont-archer">&#xe606;</span>NSNull</span>
+    
+        <span class="sidebar-tag-name" data-tags="deadLock"><span class="iconfont-archer">&#xe606;</span>deadLock</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机系统"><span class="iconfont-archer">&#xe606;</span>计算机系统</span>
+    
+        <span class="sidebar-tag-name" data-tags="消息"><span class="iconfont-archer">&#xe606;</span>消息</span>
+    
+        <span class="sidebar-tag-name" data-tags="load"><span class="iconfont-archer">&#xe606;</span>load</span>
+    
+        <span class="sidebar-tag-name" data-tags="Shadowsocks"><span class="iconfont-archer">&#xe606;</span>Shadowsocks</span>
+    
+        <span class="sidebar-tag-name" data-tags="CentOS"><span class="iconfont-archer">&#xe606;</span>CentOS</span>
+    
+        <span class="sidebar-tag-name" data-tags="AWS root"><span class="iconfont-archer">&#xe606;</span>AWS root</span>
+    
+        <span class="sidebar-tag-name" data-tags="Swift"><span class="iconfont-archer">&#xe606;</span>Swift</span>
+    
+        <span class="sidebar-tag-name" data-tags="Git"><span class="iconfont-archer">&#xe606;</span>Git</span>
+    
+        <span class="sidebar-tag-name" data-tags="proxy"><span class="iconfont-archer">&#xe606;</span>proxy</span>
+    
+        <span class="sidebar-tag-name" data-tags="加速器"><span class="iconfont-archer">&#xe606;</span>加速器</span>
+    
+        <span class="sidebar-tag-name" data-tags="OS"><span class="iconfont-archer">&#xe606;</span>OS</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机网络"><span class="iconfont-archer">&#xe606;</span>计算机网络</span>
+    
+        <span class="sidebar-tag-name" data-tags="Runloop"><span class="iconfont-archer">&#xe606;</span>Runloop</span>
+    
+        <span class="sidebar-tag-name" data-tags="runtime"><span class="iconfont-archer">&#xe606;</span>runtime</span>
+    
+        <span class="sidebar-tag-name" data-tags="Core Animation"><span class="iconfont-archer">&#xe606;</span>Core Animation</span>
+    
+        <span class="sidebar-tag-name" data-tags="Algorithms"><span class="iconfont-archer">&#xe606;</span>Algorithms</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Hayato"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

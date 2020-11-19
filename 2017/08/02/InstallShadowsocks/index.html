@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Hayato">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Hayato">
+    <meta name="keywords" content="Hayato's Studio | Hayato">
+    <meta name="description" content="">
+    <meta name="Cache-Control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>部署Shadowsocks · Hayato&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Hayato&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">部署Shadowsocks</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Hayato's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style=
+
+
+
+
+
+
+
+
+height:50vh;
+
+>
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            部署Shadowsocks
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Shadowsocks">Shadowsocks</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "CentOS">CentOS</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "AWS root">AWS root</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">2,488</span> / Reading time: <span class="post-count">12 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2017/08/02</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="CentOS7部署Shadowsocks"><a href="#CentOS7部署Shadowsocks" class="headerlink" title="CentOS7部署Shadowsocks"></a>CentOS7部署Shadowsocks</h1><p><a href="http://morning.work/page/2015-12/install-shadowsocks-on-centos-7.html" target="_blank" rel="noopener">Reference</a></p>
+<p>CentOS 7 开始默认使用<a href="https://en.wikipedia.org/wiki/Systemd" target="_blank" rel="noopener">Systemd</a>作为开启启动脚本的管理工具，<a href="https://github.com/shadowsocks/" target="_blank" rel="noopener">Shadowsocks</a>则是当前比较受欢迎的科学上网工具，本文将介绍如何在 CentOS 下安装和配置 Shadowsocks 服务。</p>
+<h2 id="服务器基本操作"><a href="#服务器基本操作" class="headerlink" title="服务器基本操作"></a>服务器基本操作</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">链接服务器：ssh root@xxxx.xxx.xxx.xxx -p XXXX  &lt; xxx:ip，XXXX：port</span><br><span class="line">修改密码：passwd</span><br><span class="line">断开链接：close</span><br></pre></td></tr></table></figure>
+<h2 id="安装-pip"><a href="#安装-pip" class="headerlink" title="安装 pip"></a>安装 pip</h2><p><a href="https://pip.pypa.io/en/stable/installing/" target="_blank" rel="noopener">pip</a>是 python 的包管理工具。在本文中将使用 python 版本的 shadowsocks，此版本的 shadowsocks 已发布到 pip 上，因此我们需要通过 pip 命令来安装。</p>
+<p>在控制台执行以下命令安装 pip：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl &quot;https://bootstrap.pypa.io/get-pip.py&quot; -o &quot;get-pip.py&quot;</span><br><span class="line">python get-pip.py</span><br></pre></td></tr></table></figure>
+<h2 id="安装配置-shadowsocks"><a href="#安装配置-shadowsocks" class="headerlink" title="安装配置 shadowsocks"></a>安装配置 shadowsocks</h2><p>在控制台执行以下命令安装 shadowsocks：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install --upgrade pip</span><br><span class="line">pip install shadowsocks</span><br></pre></td></tr></table></figure>
+<p>安装完成后，需要创建配置文件<code>/etc/shadowsocks.json</code>，内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">单账号：</span><br><span class="line">&#123;</span><br><span class="line">  &quot;server&quot;: &quot;0.0.0.0&quot;,</span><br><span class="line">  &quot;server_port&quot;: 8989,</span><br><span class="line">  &quot;password&quot;: &quot;passwd8989&quot;,</span><br><span class="line">  &quot;method&quot;: &quot;aes-256-cfb&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">多账号：</span><br><span class="line">&#123;</span><br><span class="line">    &quot;server&quot;:&quot;0.0.0.0&quot;,</span><br><span class="line">    &quot;port_password&quot;:&#123;</span><br><span class="line">        &quot;8989&quot;:&quot;haojiaqiang8989&quot;,</span><br><span class="line">        &quot;8990&quot;:&quot;haojiaqiang8990&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;timeout&quot;:300,</span><br><span class="line">    &quot;method&quot;:&quot;aes-256-cfb&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>说明：</p>
+<ul>
+<li><code>method</code>为加密方法，可选<code>aes-128-cfb, aes-192-cfb, aes-256-cfb, bf-cfb, cast5-cfb, des-cfb, rc4-md5, chacha20, salsa20, rc4, table</code></li>
+<li><code>server_port</code>为服务监听端口</li>
+<li><code>password</code>为密码，可使用<a href="http://ucdok.com/project/generate_password.html" target="_blank" rel="noopener">密码生成工具</a>生成一个随机密码</li>
+</ul>
+<p>以上三项信息在配置 shadowsocks 客户端时需要配置一致，具体说明可查看 shadowsocks 的帮助文档。</p>
+<h2 id="配置自启动"><a href="#配置自启动" class="headerlink" title="配置自启动"></a>配置自启动</h2><p>新建启动脚本文件<code>/etc/systemd/system/shadowsocks.service</code>，内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Shadowsocks</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">TimeoutStartSec=0</span><br><span class="line">ExecStart=/usr/bin/ssserver -c /etc/shadowsocks.json</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<p>执行以下命令启动 shadowsocks 服务：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl enable shadowsocks</span><br><span class="line">systemctl start shadowsocks</span><br></pre></td></tr></table></figure>
+<p>为了检查 shadowsocks 服务是否已成功启动，可以执行以下命令查看服务的状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status shadowsocks -l</span><br></pre></td></tr></table></figure>
+<p>如果服务启动成功，则控制台显示的信息可能类似这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">● shadowsocks.service - Shadowsocks</span><br><span class="line">   Loaded: loaded (/etc/systemd/system/shadowsocks.service; enabled; vendor preset: disabled)</span><br><span class="line">   Active: active (running) since Mon 2015-12-21 23:51:48 CST; 11min ago</span><br><span class="line"> Main PID: 19334 (ssserver)</span><br><span class="line">   CGroup: /system.slice/shadowsocks.service</span><br><span class="line">           └─19334 /usr/bin/python /usr/bin/ssserver -c /etc/shadowsocks.json</span><br><span class="line"></span><br><span class="line">Dec 21 23:51:48 morning.work systemd[1]: Started Shadowsocks.</span><br><span class="line">Dec 21 23:51:48 morning.work systemd[1]: Starting Shadowsocks...</span><br><span class="line">Dec 21 23:51:48 morning.work ssserver[19334]: INFO: loading config from /etc/shadowsocks.json</span><br><span class="line">Dec 21 23:51:48 morning.work ssserver[19334]: 2015-12-21 23:51:48 INFO     loading libcrypto from libcrypto.so.10</span><br><span class="line">Dec 21 23:51:48 morning.work ssserver[19334]: 2015-12-21 23:51:48 INFO     starting server at 0.0.0.0:8388</span><br></pre></td></tr></table></figure>
+<h2 id="设置服务器定时重启"><a href="#设置服务器定时重启" class="headerlink" title="设置服务器定时重启"></a>设置服务器定时重启</h2><p>一般默认会安装Crontab，如果需要配置的话：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">yum install vixie-cron crontabs # 安装</span><br><span class="line">chkconfig crond on # 设置开机启动</span><br><span class="line">service crond start # 启动服务</span><br></pre></td></tr></table></figure></p>
+<p>先列一下现有的Crontab看看：<br><code>crontab -l</code><br>如果没有提示为 no crontab for root</p>
+<p>编辑命令：<br><code>crontab –e</code></p>
+<p>输入<br><code>20 5 * * * root /sbin/reboot</code><br>表示服务器会在所在时区每天05：20重启</p>
+<p>生效：<br><code>service crond restart</code></p>
+<h2 id="傻瓜式一键安装脚本"><a href="#傻瓜式一键安装脚本" class="headerlink" title="===== 傻瓜式一键安装脚本 ====="></a>===== 傻瓜式一键安装脚本 =====</h2><p>新建文件<code>install-shadowsocks.sh</code>，内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line"># Install Shadowsocks on CentOS 7</span><br><span class="line"></span><br><span class="line">echo &quot;Installing Shadowsocks...&quot;</span><br><span class="line"></span><br><span class="line">random-string()</span><br><span class="line">&#123;</span><br><span class="line">    cat /dev/urandom | tr -dc &apos;a-zA-Z0-9&apos; | fold -w $&#123;1:-32&#125; | head -n 1</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">CONFIG_FILE=/etc/shadowsocks.json</span><br><span class="line">SERVICE_FILE=/etc/systemd/system/shadowsocks.service</span><br><span class="line">SS_PASSWORD=$(random-string 32)</span><br><span class="line">SS_PORT=8989</span><br><span class="line">SS_METHOD=aes-256-cfb</span><br><span class="line">SS_IP=`ip route get 1 | awk &apos;&#123;print $NF;exit&#125;&apos;`</span><br><span class="line">GET_PIP_FILE=/tmp/get-pip.py</span><br><span class="line"></span><br><span class="line"># install pip</span><br><span class="line">curl &quot;https://bootstrap.pypa.io/get-pip.py&quot; -o &quot;$&#123;GET_PIP_FILE&#125;&quot;</span><br><span class="line">python $&#123;GET_PIP_FILE&#125;</span><br><span class="line"></span><br><span class="line"># install shadowsocks</span><br><span class="line">pip install --upgrade pip</span><br><span class="line">pip install shadowsocks</span><br><span class="line"></span><br><span class="line"># create shadowsocls config</span><br><span class="line">cat &lt;&lt;EOF | sudo tee $&#123;CONFIG_FILE&#125;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;server&quot;: &quot;0.0.0.0&quot;,</span><br><span class="line">  &quot;server_port&quot;: $&#123;SS_PORT&#125;,</span><br><span class="line">  &quot;password&quot;: &quot;$&#123;SS_PASSWORD&#125;&quot;,</span><br><span class="line">  &quot;method&quot;: &quot;$&#123;SS_METHOD&#125;&quot;</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"># create service</span><br><span class="line">cat &lt;&lt;EOF | sudo tee $&#123;SERVICE_FILE&#125;</span><br><span class="line">[Unit]</span><br><span class="line">Description=Shadowsocks</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">TimeoutStartSec=0</span><br><span class="line">ExecStart=/usr/bin/ssserver -c $&#123;CONFIG_FILE&#125;</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"># start service</span><br><span class="line">systemctl enable shadowsocks</span><br><span class="line">systemctl start shadowsocks</span><br><span class="line"></span><br><span class="line"># view service status</span><br><span class="line">sleep 5</span><br><span class="line">systemctl status shadowsocks -l</span><br><span class="line"></span><br><span class="line">echo &quot;================================&quot;</span><br><span class="line">echo &quot;&quot;</span><br><span class="line">echo &quot;Congratulations! Shadowsocks has been installed on your system.&quot;</span><br><span class="line">echo &quot;You shadowsocks connection info:&quot;</span><br><span class="line">echo &quot;--------------------------------&quot;</span><br><span class="line">echo &quot;server:      $&#123;SS_IP&#125;&quot;</span><br><span class="line">echo &quot;server_port: $&#123;SS_PORT&#125;&quot;</span><br><span class="line">echo &quot;password:    $&#123;SS_PASSWORD&#125;&quot;</span><br><span class="line">echo &quot;method:      $&#123;SS_METHOD&#125;&quot;</span><br><span class="line">echo &quot;--------------------------------&quot;</span><br></pre></td></tr></table></figure>
+<p>执行以下命令一键安装：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x install-shadowsocks.sh</span><br><span class="line">./install-shadowsocks.sh</span><br></pre></td></tr></table></figure>
+<p>也可以直接执行以下命令从 GitHub 下载安装脚本并执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash &lt;(curl -s http://morning.work/examples/2015-12/install-shadowsocks.sh)</span><br></pre></td></tr></table></figure>
+<p>安装完成后会自动打印出 Shadowsocks 的连接配置信息。比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Congratulations! Shadowsocks has been installed on your system.</span><br><span class="line">You shadowsocks connection info:</span><br><span class="line">--------------------------------</span><br><span class="line">server:      10.0.2.15</span><br><span class="line">server_port: 8989</span><br><span class="line">password:    RaskAAcW0IQrVcA7n0QLCEphhng7K4Yc</span><br><span class="line">method:      aes-256-cfb</span><br><span class="line">--------------------------------</span><br></pre></td></tr></table></figure>
+<p>链接服务器报错<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</span><br><span class="line">@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @</span><br><span class="line">@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</span><br><span class="line">IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!</span><br><span class="line">Someone could be eavesdropping on you right now (man-in-the-middle attack)!</span><br><span class="line">It is also possible that a host key has just been changed.</span><br><span class="line">The fingerprint for the RSA key sent by the remote host is</span><br><span class="line">SHA256:mBd/txv711elA0SBOKfdIBVE+iTJ3Rn/FLrkRPEi1bQ.</span><br><span class="line">Please contact your system administrator.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">~/.ssh/known_hosts 删除对应ip描述</span><br></pre></td></tr></table></figure></p>
+<p>查看服务器运行情况<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ss -tulnp | grep xxxx   xxxx端口号，查看/etc/shadowsocks.json</span><br></pre></td></tr></table></figure></p>
+<h2 id="扩展阅读"><a href="#扩展阅读" class="headerlink" title="扩展阅读"></a>扩展阅读</h2><ul>
+<li><a href="https://blog.linuxeye.com/400.html" target="_blank" rel="noopener">systemd 详解</a></li>
+<li><a href="https://pip.pypa.io/en/stable/installing/" target="_blank" rel="noopener">Install pip</a></li>
+<li><a href="http://www.liquidweb.com/kb/how-to-install-pip-on-centos-7/" target="_blank" rel="noopener">How to Install Pip on CentOS 7</a></li>
+<li><a href="https://scottlinux.com/2014/12/08/how-to-create-a-systemd-service-in-linux-centos-7/" target="_blank" rel="noopener">How To Create a systemd Service in Linux (CentOS 7)</a></li>
+<li><a href="https://coreos.com/docs/launching-containers/launching/getting-started-with-systemd/" target="_blank" rel="noopener">Getting Started with systemd</a></li>
+<li><a href="http://stackoverflow.com/questions/13322485/how-to-i-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x" target="_blank" rel="noopener">How to I get the primary IP address of the local machine on Linux and OS X?</a></li>
+<li><a href="http://stackoverflow.com/questions/5735666/execute-bash-script-from-url" target="_blank" rel="noopener">Execute bash script from URL</a></li>
+</ul>
+<h1 id="AWS部署Shadowsocks"><a href="#AWS部署Shadowsocks" class="headerlink" title="AWS部署Shadowsocks"></a>AWS部署Shadowsocks</h1><p><a href="http://blog.csdn.net/f59130/article/details/74014415" target="_blank" rel="noopener">Reference</a></p>
+<h2 id="启动虚拟机"><a href="#启动虚拟机" class="headerlink" title="启动虚拟机"></a>启动虚拟机</h2><p><img src="http://upload-images.jianshu.io/upload_images/1766686-2d881a4d4bef5265.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="启动虚拟机"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1766686-6fbc48e7b6df5cef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="启动实例"></p>
+<p>这里，点击<strong>高级EC2启动实例向导</strong>进行个性化配置。</p>
+<h2 id="定制化服务器类型"><a href="#定制化服务器类型" class="headerlink" title="定制化服务器类型"></a>定制化服务器类型</h2><ul>
+<li><p>选择Amazon 系统映像(AMI)</p>
+<p>这里选择，Amazon Linux AMI、RedHat、Ubuntu都行。本文选择的是Ubuntu。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1766686-73536a835bfd9689.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="AMI"></p>
+</li>
+<li><p>选择实例类型</p>
+</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1766686-d294863c73355796.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="实例类型"></p>
+<ul>
+<li><p>标签实例</p>
+<p>图中标出的3-4两步直接默认配置就行。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1766686-2ac053025ef98718.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+</li>
+<li><p>配置安全组</p>
+<p>这里先配置所有流量和端口开放。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1766686-6b355136f89e83a7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="配置安全组"></p>
+</li>
+<li><p>生成秘钥对</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1766686-7a082edebbbc1512.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="审核"></p>
+</li>
+<li><p>创建账单警报</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1766686-7ae85173ef085ade.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="账单警报.png"></p>
+</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/1766686-7d96351b4458763e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="接收账单警报"></p>
+<h2 id="登录服务器"><a href="#登录服务器" class="headerlink" title="登录服务器"></a>登录服务器</h2><p>定制完成后，就可以远程登录了。在实例上右击，点击连接。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1766686-f6a9ee8e264bc63a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="连接"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1766686-e091770eafe8b040.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="连接到实例"></p>
+<p>下面主要是通过Xshell连接到EC2，具体看<a href="http://jingyan.baidu.com/article/a3a3f811d5fc338da2eb8a00.html" target="_blank" rel="noopener">教程</a>。<strong>注意</strong>：用户名那里填写<strong>ubuntu</strong>，否则会出现</p>
+<p><em>所选的用户密钥未在远程主机上注册 请再试一次</em>。</p>
+<h2 id="安装Shadowsocks"><a href="#安装Shadowsocks" class="headerlink" title="安装Shadowsocks"></a>安装Shadowsocks</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># 获取root权限</span><br><span class="line">sudo -s</span><br><span class="line"></span><br><span class="line"># 更新apt-get</span><br><span class="line">apt-get update</span><br><span class="line"></span><br><span class="line"># 安装python包管理工具</span><br><span class="line">apt-get install python-setuptools</span><br><span class="line">apt-get install python-pip</span><br><span class="line"></span><br><span class="line"># 配置语言</span><br><span class="line">export LC_ALL=C</span><br><span class="line"></span><br><span class="line"># 安装shadowsocks</span><br><span class="line">pip install shadowsocks</span><br></pre></td></tr></table></figure>
+<h2 id="配置Shadowsocks"><a href="#配置Shadowsocks" class="headerlink" title="配置Shadowsocks"></a>配置Shadowsocks</h2><p>创建配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir /etc/shadowsocks</span><br><span class="line">vim /etc/shadowsocks/ss.json</span><br></pre></td></tr></table></figure>
+<p>配置文件内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;server&quot;:&quot;0.0.0.0&quot;,</span><br><span class="line">    &quot;server_port&quot;:443,</span><br><span class="line">    &quot;local_address&quot;:&quot;127.0.0.1&quot;,</span><br><span class="line">    &quot;local_port&quot;:1080,</span><br><span class="line">    &quot;password&quot;:&quot;xxxx&quot;,</span><br><span class="line">    &quot;timeout&quot;:300,</span><br><span class="line">    &quot;method&quot;:&quot;aes-256-cfb&quot;,</span><br><span class="line">    &quot;fast_open&quot;:false,</span><br><span class="line">    &quot;workers&quot;: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>或多端口配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    “server”:”0.0.0.0”,#或者为服务器ip地址</span><br><span class="line">    “port_password”: &#123;</span><br><span class="line">        “端口1”: “连接密码1”,</span><br><span class="line">        “端口2” : “连接密码2”</span><br><span class="line">    &#125;,</span><br><span class="line">    “timeout”:300,</span><br><span class="line">    “method”:”aes-256-cfb”,</span><br><span class="line">    “fast_open”: false</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<table>
+<thead>
+<tr>
+<th>配置字段</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>server</td>
+<td style="text-align:center">服务端监听地址(IPv4或IPv6)</td>
+</tr>
+<tr>
+<td>server_port</td>
+<td style="text-align:center">服务端端口，一般为443</td>
+</tr>
+<tr>
+<td>local_address</td>
+<td style="text-align:center">本地监听地址，缺省为127.0.0.1</td>
+</tr>
+<tr>
+<td>local_port</td>
+<td style="text-align:center">本地监听端口，一般为1080</td>
+</tr>
+<tr>
+<td>password</td>
+<td style="text-align:center">用以加密的密匙</td>
+</tr>
+<tr>
+<td>timeout</td>
+<td style="text-align:center">超时时间（秒）</td>
+</tr>
+<tr>
+<td>method</td>
+<td style="text-align:center">加密方法，默认为aes-256-cfb，更多请查阅<a href="https://github.com/shadowsocks/shadowsocks/wiki/Encryption" target="_blank" rel="noopener">Encryption</a></td>
+</tr>
+<tr>
+<td>fast_open</td>
+<td style="text-align:center">是否启用<a href="https://github.com/shadowsocks/shadowsocks/wiki/TCP-Fast-Open" target="_blank" rel="noopener">TCP-Fast-Open</a>，true或者false</td>
+</tr>
+<tr>
+<td>workers</td>
+<td style="text-align:center"><a href="https://github.com/shadowsocks/shadowsocks/wiki/Workers" target="_blank" rel="noopener">worker数量</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="启动Shadowsocks"><a href="#启动Shadowsocks" class="headerlink" title="启动Shadowsocks"></a>启动Shadowsocks</h2><p>启动：<code>ssserver -c /etc/shadowsocks/ss.json -d start</code></p>
+<p>停止：<code>ssserver -c /etc/shadowsocks/ss.json -d stop</code></p>
+<p>重启：<code>ssserver -c /etc/shadowsocks/ss.json -d restart</code></p>
+<h2 id="设置SS为开机自启动"><a href="#设置SS为开机自启动" class="headerlink" title="设置SS为开机自启动"></a>设置SS为开机自启动</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/rc.local</span><br></pre></td></tr></table></figure>
+<p>加入：<code>sudo ssserver -c /etc/shadowsocks/ss.json -d start</code></p>
+<h2 id="本地设备连接到Shadowsocks服务器"><a href="#本地设备连接到Shadowsocks服务器" class="headerlink" title="本地设备连接到Shadowsocks服务器"></a>本地设备连接到Shadowsocks服务器</h2><p>到GitHub下载最新的客户端：</p>
+<p><a href="https://github.com/shadowsocks/shadowsocks-windows/releases" target="_blank" rel="noopener">Windows客户端下载地址</a></p>
+<p><a href="https://github.com/shadowsocks/shadowsocks-iOS/releases" target="_blank" rel="noopener">macOS客户端下载地址</a></p>
+<p><a href="https://github.com/shadowsocks/shadowsocks-qt5/releases" target="_blank" rel="noopener">Linux客户端下载地址</a></p>
+<p>安装之后，添加服务器，地址为AWS的外网地址，登录<a href="https://ap-northeast-1.console.aws.amazon.com/ec2/" target="_blank" rel="noopener">AWS控制台</a>，查看正在运行中的实例，找到公有ip。 端口号为刚才配置Shadowsocks服务器时的端口号，密码也是刚才配置的(当然密码可以自行设置)，设置完之后保存。</p>
+<p>关于Windows下使用Shadowsocks的方法，还请自行搜索。</p>
+<h2 id="防止AWS到期或其他原因扣费"><a href="#防止AWS到期或其他原因扣费" class="headerlink" title="防止AWS到期或其他原因扣费"></a>防止AWS到期或其他原因扣费</h2><p>为了防止流量超出或者此<a href="https://www.zhihu.com/question/22543732" target="_blank" rel="noopener">悲剧</a>发生。</p>
+<p>需要设置账单警报，前面已经介绍了。</p>
+<p>还有就是在<strong>安全组</strong>下面设置入站和出站规则。</p>
+<p>一言以蔽之，到期前把你账户下所有AWS实例关闭并销毁。</p>
+<h2 id="AWS-Ubuntu启用root用户以SSH登录"><a href="#AWS-Ubuntu启用root用户以SSH登录" class="headerlink" title="AWS Ubuntu启用root用户以SSH登录"></a>AWS Ubuntu启用root用户以SSH登录</h2><p>按照下面的步骤启用ssh作为AWS上的实例的Ubuntu root用户。您可以按照其他Linux相同的步骤像CentOS，RHEL，LinuxMint，Debian的AWS等实例</p>
+<ul>
+<li><strong>SSH到服务器-</strong> 登录与Ubuntu的用户你的服务器，然后切换到root用户使用sudo命令。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i server.pem ubuntu@remote-server.com</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>成功登录到Ubuntu帐户切换到root帐户后。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo su</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><strong>编辑authorized_keys文件-</strong> 现在编辑<code>/root/.ssh/authorized_keys</code>提交你的私钥。 你会得到类似的代码与您的钥匙。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command=&quot;</span><br><span class="line">echo &apos;Please login as the user &quot;ubuntu&quot; rather than the user &quot;root&quot;.&apos;;</span><br><span class="line">echo;sleep 10&quot; ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCPqJ2U4gidqek</span><br><span class="line">4FPQJABENkrUiLVP61LObdFAZXvs2EpCf/nBQCRg4ykMNg+8TC9lb7jC65zfIrTUcNcwongDb4</span><br><span class="line">3k6miSKu1M8fdqXDpcb8CdDRaKpM2wP8l+hTaJ2aWycXmGJ7lZKQPiwNUOhbrOLNEtDmOI9eiV</span><br><span class="line">lz7See98LVLW+6AwfzNA8Cu4riDTvEMQr/WQ9NLrS3BZE1TAAswJi9lGDfTgEvfh4Ji+eI/xT</span><br><span class="line">Xrjkkwjerkjk3jrkwejrkjwe9wASXob4rbV12TXjQIcMKaRGQAGrwOHu0nM2ibfTdgqjrTAG</span><br><span class="line">03CXKzQhF09LdxKlT7GpYe0oVU2R1kjkejwQp howtoing.com</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>从authorized_keys文件中删除加粗突出显示的文字和你的关键应该是这样的。有支持SSH-RSA文本之前没有空格。<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCPqJ2U4gidqek4FPQJABENkrUiLVP61LObd</span><br><span class="line">FAZXvs2EpCf/nBQCRg4ykMNg+8TC9lb7jC65zfIrTUcNcwongDb43k6miSKu1M8fdqXDpcb8C</span><br><span class="line">dDRaKpM2wP8l+hTaJ2aWycXmGJ7lZKQPiwNUOhbrOLNEtDmOI9eiVlz7See98LVLW+6AwfzNA</span><br><span class="line">8Cu4riDTvEMQrWQ9NLrS3BZE1TAAswJi9lGDfTgEvfh4Ji+eIxTXrjkkwjerkjk3jrkwejrkj</span><br><span class="line">we9wASXob4rbV12TXjQIcMKaRGQAGrwOHu0nM2ibfTdgqjrTAG03CXKzQhF09LdxKlT7GpYe0</span><br><span class="line">oVU2R1kjkejwQp howtoing.com</span><br></pre></td></tr></table></figure></p>
+<p><a href="http://www.howtoing.com/wp-content/uploads/2015/09/authorized-key-file.png" target="_blank" rel="noopener"><img src="http://upload-images.jianshu.io/upload_images/1766686-bdda847cf381a741.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="授权密钥文件"></a> </p>
+<ul>
+<li><p><strong>保存存档 -</strong> 上述后去除authorized_keys文件高亮显示的文本，保存并尝试用root帐号以SSH。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -i server.pem root@remote-server.com</span><br></pre></td></tr></table></figure>
+<p>你会发现，你已经成功登录到直接用root用户服务器。</p>
+</li>
+</ul>
+<h1 id="Error"><a href="#Error" class="headerlink" title="Error"></a>Error</h1><h2 id="pip-install-shadowsocks"><a href="#pip-install-shadowsocks" class="headerlink" title="pip install shadowsocks"></a>pip install shadowsocks</h2><h3 id="错误提示："><a href="#错误提示：" class="headerlink" title="错误提示："></a>错误提示：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># pip install shadowsocks</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;/usr/bin/pip&quot;, line 11, in &lt;module&gt;</span><br><span class="line">    sys.exit(main())</span><br><span class="line">  File &quot;/usr/lib/python2.7/dist-packages/pip/__init__.py&quot;, line 215, in main</span><br><span class="line">    locale.setlocale(locale.LC_ALL, &apos;&apos;)</span><br><span class="line">  File &quot;/usr/lib/python2.7/locale.py&quot;, line 581, in setlocale</span><br><span class="line">    return _setlocale(category, locale)</span><br><span class="line">locale.Error: unsupported locale setting</span><br></pre></td></tr></table></figure>
+<h3 id="原因：语言配置错误导致"><a href="#原因：语言配置错误导致" class="headerlink" title="原因：语言配置错误导致"></a>原因：语言配置错误导致</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># locale -a</span><br><span class="line">locale: Cannot set LC_CTYPE to default locale: No such file or directory</span><br><span class="line">C</span><br><span class="line">C.UTF-8</span><br><span class="line">en_AG</span><br><span class="line">en_AG.utf8</span><br><span class="line">en_AU.utf8</span><br><span class="line">en_BW.utf8</span><br><span class="line">en_CA.utf8</span><br><span class="line">en_DK.utf8</span><br><span class="line">en_GB.utf8</span><br><span class="line">en_HK.utf8</span><br><span class="line">en_IE.utf8</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h3 id="解决办法："><a href="#解决办法：" class="headerlink" title="解决办法："></a>解决办法：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export LC_ALL=C</span><br></pre></td></tr></table></figure>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="https://haojiaqiang.github.io">Hayato</a>
+            <p>原文链接: <a href="https://haojiaqiang.github.io/2017/08/02/InstallShadowsocks/">https://haojiaqiang.github.io/2017/08/02/InstallShadowsocks/</a>
+            <p>发表日期: <a href="https://haojiaqiang.github.io/2017/08/02/InstallShadowsocks/">August 2nd 2017, 10:05:36 am</a>
+            <p>版权声明: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC-SA 4.0</a></p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2017/09/30/关于死锁的几个经典问题/" title= 关于死锁的几个经典问题 >
+                    <div class="nextTitle">关于死锁的几个经典问题</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2017/07/09/GCD-queue-and-sync-async/" title= GCD队列与同步异步的组合 >
+                    <div class="prevTitle">GCD队列与同步异步的组合</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+    
+        
+            
+                <a href="https://github.com/haojiaqiang" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://about.me/haojiaqiang" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CentOS7部署Shadowsocks"><span class="toc-number">1.</span> <span class="toc-text">CentOS7部署Shadowsocks</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#服务器基本操作"><span class="toc-number">1.1.</span> <span class="toc-text">服务器基本操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装-pip"><span class="toc-number">1.2.</span> <span class="toc-text">安装 pip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装配置-shadowsocks"><span class="toc-number">1.3.</span> <span class="toc-text">安装配置 shadowsocks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置自启动"><span class="toc-number">1.4.</span> <span class="toc-text">配置自启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置服务器定时重启"><span class="toc-number">1.5.</span> <span class="toc-text">设置服务器定时重启</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#傻瓜式一键安装脚本"><span class="toc-number">1.6.</span> <span class="toc-text">===== 傻瓜式一键安装脚本 =====</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展阅读"><span class="toc-number">1.7.</span> <span class="toc-text">扩展阅读</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#AWS部署Shadowsocks"><span class="toc-number">2.</span> <span class="toc-text">AWS部署Shadowsocks</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#启动虚拟机"><span class="toc-number">2.1.</span> <span class="toc-text">启动虚拟机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#定制化服务器类型"><span class="toc-number">2.2.</span> <span class="toc-text">定制化服务器类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#登录服务器"><span class="toc-number">2.3.</span> <span class="toc-text">登录服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装Shadowsocks"><span class="toc-number">2.4.</span> <span class="toc-text">安装Shadowsocks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置Shadowsocks"><span class="toc-number">2.5.</span> <span class="toc-text">配置Shadowsocks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#启动Shadowsocks"><span class="toc-number">2.6.</span> <span class="toc-text">启动Shadowsocks</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置SS为开机自启动"><span class="toc-number">2.7.</span> <span class="toc-text">设置SS为开机自启动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地设备连接到Shadowsocks服务器"><span class="toc-number">2.8.</span> <span class="toc-text">本地设备连接到Shadowsocks服务器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#防止AWS到期或其他原因扣费"><span class="toc-number">2.9.</span> <span class="toc-text">防止AWS到期或其他原因扣费</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AWS-Ubuntu启用root用户以SSH登录"><span class="toc-number">2.10.</span> <span class="toc-text">AWS Ubuntu启用root用户以SSH登录</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Error"><span class="toc-number">3.</span> <span class="toc-text">Error</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#pip-install-shadowsocks"><span class="toc-number">3.1.</span> <span class="toc-text">pip install shadowsocks</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#错误提示："><span class="toc-number">3.1.1.</span> <span class="toc-text">错误提示：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原因：语言配置错误导致"><span class="toc-number">3.1.2.</span> <span class="toc-text">原因：语言配置错误导致</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决办法："><span class="toc-number">3.1.3.</span> <span class="toc-text">解决办法：</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 18
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/02</span><a class="archive-post-title" href= "/2018/02/02/iOS-Core-Animation/" >iOS Core Animation</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2017/09/30/关于死锁的几个经典问题/" >关于死锁的几个经典问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/02</span><a class="archive-post-title" href= "/2017/08/02/InstallShadowsocks/" >部署Shadowsocks</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/09</span><a class="archive-post-title" href= "/2017/07/09/GCD-queue-and-sync-async/" >GCD队列与同步异步的组合</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span><a class="archive-post-title" href= "/2017/07/03/howRuntimeWorks/" >彻底理解Runtime</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/2017/04/22/Pro-multithreading-and-memory-management-for-iOS-and-OS-X/" >Object-C 高级编程 iOS和OS X多线程和内存管理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/08</span><a class="archive-post-title" href= "/2017/02/08/Computer-Networking-A-Top-Down-Approach-NOTES/" >计算机网络 自顶向下方法</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/20</span><a class="archive-post-title" href= "/2016/11/20/Design-Pattern-Odyssey/" >大话设计模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/Algorithms/" >Algorithms</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/操作系统原理/" >操作系统原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2016/09/08/Effective-Objective-C-2-0/" >Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/03</span><a class="archive-post-title" href= "/2016/08/03/SwiftGrammar/" >SwiftGrammar</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/22</span><a class="archive-post-title" href= "/2016/05/22/Computer-Systems-A-Programmer-s-Perspective/" >深入理解计算机系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/04</span><a class="archive-post-title" href= "/2016/02/04/git/" >Git</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/25</span><a class="archive-post-title" href= "/2015/06/25/special-kind-of-pointer/" >几种特殊指针的含义区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2015/03/30/SQL查询实现方式/" >SQL查询实现方式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span><a class="archive-post-title" href= "/2015/03/11/SQL/" >SQL</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2015/01/01/How-does-the-program-run/" >程序是怎样跑起来的</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="计算机系统"><span class="iconfont-archer">&#xe606;</span>计算机系统</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机网络"><span class="iconfont-archer">&#xe606;</span>计算机网络</span>
+    
+        <span class="sidebar-tag-name" data-tags="async"><span class="iconfont-archer">&#xe606;</span>async</span>
+    
+        <span class="sidebar-tag-name" data-tags="sync"><span class="iconfont-archer">&#xe606;</span>sync</span>
+    
+        <span class="sidebar-tag-name" data-tags="queue"><span class="iconfont-archer">&#xe606;</span>queue</span>
+    
+        <span class="sidebar-tag-name" data-tags="消息"><span class="iconfont-archer">&#xe606;</span>消息</span>
+    
+        <span class="sidebar-tag-name" data-tags="load"><span class="iconfont-archer">&#xe606;</span>load</span>
+    
+        <span class="sidebar-tag-name" data-tags="Shadowsocks"><span class="iconfont-archer">&#xe606;</span>Shadowsocks</span>
+    
+        <span class="sidebar-tag-name" data-tags="CentOS"><span class="iconfont-archer">&#xe606;</span>CentOS</span>
+    
+        <span class="sidebar-tag-name" data-tags="AWS root"><span class="iconfont-archer">&#xe606;</span>AWS root</span>
+    
+        <span class="sidebar-tag-name" data-tags="app"><span class="iconfont-archer">&#xe606;</span>app</span>
+    
+        <span class="sidebar-tag-name" data-tags="SQL"><span class="iconfont-archer">&#xe606;</span>SQL</span>
+    
+        <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存管理"><span class="iconfont-archer">&#xe606;</span>内存管理</span>
+    
+        <span class="sidebar-tag-name" data-tags="Git"><span class="iconfont-archer">&#xe606;</span>Git</span>
+    
+        <span class="sidebar-tag-name" data-tags="Swift"><span class="iconfont-archer">&#xe606;</span>Swift</span>
+    
+        <span class="sidebar-tag-name" data-tags="runtime"><span class="iconfont-archer">&#xe606;</span>runtime</span>
+    
+        <span class="sidebar-tag-name" data-tags="deadLock"><span class="iconfont-archer">&#xe606;</span>deadLock</span>
+    
+        <span class="sidebar-tag-name" data-tags="pointer"><span class="iconfont-archer">&#xe606;</span>pointer</span>
+    
+        <span class="sidebar-tag-name" data-tags="id"><span class="iconfont-archer">&#xe606;</span>id</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSObject"><span class="iconfont-archer">&#xe606;</span>NSObject</span>
+    
+        <span class="sidebar-tag-name" data-tags="id<NSObject>"><span class="iconfont-archer">&#xe606;</span>id<NSObject></span>
+    
+        <span class="sidebar-tag-name" data-tags="void *"><span class="iconfont-archer">&#xe606;</span>void *</span>
+    
+        <span class="sidebar-tag-name" data-tags="nil"><span class="iconfont-archer">&#xe606;</span>nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="Nil"><span class="iconfont-archer">&#xe606;</span>Nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSNull"><span class="iconfont-archer">&#xe606;</span>NSNull</span>
+    
+        <span class="sidebar-tag-name" data-tags="Core Animation"><span class="iconfont-archer">&#xe606;</span>Core Animation</span>
+    
+        <span class="sidebar-tag-name" data-tags="OS"><span class="iconfont-archer">&#xe606;</span>OS</span>
+    
+        <span class="sidebar-tag-name" data-tags="Algorithms"><span class="iconfont-archer">&#xe606;</span>Algorithms</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Hayato"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

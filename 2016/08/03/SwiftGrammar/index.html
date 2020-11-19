@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Hayato">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Hayato">
+    <meta name="keywords" content="Hayato's Studio | Hayato">
+    <meta name="description" content="">
+    <meta name="Cache-Control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>SwiftGrammar · Hayato&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Hayato&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">SwiftGrammar</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Hayato's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style=
+
+
+
+
+
+
+
+
+height:50vh;
+
+>
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            SwiftGrammar
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Swift">Swift</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">2,618</span> / Reading time: <span class="post-count">12 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2016/08/03</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h1><ul>
+<li>1.无隐式转换 <code>Float(param)</code></li>
+</ul>
+<h1 id="通用"><a href="#通用" class="headerlink" title="通用"></a>通用</h1><h2 id="关键字"><a href="#关键字" class="headerlink" title="关键字"></a>关键字</h2><ul>
+<li>注意: 不可以在一个实体中定义访问级别更低的实体</li>
+<li><p>1.<strong>方法/属性</strong></p>
+<pre><code>* internal: 在本模块(项目/bundle/target)中都可以访问,系统默认的方法/属性权限
+* private: 只有在本类中才可以访问(extension亦不可访问,修饰方法是需要加@objc)
+* fileprivate: 在类所在文件中都可以访问
+* open: 可以跨模块访问(系统类可访问的属性/方法均为open) 
+internal/fileprivate/private(set) 改变set访问权限
+
+* mutating: 修饰函数,表示该函数可以修改函数所属实例(属性)
+* subscript: 下标语法
+
+* inout: 输入输出参数,表示传入的参数本身会在函数内被修改,需要是&amp;param指针类型,不能为let类型或者有默认值
+
+*convenience: 便利构造器
+
+@required: 必要的 required init(){ //构造器代码 }
+</code></pre></li>
+<li><p>2.<strong>类型</strong></p>
+<pre><code>* 1.AnyObject &gt; 任意class类型
+* 2.Any &gt; 任意类型,包括函数类型
+* 3.as &gt; 类型转换  A as B (switch A to B)
+</code></pre></li>
+<li><p>3.<strong>文件级</strong></p>
+</li>
+<li><p><code>SwiftCustomLogFunction</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">func log&lt;T&gt;(message: T, file: String = #file, function: String = #function, line: Int = #line) &#123;</span><br><span class="line">    // setting: buildPhases - Swift complier-Custom Flags - Other Swift Flags - Debug -+ -D DEBUG</span><br><span class="line">    #if DEBUG</span><br><span class="line">    let fileName = (#file as NSString).lastPathComponent.split(separator: &quot;.&quot;)</span><br><span class="line">    print(&quot;&gt;&gt; \(message) &lt;&lt; line:\(line) \(fileName) . \(function)&quot;)</span><br><span class="line">    #endif</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="逻辑语句"><a href="#逻辑语句" class="headerlink" title="逻辑语句"></a>逻辑语句</h1><ul>
+<li>1.<code>if</code> &gt; Swift所有条件表达式<code>无</code>非0/nil即真的概念</li>
+<li><p>2.<code>guard</code> &gt;== special <code>if</code></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">guard 条件表达式1 else &#123;</span><br><span class="line">    //条件1false 异常处理code</span><br><span class="line">    return/break/continue/throw 关键字</span><br><span class="line">&#125;</span><br><span class="line">    (条件1ture) 执行语句</span><br><span class="line">guard 条件表达式2 else &#123;</span><br><span class="line">    //条件1true + 条件2false 异常处理</span><br><span class="line">    return/break/contine/throw 关键字</span><br><span class="line">&#125;</span><br><span class="line">    (条件1true + 条件2true)执行语句</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>3.<code>switch</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">* 1.判断条件可以使:Int \ Floaf \ String \ 区间范围</span><br><span class="line">* 2.关键字fallthrough (默认每个case 语句包含break)</span><br><span class="line">* 3.case 可以跟多个判断表达式 &gt; case : 条件1, 条件2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>4.<code>repeat while</code> &gt;== <code>do wile inOC</code></p>
+</li>
+</ul>
+<h1 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h1><ul>
+<li>1.<code>拼接</code> &gt; <code>str1 + str2</code></li>
+<li>2.<code>和标识符拼接</code> &gt; <code>\(param)</code> : “name is \(name), age is \(age)”</li>
+<li>3.<code>格式化</code> &gt; <code>String(format: arguments:)</code> : String(format: “%02d:%02d”, arguments:[min, second]);</li>
+<li>4.<code>as NSString用法</code> &gt; <code>常用于截取字符串场景: (urlString as NSString).substringToIndex(3)</code></li>
+</ul>
+<h1 id="数组-泛型集合-一般不存放不同类型元素"><a href="#数组-泛型集合-一般不存放不同类型元素" class="headerlink" title="数组 (泛型集合,一般不存放不同类型元素)"></a>数组 (泛型集合,一般不存放不同类型元素)</h1><ol>
+<li><p><code>initializer</code></p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* 1. let array = [1, 2, 3, 4, 5]</span><br><span class="line">* 2. var arrayM = [String]()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>拼接</code> &gt; <code>array + array2</code>(+ 仅限array1 与array2元素类型相同)</p>
+</li>
+<li><p>遍历 &gt; for param in array[0..&lt;2] { }</p>
+</li>
+</ol>
+<h1 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h1><ul>
+<li><p>1.<code>initializer</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">* 1. let dict = [&quot;key1&quot; : &quot;value1&quot;, &quot;key2&quot; : &quot;value2&quot;]</span><br><span class="line">* 2. var dictM = Dictionary&lt;String : anyObject&gt;()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>2.<code>增/改 删 查</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dictM[key] = value (无key为增, 有key为改)</span><br><span class="line">dictM.removeValue(forKey: &quot;key&quot;) 删</span><br><span class="line">dictM[&quot;key&quot;]</span><br><span class="line">for (key, value) in dictM &#123;</span><br><span class="line">	dictM[key] = value</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="元组"><a href="#元组" class="headerlink" title="元组"></a>元组</h1><ul>
+<li><code>initializer</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">   * 1. let info = (name : &quot;why&quot;, age : 19, height : 1.88) &gt; info.name</span><br><span class="line">* 2. let info = (&quot;why&quot;, 18, 1.88) &gt; info.index &gt;= info.1</span><br><span class="line">* 3. let (name, age, height) = (&quot;why&quot;, 18, 1.89) &gt; name</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="可选类型"><a href="#可选类型" class="headerlink" title="可选类型"></a>可选类型</h1><ul>
+<li><p>1.<code>initializer</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">* 1. var name : String? = nil</span><br><span class="line">* 2. var name : Optional&lt;String&gt; = nil</span><br><span class="line">   example: </span><br><span class="line">   	let errorInfo = (errorCode: 404, errorMessage: &quot;Not Found&quot;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>2.<code>强制解包</code>与<code>可选绑定</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. optionalName! &gt; 注意:强制解包前一定要判断!= nil,否则崩溃</span><br><span class="line">2. if let optionalName = optionalName &#123;</span><br><span class="line">   	执行optionalName用途 </span><br><span class="line">   &#125;</span><br><span class="line">   相当于执行2步操作: 判断optionalName != nil, optionalName = optionalName!</span><br><span class="line">   (当optionalName == nil,不执行&#123; &#125;代码)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h1><ul>
+<li><p>1.<code>intializer</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">func 函数名(参数名: 参数类型, 参数名2: 参数类型) -&gt; 返回值类型 &#123;</span><br><span class="line">   	函数代码块</span><br><span class="line">       return 返回值</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>2.<code>使用注意</code></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">* 1. 内部参数 &amp; 外部参数 (参数别名可见范围区分,默认第一个参数为内部参数,其余为外部参数)</span><br><span class="line">	 参数1转换成外部参数 &gt; 在参数1前再+别名</span><br><span class="line">   * 2. 默认参数 </span><br><span class="line">  		func makeCoffee(coffeeName: String = &quot;雀巢&quot;) -&gt; String &#123;&#125;</span><br><span class="line">       makeCoffee()</span><br><span class="line">   * 3. 可变参数(参数数组)</span><br><span class="line">       func calculator(params: Int...) -&gt; Int &#123;</span><br><span class="line">           var result = 0</span><br><span class="line">           for param in params &#123;</span><br><span class="line">               result += param</span><br><span class="line">           &#125;</span><br><span class="line">           return result</span><br><span class="line">       &#125;</span><br><span class="line">* 4. 指针参数</span><br><span class="line">	func swapNum(inout m: Int, inout n: Int) &#123;</span><br><span class="line">           let temp = m</span><br><span class="line">           m = n</span><br><span class="line">           n = temp      </span><br><span class="line">       &#125;</span><br><span class="line">	swapNum(m: &amp;m, n: &amp;n)</span><br><span class="line">* 5. 函数嵌套 </span><br><span class="line">	func nestFunc() &#123;</span><br><span class="line">       	func test() &#123;</span><br><span class="line">           	print(&quot;Test&quot;)</span><br><span class="line">           &#125;</span><br><span class="line">           print&quot;nestFunc&quot;</span><br><span class="line">           test()</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>#枚举<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">注意: Swift枚举值可以是Int,Float,character,String,并且不手动提供枚举值,系统不会默认指定,如果需要指定枚举值,则必须在枚举后指定枚举值类型</span><br><span class="line">定义</span><br><span class="line">* 1. enum CompassPoint &#123;</span><br><span class="line">    case North</span><br><span class="line">    case South</span><br><span class="line">    case East</span><br><span class="line">    case West</span><br><span class="line">    &#125;</span><br><span class="line">* 2. enum Planet: Int &#123; // 可以枚举列举在一行</span><br><span class="line">  case Mercury = 1, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h1><ul>
+<li>1.<code>结构体是一个数据结构/值类型,在方法中是值传递, 类是指针传递</code></li>
+<li>2.<code>定义格式: struct 结构体名称 { // 属性和方法 }</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">   struct Location &#123;</span><br><span class="line">       var x: Double</span><br><span class="line">       var y: Double</span><br><span class="line">       /// 构造函数必须确保素有成员变量都有被初始化,构造函数都不需要返回值</span><br><span class="line">       // 系统默认会创建此种构造函数</span><br><span class="line">       init(x: Double, y:Double) &#123;</span><br><span class="line">           self.x = x</span><br><span class="line">           self.y = y</span><br><span class="line">       &#125;</span><br><span class="line">       // 如果手动创建构造函数,就会覆盖默认构造函数,但可以手动再创建</span><br><span class="line">       init(xyString: String) &#123;</span><br><span class="line">           let strs = xyString.components(separatedBy: &quot;,&quot;)</span><br><span class="line">           self.x = Double(strs.first ?? &quot;0&quot;) ?? 0</span><br><span class="line">           self.y = Double(strs.last! ?? &quot;0&quot;) ?? 0</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   /// 枚举拓展 - 可以拓展系统定义的结构体</span><br><span class="line">extension Location &#123;</span><br><span class="line">       mutating func move(x: Double, y: Double) &#123; // 结构体可以扩充方法,修改成员变量的方法必须+ mutating</span><br><span class="line">           self.x += x</span><br><span class="line">           self.x += y</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="类"><a href="#类" class="headerlink" title="类"></a>类</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">class Student : NSObject &#123;</span><br><span class="line">    /***** 属性3种 *****/ // 初始化类的属性一般要赋值(值类型属性)或者指定可选类型(对象属性)</span><br><span class="line">    /// 1.存储属性</span><br><span class="line">    var englishScore: Double = 0.0</span><br><span class="line">    var chineseScore: Double = 0.0</span><br><span class="line">    /// 2.计算属性</span><br><span class="line">    var averageScore: Double &#123;</span><br><span class="line">        return (englishScore + chineseScore) * 0.5</span><br><span class="line">    &#125;</span><br><span class="line">    /// 3.类属性</span><br><span class="line">    static var courseCount: Int = 0</span><br><span class="line">    </span><br><span class="line">    /***** 构造函数 *****/</span><br><span class="line">    /// 1.重写构造函数</span><br><span class="line">    override init() &#123;</span><br><span class="line">        super.init()</span><br><span class="line">        // custom initCode</span><br><span class="line">    &#125;</span><br><span class="line">    /// 2.自定义构造函数</span><br><span class="line">    init(englishScore: Double, chineseScore: Double) &#123;</span><br><span class="line">        super.init() // 可省略,init默认会调用super.init()</span><br><span class="line">        self.englishScore = englishScore</span><br><span class="line">        self.chineseScore = chineseScore</span><br><span class="line">    &#125;</span><br><span class="line">    /// 3.自定义构造函数withDictionary</span><br><span class="line">//    init(dictT: [String : AnyObject]) &#123;</span><br><span class="line">//        if let score = dictT[&quot;chineseScore&quot;] as? Double &#123;</span><br><span class="line">//            chineseScore = score</span><br><span class="line">//        &#125;</span><br><span class="line">//    &#125;</span><br><span class="line">    init(dict: [String : AnyObject]) &#123;</span><br><span class="line">        super.init()</span><br><span class="line">       setValuesForKeys(dict)</span><br><span class="line">    &#125;</span><br><span class="line">    override func setValue(_ value: Any?, forUndefinedKey key: String) &#123;&#125; // 必须重写防止崩溃</span><br><span class="line">    </span><br><span class="line">    /***** 类方法 *****/</span><br><span class="line">    class func classFunc() &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    /***** 属性监听器器 *****/</span><br><span class="line">        var targetValue: Int = 0 &#123;</span><br><span class="line">        willSet &#123; /* newValue */ &#125;</span><br><span class="line">        didSet &#123; /* oldValue */ &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    /****** 下标语法 *****/</span><br><span class="line">    subscript (index: Int) -&gt; Int &#123; // 必须要有返回值 getter</span><br><span class="line">        get &#123;</span><br><span class="line">            return index * index;</span><br><span class="line">        &#125;</span><br><span class="line">        set &#123; // newValue &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    /***** 销毁 *****/</span><br><span class="line">    deinit &#123;</span><br><span class="line">    	相当于dealloc inOC</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Student.courseCount = 2</span><br><span class="line">let student = Student()</span><br><span class="line">student.englishScore = 78.0</span><br><span class="line">student.chineseScore = 80.0</span><br></pre></td></tr></table></figure>
+<h1 id="可选链"><a href="#可选链" class="headerlink" title="可选链"></a>可选链</h1><ul>
+<li>1.<code>从可选链中进行取值?</code> &gt; 返回值是可选类型,其中任意可选为nil,则整个可选链结果为nil let toy = person.dog?.toy?</li>
+<li>2.<code>可选链获取目标进行赋值或调用方法</code> &gt; 可选链任一部分为nil,不执行后续代码\方法 person.dog?.toy? = “Hello Kity”</li>
+</ul>
+<h1 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h1><ul>
+<li><p><code>注意点</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0.协议作为类型,可以作为参数类型或返回值类型,集合元素类型</span><br><span class="line">1.协议协议遵守者可以是 class, enum, static</span><br><span class="line">2.代理类型的协议需要: class &gt; 这样可以用执行修饰class的weak修饰可选类型的delegate</span><br><span class="line">3.optional特性来自OC,需要定义optional func 需要在protocol 和该方法前 + @objc</span><br><span class="line">4.协议定义属性:要求协议遵守者提供协议定义的属性,使用var定义,且只定义属性的名称、类型、读写属性</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>用法</code></p>
+<ul>
+<li>&amp; 把两个协议结合成一个临时局部协议 : A &amp; B<br>func wishHappyBirthday(to celebrator: NamedProtocol &amp; AgedProcotol) {<br>print(“Happy birthday, (celebrator.name), you’re (celebrator.age)!”)<br>}</li>
+</ul>
+</li>
+<li><p><code>example</code></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@objc protocol SportProtocol &#123;//协议遵守者可以是 class, enum, static</span><br><span class="line">    func playBasketball()</span><br><span class="line">    @objc optional func playFootball()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">protocol purchaseDelegate: class &#123;//</span><br><span class="line">    func buy()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class person: SportProtocol &#123;</span><br><span class="line">    weak var deletage: purchaseDelegate?</span><br><span class="line">    func goForeign() &#123;</span><br><span class="line">        deletage?.buy()</span><br><span class="line">    &#125;</span><br><span class="line">    // SportProtocol implementation</span><br><span class="line">    func playBasketball() &#123; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="扩展-extension"><a href="#扩展-extension" class="headerlink" title="扩展 extension"></a>扩展 extension</h1><ul>
+<li>1.<strong>定义</strong>:为已有的类 结构体 枚举或者协议添加新功能</li>
+<li><p>2.<strong>功能:</strong>(类似 分类 inObjc)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.添加计算型 类/实例属性</span><br><span class="line">2.定义 实例/类方法,包括构造器</span><br><span class="line">3.定义下标</span><br><span class="line">4.定义和使用新的嵌套类型</span><br><span class="line">5.使一个已有类型符合某个协议</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>3.<strong>注意</strong> 只能添加,不能重写已有功能</p>
+</li>
+</ul>
+<h1 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h1><ul>
+<li><p>1.<code>格式: 类型 (参数列表) -&gt; (返回值)</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">闭包的写法:</span><br><span class="line">    类型:(形参列表)-&gt;(返回值)</span><br><span class="line">    技巧:初学者定义闭包类型,直接写()-&gt;().再填充参数和返回值</span><br><span class="line">    </span><br><span class="line">    值:</span><br><span class="line">    &#123;</span><br><span class="line">        (形参) -&gt; 返回值类型 in</span><br><span class="line">        // 执行代码</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>2.<code>闭包解决循环引用</code></p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">   方式1: == 简写方式2</span><br><span class="line">   tools.loadData&#123;[weak self] (jsonData) -&gt; () in &#123;</span><br><span class="line">  		self?.view.backgroundColor = UIColor.redColor</span><br><span class="line">   	&#125;</span><br><span class="line">&#125;</span><br><span class="line">   方式2:</span><br><span class="line">   weak var weakSelf = self</span><br><span class="line">   tools.loadData &#123; (jsonData) -&gt; () in &#123;</span><br><span class="line">           weakSelf?.view.background = UIColor.redColor // 如果weakSelf != nil 执行语句</span><br><span class="line">   	&#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>3.<code>尾随闭包</code> &gt; <code>当闭包是函数的最后一个参数,则该闭包为尾随闭包,尾随闭包函数可以将闭包提到()后,如果函数只有一个参数且为闭包,则可以省略参数列表外的()</code></p>
+</li>
+</ul>
+<h1 id="Error"><a href="#Error" class="headerlink" title="Error"></a>Error</h1><ul>
+<li><p>1.定义</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">func 方法(参数) throws返回值 &#123;</span><br><span class="line">   	条件语句 &#123;throw someError&#125;</span><br><span class="line">   &#125;</span><br><span class="line">   example:</span><br><span class="line">       func age(age : Int) throws -&gt; String &#123;</span><br><span class="line">           if age &lt; 0 &#123;</span><br><span class="line">               throw AgeError.wrongAge // 错位定义成枚举类型, throw == return in 流程控制</span><br><span class="line">           &#125;</span><br><span class="line">           return &quot;OK&quot;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>2.处理 - 未被catch的error将层层传递</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">1. do catch</span><br><span class="line"> do &#123;</span><br><span class="line">    try throws类型的函数</span><br><span class="line"> &#125; catch 特定error &#123;// 特定error</span><br><span class="line"></span><br><span class="line"> &#125; catch &#123;// 所有error </span><br><span class="line"></span><br><span class="line"> &#125;</span><br><span class="line"> example:</span><br><span class="line">do &#123;</span><br><span class="line">    try student.age(age: -1)</span><br><span class="line">&#125; catch &#123;</span><br><span class="line">    print(&quot;error&quot;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">2. try try? &amp; try!(类似强制解包&gt;有崩溃风险)</span><br><span class="line">try? &gt; let str = stry? tudent.age(age: 10) 如果抛出错误,str = nil, 如果未抛出错误, str = 返回值</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="指定清理操作-defer"><a href="#指定清理操作-defer" class="headerlink" title="指定清理操作 defer"></a>指定清理操作 defer</h1><ul>
+<li><code>1. 用途</code> defer定义在即将离开当前代码块时执行的语句,离开当前代码块包括return , break, throw ERROR等</li>
+<li><code>2.注意:</code> defer语句中不能有流程控制转移,如break, return, throw ERROR等</li>
+<li><code>3.顺序</code> 多条fefer语句,反序执行,即最后的defer语句最先执行<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">func processFile(filename: String) throws &#123;</span><br><span class="line">    if exists(filename) &#123;</span><br><span class="line">        let file = open(filename)</span><br><span class="line">        defer &#123;</span><br><span class="line">            close(file)</span><br><span class="line">        &#125;</span><br><span class="line">while let line = try file.readline() &#123; // 处理文件。</span><br><span class="line">&#125;</span><br><span class="line">// close(file) 会在这里被调用，即作用域的最后。 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h1><ul>
+<li>1.判断字:<strong>is</strong> &gt; <strong>if</strong> <em>(something)</em> <strong>is</strong> <em>(anotherThing)</em> <em>return true/false</em></li>
+<li>2.关键字:<strong>as</strong> &gt; <strong> if let item = product as? Movie</strong></li>
+</ul>
+<h1 id="元类型"><a href="#元类型" class="headerlink" title="元类型"></a>元类型</h1><p>类、结构体、枚举类型的元类型: .Type / type(of: someInstance) &gt; example: SomeClass.Type<br>协议的元类型: .Protocol     &gt; example: SomeProtocal.Protocol</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="https://haojiaqiang.github.io">Hayato</a>
+            <p>原文链接: <a href="https://haojiaqiang.github.io/2016/08/03/SwiftGrammar/">https://haojiaqiang.github.io/2016/08/03/SwiftGrammar/</a>
+            <p>发表日期: <a href="https://haojiaqiang.github.io/2016/08/03/SwiftGrammar/">August 3rd 2016, 2:00:26 pm</a>
+            <p>版权声明: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC-SA 4.0</a></p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2016/09/08/Effective-Objective-C-2-0/" title= Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法 >
+                    <div class="nextTitle">Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2016/05/22/Computer-Systems-A-Programmer-s-Perspective/" title= 深入理解计算机系统 >
+                    <div class="prevTitle">深入理解计算机系统</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+    
+        
+            
+                <a href="https://github.com/haojiaqiang" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://about.me/haojiaqiang" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#注意点"><span class="toc-number">1.</span> <span class="toc-text">注意点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#通用"><span class="toc-number">2.</span> <span class="toc-text">通用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#关键字"><span class="toc-number">2.1.</span> <span class="toc-text">关键字</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#逻辑语句"><span class="toc-number">3.</span> <span class="toc-text">逻辑语句</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#字符串"><span class="toc-number">4.</span> <span class="toc-text">字符串</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#数组-泛型集合-一般不存放不同类型元素"><span class="toc-number">5.</span> <span class="toc-text">数组 (泛型集合,一般不存放不同类型元素)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#字典"><span class="toc-number">6.</span> <span class="toc-text">字典</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#元组"><span class="toc-number">7.</span> <span class="toc-text">元组</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#可选类型"><span class="toc-number">8.</span> <span class="toc-text">可选类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#函数"><span class="toc-number">9.</span> <span class="toc-text">函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#结构体"><span class="toc-number">10.</span> <span class="toc-text">结构体</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#类"><span class="toc-number">11.</span> <span class="toc-text">类</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#可选链"><span class="toc-number">12.</span> <span class="toc-text">可选链</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#协议"><span class="toc-number">13.</span> <span class="toc-text">协议</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#扩展-extension"><span class="toc-number">14.</span> <span class="toc-text">扩展 extension</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#闭包"><span class="toc-number">15.</span> <span class="toc-text">闭包</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Error"><span class="toc-number">16.</span> <span class="toc-text">Error</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#指定清理操作-defer"><span class="toc-number">17.</span> <span class="toc-text">指定清理操作 defer</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#类型转换"><span class="toc-number">18.</span> <span class="toc-text">类型转换</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#元类型"><span class="toc-number">19.</span> <span class="toc-text">元类型</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 20
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span><a class="archive-post-title" href= "/2020/11/19/网游加速器原理/" >网游加速器原理、技术与实现</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/30</span><a class="archive-post-title" href= "/2017/11/30/关于死锁的几个经典问题/" >关于死锁的几个经典问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/03</span><a class="archive-post-title" href= "/2017/09/03/howRuntimeWorks/" >彻底理解Runtime</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/29</span><a class="archive-post-title" href= "/2017/06/29/Runloop/" >Runloop</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2017/05/08/Computer-Networking-A-Top-Down-Approach-NOTES/" >计算机网络 自顶向下方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span><a class="archive-post-title" href= "/2017/04/19/GCD-queue-and-sync-async/" >GCD队列与同步异步的组合</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/02</span><a class="archive-post-title" href= "/2017/01/02/iOS-Core-Animation/" >iOS Core Animation</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/20</span><a class="archive-post-title" href= "/2016/11/20/Design-Pattern-Odyssey/" >大话设计模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/Algorithms/" >Algorithms</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/操作系统原理/" >操作系统原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2016/09/08/Effective-Objective-C-2-0/" >Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/03</span><a class="archive-post-title" href= "/2016/08/03/SwiftGrammar/" >SwiftGrammar</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/22</span><a class="archive-post-title" href= "/2016/05/22/Computer-Systems-A-Programmer-s-Perspective/" >深入理解计算机系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/2016/04/22/Pro-multithreading-and-memory-management-for-iOS-and-OS-X/" >Object-C 高级编程 iOS和OS X多线程和内存管理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/12</span><a class="archive-post-title" href= "/2016/03/12/git/" >Git</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/25</span><a class="archive-post-title" href= "/2015/06/25/special-kind-of-pointer/" >几种特殊指针的含义区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2015/05/08/InstallShadowsocks/" >部署Shadowsocks</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2015/03/30/SQL查询实现方式/" >SQL查询实现方式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span><a class="archive-post-title" href= "/2015/03/11/SQL/" >SQL</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2015/01/01/How-does-the-program-run/" >程序是怎样跑起来的</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="app"><span class="iconfont-archer">&#xe606;</span>app</span>
+    
+        <span class="sidebar-tag-name" data-tags="async"><span class="iconfont-archer">&#xe606;</span>async</span>
+    
+        <span class="sidebar-tag-name" data-tags="sync"><span class="iconfont-archer">&#xe606;</span>sync</span>
+    
+        <span class="sidebar-tag-name" data-tags="queue"><span class="iconfont-archer">&#xe606;</span>queue</span>
+    
+        <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存管理"><span class="iconfont-archer">&#xe606;</span>内存管理</span>
+    
+        <span class="sidebar-tag-name" data-tags="SQL"><span class="iconfont-archer">&#xe606;</span>SQL</span>
+    
+        <span class="sidebar-tag-name" data-tags="pointer"><span class="iconfont-archer">&#xe606;</span>pointer</span>
+    
+        <span class="sidebar-tag-name" data-tags="id"><span class="iconfont-archer">&#xe606;</span>id</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSObject"><span class="iconfont-archer">&#xe606;</span>NSObject</span>
+    
+        <span class="sidebar-tag-name" data-tags="id<NSObject>"><span class="iconfont-archer">&#xe606;</span>id<NSObject></span>
+    
+        <span class="sidebar-tag-name" data-tags="void *"><span class="iconfont-archer">&#xe606;</span>void *</span>
+    
+        <span class="sidebar-tag-name" data-tags="nil"><span class="iconfont-archer">&#xe606;</span>nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="Nil"><span class="iconfont-archer">&#xe606;</span>Nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSNull"><span class="iconfont-archer">&#xe606;</span>NSNull</span>
+    
+        <span class="sidebar-tag-name" data-tags="deadLock"><span class="iconfont-archer">&#xe606;</span>deadLock</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机系统"><span class="iconfont-archer">&#xe606;</span>计算机系统</span>
+    
+        <span class="sidebar-tag-name" data-tags="消息"><span class="iconfont-archer">&#xe606;</span>消息</span>
+    
+        <span class="sidebar-tag-name" data-tags="load"><span class="iconfont-archer">&#xe606;</span>load</span>
+    
+        <span class="sidebar-tag-name" data-tags="Shadowsocks"><span class="iconfont-archer">&#xe606;</span>Shadowsocks</span>
+    
+        <span class="sidebar-tag-name" data-tags="CentOS"><span class="iconfont-archer">&#xe606;</span>CentOS</span>
+    
+        <span class="sidebar-tag-name" data-tags="AWS root"><span class="iconfont-archer">&#xe606;</span>AWS root</span>
+    
+        <span class="sidebar-tag-name" data-tags="Swift"><span class="iconfont-archer">&#xe606;</span>Swift</span>
+    
+        <span class="sidebar-tag-name" data-tags="Git"><span class="iconfont-archer">&#xe606;</span>Git</span>
+    
+        <span class="sidebar-tag-name" data-tags="proxy"><span class="iconfont-archer">&#xe606;</span>proxy</span>
+    
+        <span class="sidebar-tag-name" data-tags="加速器"><span class="iconfont-archer">&#xe606;</span>加速器</span>
+    
+        <span class="sidebar-tag-name" data-tags="OS"><span class="iconfont-archer">&#xe606;</span>OS</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机网络"><span class="iconfont-archer">&#xe606;</span>计算机网络</span>
+    
+        <span class="sidebar-tag-name" data-tags="Runloop"><span class="iconfont-archer">&#xe606;</span>Runloop</span>
+    
+        <span class="sidebar-tag-name" data-tags="runtime"><span class="iconfont-archer">&#xe606;</span>runtime</span>
+    
+        <span class="sidebar-tag-name" data-tags="Core Animation"><span class="iconfont-archer">&#xe606;</span>Core Animation</span>
+    
+        <span class="sidebar-tag-name" data-tags="Algorithms"><span class="iconfont-archer">&#xe606;</span>Algorithms</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Hayato"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

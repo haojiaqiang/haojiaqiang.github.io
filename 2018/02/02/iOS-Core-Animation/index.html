@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Hayato">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Hayato">
+    <meta name="keywords" content="Hayato's Studio | Hayato">
+    <meta name="description" content="">
+    <meta name="Cache-Control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>iOS Core Animation · Hayato&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Hayato&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">iOS Core Animation</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Hayato's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style=
+
+
+
+
+
+
+
+
+height:50vh;
+
+>
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            iOS Core Animation
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Core Animation">Core Animation</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">11,068</span> / Reading time: <span class="post-count">44 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/02/02</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>概念: </p>
+<blockquote>
+<ol>
+<li>Core Graphics:实际上是一个严格意义上的2D绘图API<br><br>2.图层树<br>3.OpenGL:底层C接口，提供了Core Animation的基础<br>4.Core Animation 处在iOS的核心地位：应用内和应用间都会用到它</li>
+</ol>
+</blockquote>
+<p>关于layer:</p>
+<blockquote>
+<ul>
+<li>1.布局：<br><br>view 的布局三属性： frame， bounds， center。对应的， layer 是 frame， bounds， position。center 和position 指示的是 anchorPoint的位置。<br>frame是一个虚值，它通过 bounds, position, transform 自动计算出来的;另外，更改 frame 属性，也会相应的更改 bounds， position 等属性的值。当旋转的时候，frame 值可能就和bounds 的宽度和高度没啥相等的了。</li>
+<li>2.锚点 anchorPoint<br><br>默认是 {0.5,0.5} 在正中心。锚点主要影响变形的中心，和subView的坐标系统。</li>
+<li>3.坐标系统<br><br>layer 和view 类似，采用树形的父子链式的坐标系统。即，当你移动一个layer 的时候，其subView也会随之移动。<br>在不同的树节点的坐标系统中变换某个点的话，采用下边四个方法：<br><br>(CGPoint)convertPoint:(CGPoint)point fromLayer:(CALayer<em>)layer;<br>(CGPoint)convertPoint:(CGPoint)point toLayer:(CALayer</em>)layer;<br>(CGPoint)convertRect:(CGRect)rect fromLayer:(CALayer<em>)layer;<br>(CGPoint)convertRect:(CGRect)rect toLayer:(CALayer</em>)layer;<br><br>iOS 上position 是对应父layer的左上角，在mac 上却是对应左下角。在 Core Animation 中，geometryFlipped 属性（BOOL类型）可以支持这两种行为。你可以在iOS上将 geometryFlipped 设置为 YES，来实现坐标是对应左下角的行为。<br>CALayer 在z轴上有两个属性：zPosition 和 anchorPointZ， 通常用不到，因为旋转可以用 transform 来实现，如果单纯的调整view的显示前后次序，可以设置一下 zPosition 比较简单。</li>
+<li>4.点击测试 hit testing<br><br>尽管 CALayer 对响应链不知情，不知道如何去处理触摸等事件，但是它提供了两个工具方法： -containsPoint: 和 -hitTest:<br><br><strong>-containsPoint</strong>: 接受一个 CGPoint 参数，这个坐标是在本 layer 坐标系内的坐标，所以通常你需要通过 - (CGPoint)convertPoint:(CGPoint)point fromLayer:(CALayer*)layer 来转换一下。返回一个 BOOL， 即检测 CGPoint 是否在本 layer 中。<br><strong>-hitTest</strong>: 方法接受一个 CGPoint 参数，返回 CALayer。它的意义是查找 本layer 树中（本layer 和所有的sublayer以及sub的sub etc），找出 CGPoint 所在的 layer。但是如果你设置了 zPosition 属性来调整 layer 的显示次序，可能得出的结果不是你看到的最上边的layer， 而是被盖住的layer。</li>
+<li>4.自动布局<br><br>iOS 上view的自动布局用 UIViewAutoresizingMask 和 NSLayoutConstraint API 。但是 layer 的自动布局就情况不太好了， 通过 CALayerDelegate 的 -(void)layoutSublayersOfLayer:(CALayer*)layer 来内部实现手动布局，然后在 layer的 bounds 属性被更改或 -setNeedLayout 方法被调用的时候，此布局方法会被调用。屏幕旋转的话，你还是别想了吧。所以尽可能使用 UIView 的自动布局吧，况且有 Masonry 那么强大友好的 DSL呢。</li>
+</ul>
+</blockquote>
+<p>关于GPU：</p>
+<blockquote>
+<p>现代 GPU 在处理计算机图形和图像方面非常高效，并且 GPU 的高度并行结构使其在大块数据并行处理的算法中比通用 CPU 更有效。</p>
+</blockquote>
+<h2 id="1-图层树"><a href="#1-图层树" class="headerlink" title="1.图层树"></a>1.图层树</h2><h3 id="1-UIView-amp-UILayer的关系"><a href="#1-UIView-amp-UILayer的关系" class="headerlink" title="1.UIView &amp; UILayer的关系"></a>1.UIView &amp; UILayer的关系</h3><ul>
+<li>UIView仅仅是对UILayer的封装,增加了交互功能(事件响应),提供了一些Core Animation底层方法的高级接口.</li>
+<li>UIView封装的API没有实现Core Animation的全部功能,需要由UILayer实现:<blockquote>
+<ol>
+<li>阴影,圆角,带颜色的边框</li>
+<li>3D变换</li>
+<li>非矩形范围</li>
+<li>透明遮罩</li>
+<li>多级非线性动画</li>
+</ol>
+</blockquote>
+</li>
+</ul>
+<h2 id="2-寄宿图"><a href="#2-寄宿图" class="headerlink" title="2.寄宿图"></a>2.寄宿图</h2><h3 id="1-Layer上添加寄宿图"><a href="#1-Layer上添加寄宿图" class="headerlink" title="1.Layer上添加寄宿图"></a>1.Layer上添加寄宿图</h3><p><code>Core Foundation &lt;桥接&gt; Cocoa对象</code><br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">UIImage</span> *image = [<span class="built_in">UIImage</span> imageNamed:<span class="string">"imageName"</span>];</span><br><span class="line">view.layer.contents = (__bridge <span class="keyword">id</span>)image.CGImage;</span><br><span class="line"><span class="keyword">self</span>.layerView.layer.contentsGravity = kCAGravityResizeAspect;<span class="comment">// 内容填充模式</span></span><br><span class="line"><span class="keyword">self</span>.layerView.layer.contentsScale = image.scale([<span class="built_in">UIScreen</span> mainScreen].scale);<span class="comment">// contentsScale主要是为了适配Retina,当contentsGravity是拉伸效果时,contentsScale无效,如果contentsGravity设置为无拉伸效果,必须手动设置contentsScale,否则图片在Retina上会失真变大(读取的UIImage可能是@2x,@3x,而CGImage默认是像素点与图片像素1:1)</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="2-contentsRect"><a href="#2-contentsRect" class="headerlink" title="2.contentsRect"></a>2.contentsRect</h3><ul>
+<li>默认{0, 0, 1, 1} &gt; {x, y, widthRatio, heightRatio},设置一个负数的原点或是大于{1, 1}的尺寸也是可以的。这种情况下，最外面的像素会被拉伸以填充剩下的区域</li>
+<li>拼合图片,一张图片通过contentsRect截取不同部分显示在不同的layer上</li>
+</ul>
+<h3 id="3-contentsCenter"><a href="#3-contentsCenter" class="headerlink" title="3.contentsCenter"></a>3.contentsCenter</h3><ul>
+<li>contents赋值寄宿图的方法:CGImage &amp;&amp; Core Graphics直接绘制(-drawRect:)</li>
+<li>如果你不需要寄宿图，那就不要创建一个空的-drawRect:(只要实现了该方法，就会为视图分配一个寄宿图，这个寄宿图的像素尺寸等于视图大小乘以 contentsScale的值，造成资源浪费))</li>
+<li>-drawRect:绘制寄宿图即使没有clipToBounds也不会显示超出部分,因为绘制在bounds内,超出部分根本没有绘制</li>
+</ul>
+<h2 id="3-图层几何学"><a href="#3-图层几何学" class="headerlink" title="3.图层几何学"></a>3.图层几何学</h2><ul>
+<li>UIView/CALayer 渲染效果：bounds,positon/AnchorPoint,transform</li>
+<li>anchorPoint</li>
+<li>zPosition (仅仅改变显示层级,不能改变时间传递的层级)</li>
+</ul>
+<h2 id="4-视觉效果"><a href="#4-视觉效果" class="headerlink" title="4.视觉效果"></a>4.视觉效果</h2><h3 id="cornerRadius-沿着图层的边界"><a href="#cornerRadius-沿着图层的边界" class="headerlink" title="cornerRadius 沿着图层的边界"></a>cornerRadius 沿着图层的边界</h3><blockquote>
+<p>默认只影响backgroundColor,不影响内容<br>配合maskToBounds切除超出部分</p>
+</blockquote>
+<h3 id="border-沿着图层的边界绘制出来"><a href="#border-沿着图层的边界绘制出来" class="headerlink" title="border 沿着图层的边界绘制出来"></a>border 沿着图层的边界绘制出来</h3><blockquote>
+<ol>
+<li>borderWidth</li>
+<li>borderColor</li>
+</ol>
+</blockquote>
+<h3 id="shadow-沿着自身-amp-subView-amp-寄宿图创建阴影-不是Layer自身的边界"><a href="#shadow-沿着自身-amp-subView-amp-寄宿图创建阴影-不是Layer自身的边界" class="headerlink" title="shadow 沿着自身&amp;subView&amp;寄宿图创建阴影(不是Layer自身的边界)"></a>shadow 沿着自身&amp;subView&amp;寄宿图创建阴影(不是Layer自身的边界)</h3><blockquote>
+<ol>
+<li>shadowOpacity (0&lt; 显示 &lt;1)</li>
+<li>shadowColor</li>
+<li>shadowOffset</li>
+<li>shadowRadius<br>tips:<ul>
+<li>shadow在layer之外,maskToBounds会切掉 &gt; 单独增加一个layer显示阴影</li>
+<li>要考虑所有子视图 &amp; 寄宿图,故而性能差 &gt; shadowPath<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&gt; &#123;</span><br><span class="line">&gt;  <span class="comment">//create a square shadow</span></span><br><span class="line">&gt;  <span class="built_in">CGMutablePathRef</span> squarePath = <span class="built_in">CGPathCreateMutable</span>();</span><br><span class="line">&gt;  <span class="built_in">CGPathAddRect</span>(squarePath, <span class="literal">NULL</span>, <span class="keyword">self</span>.layerView1.bounds);</span><br><span class="line">&gt;  <span class="keyword">self</span>.layerView1.layer.shadowPath = squarePath; <span class="built_in">CGPathRelease</span>(squarePath);</span><br><span class="line">&gt; </span><br><span class="line">&gt;  ￼<span class="comment">//create a circular shadow</span></span><br><span class="line">&gt;  <span class="built_in">CGMutablePathRef</span> circlePath = <span class="built_in">CGPathCreateMutable</span>();</span><br><span class="line">&gt;  <span class="built_in">CGPathAddEllipseInRect</span>(circlePath, <span class="literal">NULL</span>, <span class="keyword">self</span>.layerView2.bounds);</span><br><span class="line">&gt;  <span class="keyword">self</span>.layerView2.layer.shadowPath = circlePath; <span class="built_in">CGPathRelease</span>(circlePath);</span><br><span class="line">&gt; &#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79gy1fprdxum59ij30sm0dg3zo.jpg" alt=""></p>
+<p>知识点:</p>
+<ul>
+<li>shadowPath是一个CGPathRef类型（一个指向CGPath的指针）。CGPath是一个Core Graphics对象，用来指定任意的一个矢量图形,绘制简单图形方便</li>
+<li>UIBezierPath是UIKit提供的在CGPath基础上的Objective-C包装类</li>
+<li>borderColor是CGColorRef类型，而不是UIColor，所以它不是Cocoa的内置对象。CGColorRef在引用/释放时候的行为表现得与NSObject极其相似。但是Objective-C语法并不支持这一做法，所以CGColorRef属性即便是强引用也只能通过assign关键字来声明。</li>
+</ul>
+<h3 id="图层蒙版"><a href="#图层蒙版" class="headerlink" title="图层蒙版"></a>图层蒙版</h3><p>CAlyer包含一个属性CALayer *mask,只有mask图层区域内的内容会显示出来<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)mask &#123;</span><br><span class="line">  [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line"></span><br><span class="line">  <span class="comment">//create mask layer</span></span><br><span class="line">  <span class="built_in">CALayer</span> *maskLayer = [<span class="built_in">CALayer</span> layer];</span><br><span class="line">  maskLayer.frame = <span class="keyword">self</span>.layerView.bounds;</span><br><span class="line">  <span class="built_in">UIImage</span> *maskImage = [<span class="built_in">UIImage</span> imageNamed:<span class="string">@"Cone.png"</span>];</span><br><span class="line">  maskLayer.contents = (__bridge <span class="keyword">id</span>)maskImage.CGImage;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//apply mask to image layer￼</span></span><br><span class="line">  <span class="keyword">self</span>.imageView.layer.mask = maskLayer;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1fprew46vkfj30va0d63zb.jpg" alt=""></p>
+<h3 id="透明度-UIView-alpha-amp-CALayer-opacity"><a href="#透明度-UIView-alpha-amp-CALayer-opacity" class="headerlink" title="透明度 (UIView.alpha &amp; CALayer.opacity)"></a>透明度 (UIView.alpha &amp; CALayer.opacity)</h3><ul>
+<li>Q:设置 0 &lt; alpha &lt; 1是,subView颜色和自身颜色不完全一致</li>
+<li>A:组透明<ol>
+<li>全局设置: info.plist &gt; UIViewGroupOpacity = YES <br></li>
+<li><blockquote>
+<p>针对设置:光栅化:图层及其子图层都会先被整合成一个整体的图片<br><br>.layer.shouldRasterize = YES;<br><br>.layer.rasterizationScale = [UIScreen mainScreen].scale;(Retain屏适配)</p>
+</blockquote>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="5-变换"><a href="#5-变换" class="headerlink" title="5.变换"></a>5.变换</h2><ul>
+<li>仿射:无论变换矩阵用什么值，图层中平行的两条线在变换之后任然保持平行</li>
+</ul>
+<h3 id="1-旋转-amp-缩放-amp-平移"><a href="#1-旋转-amp-缩放-amp-平移" class="headerlink" title="1.旋转&amp;缩放&amp;平移"></a>1.旋转&amp;缩放&amp;平移</h3><blockquote>
+<ul>
+<li>CGAffineTransformMakeRotation(CGFloat angle) </li>
+<li>CGAffineTransformMakeScale(CGFloat sx, CGFloat sy)</li>
+<li>CGAffineTransformMakeTranslation(CGFloat tx, CGFloat ty)</li>
+<li>CGAffineTransformRotate(CGAffineTransform t, CGFloat angle) &gt; * CGAffineTransformScale(CGAffineTransform t, CGFloat sx, CGFloat sy)      </li>
+<li>CGAffineTransformTranslate(CGAffineTransform t, CGFloat tx, CGFloat ty)</li>
+</ul>
+</blockquote>
+<h3 id="用CGAffineTransform-amp-CGAffineTransformConcat计算形变值"><a href="#用CGAffineTransform-amp-CGAffineTransformConcat计算形变值" class="headerlink" title="用CGAffineTransform &amp; CGAffineTransformConcat计算形变值"></a>用CGAffineTransform &amp; CGAffineTransformConcat计算形变值</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)calculateTransform &#123;</span><br><span class="line">    <span class="built_in">CGAffineTransform</span> transform = <span class="built_in">CGAffineTransformIdentity</span>; <span class="comment">//create a new transform </span></span><br><span class="line">    transform = <span class="built_in">CGAffineTransformScale</span>(transform, <span class="number">0.5</span>, <span class="number">0.5</span>); <span class="comment">//scale by 50%</span></span><br><span class="line">    transform = <span class="built_in">CGAffineTransformRotate</span>(transform, M_PI / <span class="number">180.0</span> * <span class="number">30.0</span>); <span class="comment">//rotate by 30 degrees</span></span><br><span class="line">    transform = <span class="built_in">CGAffineTransformTranslate</span>(transform, <span class="number">200</span>, <span class="number">0</span>); <span class="comment">//translate by 200 points</span></span><br><span class="line">    <span class="comment">//apply transform to layer</span></span><br><span class="line">    <span class="keyword">self</span>.layerView.layer.affineTransform = transform;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-剪切-CG没有直接提供对应函数"><a href="#2-剪切-CG没有直接提供对应函数" class="headerlink" title="2.剪切(CG没有直接提供对应函数)"></a>2.剪切(CG没有直接提供对应函数)</h3><h3 id="3-3D变换-CATransform3D"><a href="#3-3D变换-CATransform3D" class="headerlink" title="3.3D变换 CATransform3D"></a>3.3D变换 CATransform3D</h3><ul>
+<li>CATransform3DMakeRotation(CGFloat angle, CGFloat x, CGFloat y, CGFloat z)</li>
+<li>CATransform3DMakeScale(CGFloat sx, CGFloat sy, CGFloat sz) </li>
+<li>CATransform3DMakeTranslation(Gloat tx, CGFloat ty, CGFloat tz)<blockquote>
+<p>layer.doubleSided 是否双面绘制</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="6-专有图层"><a href="#6-专有图层" class="headerlink" title="6.专有图层"></a>6.专有图层</h2><h3 id="CAShapeLayer"><a href="#CAShapeLayer" class="headerlink" title="CAShapeLayer"></a>CAShapeLayer</h3><p>可以用来绘制所有能够通过CGPath绘制的图形,且有优点:</p>
+<ul>
+<li>渲染快速。CAShapeLayer使用了硬件加速，比用Core Graphics快很多。</li>
+<li>高效使用内存。一个CAShapeLayer不需要像普通CALayer一样创建一个寄宿图形，所以无论有多大，都不会占用太多的内存。</li>
+<li>不会被图层边界剪裁掉。一个CAShapeLayer可以在边界之外绘制。使用Core Graphics的普通CALayer会被剪裁掉</li>
+<li>不会出现像素化。当你给CAShapeLayer做3D变换时，它不像一个有寄宿图的普通图层一样变得像素化<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">+ (Class)layerClass</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//this makes our view create a CAShapeLayer</span></span><br><span class="line">    <span class="comment">//instead of a CALayer for its backing layer</span></span><br><span class="line">    <span class="keyword">return</span> [<span class="built_in">CAShapeLayer</span> <span class="keyword">class</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setShapeLayerInfo</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//create a mutable path</span></span><br><span class="line">    <span class="keyword">self</span>.path = [[<span class="built_in">UIBezierPath</span> alloc] init];</span><br><span class="line"></span><br><span class="line">    <span class="comment">//configure the layer</span></span><br><span class="line">    <span class="built_in">CAShapeLayer</span> *shapeLayer = (<span class="built_in">CAShapeLayer</span> *)<span class="keyword">self</span>.layer;</span><br><span class="line">    shapeLayer.strokeColor = [<span class="built_in">UIColor</span> redColor].CGColor;</span><br><span class="line">    shapeLayer.fillColor = [<span class="built_in">UIColor</span> clearColor].CGColor;</span><br><span class="line">    shapeLayer.lineJoin = kCALineJoinRound;</span><br><span class="line">    shapeLayer.lineCap = kCALineCapRound;</span><br><span class="line">    shapeLayer.lineWidth = <span class="number">5</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)touchesBegan:(<span class="built_in">NSSet</span> *)touches withEvent:(<span class="built_in">UIEvent</span> *)event</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//get the starting point</span></span><br><span class="line">    <span class="built_in">CGPoint</span> point = [[touches anyObject] locationInView:<span class="keyword">self</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">//move the path drawing cursor to the starting point</span></span><br><span class="line">    [<span class="keyword">self</span>.path moveToPoint:point];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)touchesMoved:(<span class="built_in">NSSet</span> *)touches withEvent:(<span class="built_in">UIEvent</span> *)event</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//get the current point</span></span><br><span class="line">    <span class="built_in">CGPoint</span> point = [[touches anyObject] locationInView:<span class="keyword">self</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">//add a new line segment to our path</span></span><br><span class="line">    [<span class="keyword">self</span>.path addLineToPoint:point];</span><br><span class="line"></span><br><span class="line">    <span class="comment">//update the layer with a copy of the path</span></span><br><span class="line">    ((<span class="built_in">CAShapeLayer</span> *)<span class="keyword">self</span>.layer).path = <span class="keyword">self</span>.path.CGPath;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79gy1fpriw12bxfj30ug0fcjsi.jpg" alt=""></p>
+<ul>
+<li>如果希望沿着不规则路径剪切,可以不用蒙版,把CAShapeLayer当做宿主图层,例如corner角度不一致:<blockquote>
+<p>绘制圆角+直角 &gt; 可以通过UIBezierPath api直接绘制,添加到CAShapeLayer</p>
+<ul>
+<li>(instancetype)bezierPathWithRoundedRect:(CGRect)rect byRoundingCorners:(UIRectCorner)corners cornerRadii:(CGSize)cornerRadii;</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h3 id="CATextLayer"><a href="#CATextLayer" class="headerlink" title="CATextLayer"></a>CATextLayer</h3><ul>
+<li>使用Core text,比UILabel渲染快得多</li>
+<li>可以渲染文本或富文本()<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)creadLabelWithTextLayer &#123;</span><br><span class="line"><span class="comment">//create a text layer</span></span><br><span class="line">  <span class="built_in">CATextLayer</span> *textLayer = [<span class="built_in">CATextLayer</span> layer];</span><br><span class="line">  textLayer.frame = <span class="keyword">self</span>.labelView.bounds;</span><br><span class="line">  textLayer.contentsScale = [<span class="built_in">UIScreen</span> mainScreen].scale;</span><br><span class="line">  [<span class="keyword">self</span>.labelView.layer addSublayer:textLayer];</span><br><span class="line"></span><br><span class="line">  <span class="comment">//set text attributes</span></span><br><span class="line">  textLayer.alignmentMode = kCAAlignmentJustified;</span><br><span class="line">  textLayer.wrapped = <span class="literal">YES</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//choose a font</span></span><br><span class="line">  <span class="built_in">UIFont</span> *font = [<span class="built_in">UIFont</span> systemFontOfSize:<span class="number">15</span>];</span><br><span class="line"></span><br><span class="line">  <span class="comment">//choose some text</span></span><br><span class="line">  <span class="built_in">NSString</span> *text = <span class="string">@"Lorem ipsum dolor sit amet, consectetur adipiscing \ elit. Quisque massa arcu, eleifend vel varius in, facilisis pulvinar \ leo"</span>;</span><br><span class="line">  <span class="comment">//create attributed string</span></span><br><span class="line">  <span class="built_in">NSMutableAttributedString</span> *string = <span class="literal">nil</span>;</span><br><span class="line">  string = [[<span class="built_in">NSMutableAttributedString</span> alloc] initWithString:text];</span><br><span class="line"></span><br><span class="line">  <span class="comment">//convert UIFont to a CTFont</span></span><br><span class="line">  <span class="built_in">CFStringRef</span> fontName = (__bridge <span class="built_in">CFStringRef</span>)font.fontName;</span><br><span class="line">  <span class="built_in">CGFloat</span> fontSize = font.pointSize;</span><br><span class="line">  <span class="built_in">CTFontRef</span> fontRef = <span class="built_in">CTFontCreateWithName</span>(fontName, fontSize, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">//set text attributes</span></span><br><span class="line">  <span class="built_in">NSDictionary</span> *attribs = @&#123;</span><br><span class="line">    (__bridge <span class="keyword">id</span>)kCTForegroundColorAttributeName:(__bridge <span class="keyword">id</span>)[<span class="built_in">UIColor</span> blackColor].CGColor,</span><br><span class="line">    (__bridge <span class="keyword">id</span>)kCTFontAttributeName: (__bridge <span class="keyword">id</span>)fontRef</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  [string setAttributes:attribs range:<span class="built_in">NSMakeRange</span>(<span class="number">0</span>, [text length])];</span><br><span class="line">  attribs = @&#123;</span><br><span class="line">    (__bridge <span class="keyword">id</span>)kCTForegroundColorAttributeName: (__bridge <span class="keyword">id</span>)[<span class="built_in">UIColor</span> redColor].CGColor,</span><br><span class="line">    (__bridge <span class="keyword">id</span>)kCTUnderlineStyleAttributeName: @(kCTUnderlineStyleSingle),</span><br><span class="line">    (__bridge <span class="keyword">id</span>)kCTFontAttributeName: (__bridge <span class="keyword">id</span>)fontRef</span><br><span class="line">  &#125;;</span><br><span class="line">  [string setAttributes:attribs range:<span class="built_in">NSMakeRange</span>(<span class="number">6</span>, <span class="number">5</span>)];</span><br><span class="line"></span><br><span class="line">  <span class="comment">//release the CTFont we created earlier</span></span><br><span class="line">  <span class="built_in">CFRelease</span>(fontRef);</span><br><span class="line"></span><br><span class="line">  <span class="comment">//set layer text</span></span><br><span class="line">  textLayer.string = string;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="CATransformLayer"><a href="#CATransformLayer" class="headerlink" title="CATransformLayer"></a>CATransformLayer</h3><h3 id="CAGradientLayer"><a href="#CAGradientLayer" class="headerlink" title="CAGradientLayer"></a>CAGradientLayer</h3><ul>
+<li>生成颜色的平滑渐变,绘制使用了硬件加速<blockquote>
+<ul>
+<li>array<cgcolorref> colors必传参数</cgcolorref></li>
+<li>startPoint &amp; endPoint</li>
+<li>locations &gt; 非必传<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)creatGradientLayer &#123;</span><br><span class="line">    <span class="comment">//create gradient layer and add it to our container view</span></span><br><span class="line">  <span class="built_in">CAGradientLayer</span> *gradientLayer = [<span class="built_in">CAGradientLayer</span> layer];</span><br><span class="line">  gradientLayer.frame = <span class="keyword">self</span>.containerView.bounds;</span><br><span class="line">  [<span class="keyword">self</span>.containerView.layer addSublayer:gradientLayer];</span><br><span class="line"></span><br><span class="line">  <span class="comment">//set gradient colors</span></span><br><span class="line">  gradientLayer.colors = @[(__bridge <span class="keyword">id</span>)[<span class="built_in">UIColor</span> redColor].CGColor, (__bridge <span class="keyword">id</span>) [<span class="built_in">UIColor</span> yellowColor].CGColor, (__bridge <span class="keyword">id</span>)[<span class="built_in">UIColor</span> greenColor].CGColor];</span><br><span class="line"></span><br><span class="line">  <span class="comment">//set locations</span></span><br><span class="line">  gradientLayer.locations = @[@<span class="number">0.0</span>, @<span class="number">0.25</span>, @<span class="number">0.5</span>];</span><br><span class="line"></span><br><span class="line">  <span class="comment">//set gradient start and end points</span></span><br><span class="line">  gradientLayer.startPoint = <span class="built_in">CGPointMake</span>(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">  gradientLayer.endPoint = <span class="built_in">CGPointMake</span>(<span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h3 id="CAReplicatorLayer"><a href="#CAReplicatorLayer" class="headerlink" title="CAReplicatorLayer"></a>CAReplicatorLayer</h3><p>高效生成许多相似图层<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)creatReplicatorCircleLaye</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//create a replicator layer and add it to our view</span></span><br><span class="line">    <span class="built_in">CAReplicatorLayer</span> *replicator = [<span class="built_in">CAReplicatorLayer</span> layer];</span><br><span class="line">    replicator.frame = <span class="keyword">self</span>.containerView.bounds;</span><br><span class="line">    [<span class="keyword">self</span>.containerView.layer addSublayer:replicator];</span><br><span class="line"></span><br><span class="line">    <span class="comment">//configure the replicator</span></span><br><span class="line">    replicator.instanceCount = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//apply a transform for each instance</span></span><br><span class="line">    <span class="built_in">CATransform3D</span> transform = <span class="built_in">CATransform3DIdentity</span>;</span><br><span class="line">    transform = <span class="built_in">CATransform3DTranslate</span>(transform, <span class="number">0</span>, <span class="number">200</span>, <span class="number">0</span>);</span><br><span class="line">    transform = <span class="built_in">CATransform3DRotate</span>(transform, M_PI / <span class="number">5.0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">    transform = <span class="built_in">CATransform3DTranslate</span>(transform, <span class="number">0</span>, <span class="number">-200</span>, <span class="number">0</span>);</span><br><span class="line">    replicator.instanceTransform = transform;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//apply a color shift for each instance</span></span><br><span class="line">    replicator.instanceBlueOffset = <span class="number">-0.1</span>;</span><br><span class="line">    replicator.instanceGreenOffset = <span class="number">-0.1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//create a sublayer and place it inside the replicator</span></span><br><span class="line">    <span class="built_in">CALayer</span> *layer = [<span class="built_in">CALayer</span> layer];</span><br><span class="line">    layer.frame = <span class="built_in">CGRectMake</span>(<span class="number">100.0</span>f, <span class="number">100.0</span>f, <span class="number">100.0</span>f, <span class="number">100.0</span>f);</span><br><span class="line">    layer.backgroundColor = [<span class="built_in">UIColor</span> whiteColor].CGColor;</span><br><span class="line">    [replicator addSublayer:layer];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="CAScrollLayer"><a href="#CAScrollLayer" class="headerlink" title="CAScrollLayer"></a>CAScrollLayer</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)scrollPoint:(<span class="built_in">CGPoint</span>)p;</span><br><span class="line">- (<span class="keyword">void</span>)scrollRectToVisible:(<span class="built_in">CGRect</span>)r;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">readonly</span>) <span class="built_in">CGRect</span> visibleRect</span><br></pre></td></tr></table></figure>
+<h3 id="CATiledLayer"><a href="#CATiledLayer" class="headerlink" title="CATiledLayer"></a>CATiledLayer</h3><ul>
+<li>为载入大图造成的性能问题提供了一个解决方案：将大图分解成小片然后将他们单独按需载入</li>
+<li>CATiledLayer不同于大部分UIKit和CA方法，它支持多线程绘制，-drawLayer:inContext:中需要注意线程安全</li>
+</ul>
+<h3 id="CAEmitterLayer"><a href="#CAEmitterLayer" class="headerlink" title="CAEmitterLayer"></a>CAEmitterLayer</h3><ul>
+<li>高性能粒子引擎，用来实时创建粒子动画如：烟雾，火，雨等</li>
+</ul>
+<h3 id="CAEAGLLayer"><a href="#CAEAGLLayer" class="headerlink" title="CAEAGLLayer"></a>CAEAGLLayer</h3><ul>
+<li>使用OpenGL ES2.0绘制上下文</li>
+</ul>
+<h3 id="AVPlayerLayer"><a href="#AVPlayerLayer" class="headerlink" title="AVPlayerLayer"></a>AVPlayerLayer</h3><p>*⚠️它不是Core Animation框架的一部分，而是AVFoundation,用来在iOS上播放视频，它是高级接口如MPMoviewPlayer的底层实现，提供了显示视频的底层控制。</p>
+<h2 id="7-隐式动画"><a href="#7-隐式动画" class="headerlink" title="7.隐式动画"></a>7.隐式动画</h2><ul>
+<li>改变UIView的一个可做动画的属性，并没有指定任何动画的类型，然后Core Animation自动让该属性从先前的值平滑过渡到新的值，默认0.25秒的动画</li>
+<li>隐式动画默认打开，可以手动关闭</li>
+<li>事务：Core Animation基于一个假设，说屏幕上的任何东西都可以（或者可能）做动画，实际上是Core Animation用来包含一系列属性动画集合的机制，任何用指定事务去改变可以做动画的图层属性都不会立刻发生变化，而是当事务一旦提交的时候开始用一个动画过渡到新值</li>
+<li><p>CA事务由CATransaction来管理,[CATransaction begin] (change) [CATransaction commit],Core Animation在每个run loop周期中自动开始一次新的事务，即使不显示的调用[CATransaction begin]，任何在一次run loop中的属性修改都会被集中起来做0.25s动画</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)changeColor</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//begin a new transaction</span></span><br><span class="line">    [<span class="built_in">CATransaction</span> begin];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//transaction content</span></span><br><span class="line">    [<span class="built_in">CATransaction</span> setAnimationDuration:<span class="number">1.0</span>];</span><br><span class="line">    <span class="comment">//add the spin animation on completion</span></span><br><span class="line">    [<span class="built_in">CATransaction</span> setCompletionBlock:^&#123;</span><br><span class="line">        <span class="comment">//rotate the layer 90 degrees</span></span><br><span class="line">        <span class="built_in">CGAffineTransform</span> transform = <span class="keyword">self</span>.colorLayer.affineTransform;</span><br><span class="line">        transform = <span class="built_in">CGAffineTransformRotate</span>(transform, M_PI_2);</span><br><span class="line">        <span class="keyword">self</span>.colorLayer.affineTransform = transform;</span><br><span class="line">    &#125;];</span><br><span class="line">    <span class="comment">//randomize the layer background color</span></span><br><span class="line">    <span class="built_in">CGFloat</span> red = arc4random() / (<span class="built_in">CGFloat</span>)INT_MAX;</span><br><span class="line">    <span class="built_in">CGFloat</span> green = arc4random() / (<span class="built_in">CGFloat</span>)INT_MAX;</span><br><span class="line">    <span class="built_in">CGFloat</span> blue = arc4random() / (<span class="built_in">CGFloat</span>)INT_MAX;</span><br><span class="line">    <span class="keyword">self</span>.colorLayer.backgroundColor = [<span class="built_in">UIColor</span> colorWithRed:red green:green blue:blue alpha:<span class="number">1.0</span>].CGColor;</span><br><span class="line">    </span><br><span class="line">    ￼<span class="comment">//commit the transaction</span></span><br><span class="line">    [<span class="built_in">CATransaction</span> commit];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>默认情况下，UIKit禁用UIView.layer的隐式动画的，做法是每个UIView对它关联的图层都扮演了一个委托，并且提供了-actionForLayer:forKey的实现方法。当不在一个动画块的实现中，UIView对所有图层行为返回nil，但是在动画block范围之内，它就返回了一个非空值UIView关闭了（也可通过CATransacition setDisableActions：]开关所有属性的隐式动画）</p>
+</li>
+<li>UIView关联的图层禁用了隐式动画，对这种图层做动画的唯一办法就是使用UIView的动画函数（而不是依赖CATransaction），或者继承UIView，并覆盖-actionForLayer:forKey:方法，或者直接创建一个显式动画。<br>对于单独存在的图层，我们可以通过实现图层的-actionForLayer:forKey:委托方法，或者提供一个actions字典来控制隐式动画。<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)layerAnimation &#123;</span><br><span class="line">    <span class="keyword">self</span>.colorLayer = [<span class="built_in">CALayer</span> layer];</span><br><span class="line">    <span class="keyword">self</span>.colorLayer.frame = <span class="built_in">CGRectMake</span>(<span class="number">50.0</span>f, <span class="number">50.0</span>f, <span class="number">100.0</span>f, <span class="number">100.0</span>f);</span><br><span class="line">    <span class="keyword">self</span>.colorLayer.backgroundColor = [<span class="built_in">UIColor</span> blueColor].CGColor;</span><br><span class="line">    <span class="comment">//add a custom action</span></span><br><span class="line">    <span class="built_in">CATransition</span> *transition = [<span class="built_in">CATransition</span> animation];</span><br><span class="line">    transition.type = kCATransitionPush;</span><br><span class="line">    transition.subtype = kCATransitionFromLeft;</span><br><span class="line">    <span class="keyword">self</span>.colorLayer.actions = @&#123;<span class="string">@"backgroundColor"</span>: transition&#125;;</span><br><span class="line">    <span class="comment">//add it to our view</span></span><br><span class="line">    [<span class="keyword">self</span>.layerView.layer addSublayer:<span class="keyword">self</span>.colorLayer];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)changeColor</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//randomize the layer background color</span></span><br><span class="line">    <span class="built_in">CGFloat</span> red = arc4random() / (<span class="built_in">CGFloat</span>)INT_MAX;</span><br><span class="line">    <span class="built_in">CGFloat</span> green = arc4random() / (<span class="built_in">CGFloat</span>)INT_MAX;</span><br><span class="line">    <span class="built_in">CGFloat</span> blue = arc4random() / (<span class="built_in">CGFloat</span>)INT_MAX;</span><br><span class="line">    <span class="keyword">self</span>.colorLayer.backgroundColor = [<span class="built_in">UIColor</span> colorWithRed:red green:green blue:blue alpha:<span class="number">1.0</span>].CGColor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="呈现树"><a href="#呈现树" class="headerlink" title="呈现树"></a>呈现树</h3><ul>
+<li>呈现树：每个图层属性的显示值都被存储在一个叫做呈现图层的独立图层当中，他可以通过-presentationLayer方法来访问（呈现图层的值表示当前屏幕上真正显示出来的值，动画中会不断变化）、</li>
+<li>需要用到呈现树的case：同步动画 &amp; 处理交互<blockquote>
+<p>1.如果你在实现一个基于定时器的动画，而不仅仅是基于事务的动画，这个时候准确地知道在某一时刻图层显示在什么位置就会对正确摆放图层很有用了<br><br>2.果你想让你做动画的图层响应用户输入，你可以使用-hitTest:方法来判断指定图层是否被触摸，这时候对呈现图层而不是模型图层调用-hitTest:会显得更有意义，因为呈现图层代表了用户当前看到的图层位置，而不是当前动画结束之后的位置<br></p>
+</blockquote>
+</li>
+</ul>
+<h2 id="8-显示动画"><a href="#8-显示动画" class="headerlink" title="8.显示动画"></a>8.显示动画</h2><h3 id="1-CABasicAnimation"><a href="#1-CABasicAnimation" class="headerlink" title="1.CABasicAnimation"></a>1.CABasicAnimation</h3><p>当更新属性的时候，我们需要设置一个新的事务，并且禁用图层行为。否则动画会发生两次，一个是因为显式的CABasicAnimation，另一次是因为隐式动画。<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)animationDidStop:(<span class="built_in">CABasicAnimation</span> \*)anim finished:(<span class="built_in">BOOL</span>)flag</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//set the backgroundColor property to match animation toValue</span></span><br><span class="line">  [<span class="built_in">CATransaction</span> begin];</span><br><span class="line">  [<span class="built_in">CATransaction</span> setDisableActions:<span class="literal">YES</span>];</span><br><span class="line">  <span class="keyword">self</span>.colorLayer.backgroundColor = (__bridge <span class="built_in">CGColorRef</span>)anim.toValue;</span><br><span class="line">  [<span class="built_in">CATransaction</span> commit];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-CAKeyframeAnimation"><a href="#2-CAKeyframeAnimation" class="headerlink" title="2.CAKeyframeAnimation"></a>2.CAKeyframeAnimation</h3><ul>
+<li>和CABasicAnimation不一样的是，它不限制于设置一个起始和结束的值，而是可以根据一连串随意的值来做动画</li>
+</ul>
+<h3 id="3-虚拟属性-CAPropertyAnimation"><a href="#3-虚拟属性-CAPropertyAnimation" class="headerlink" title="3.虚拟属性 CAPropertyAnimation"></a>3.虚拟属性 CAPropertyAnimation</h3><ul>
+<li>transform.rotation属性有一个奇怪的问题是它其实并不存在。这是因为CATransform3D并不是一个对象，它实际上是一个结构体，也没有符合KVC相关属性，transform.rotation实际上是一个CALayer用于处理动画变换的虚拟属性</li>
+</ul>
+<h3 id="4-CAAnimationGroup"><a href="#4-CAAnimationGroup" class="headerlink" title="4.CAAnimationGroup"></a>4.CAAnimationGroup</h3><ul>
+<li>CABasicAnimation和CAKeyframeAnimation仅仅作用于单独的属性，而CAAnimationGroup可以把这些动画组合在一起</li>
+</ul>
+<h3 id="5-过渡动画"><a href="#5-过渡动画" class="headerlink" title="5.过渡动画"></a>5.过渡动画</h3><ul>
+<li>有时候对于iOS应用程序来说，希望能通过属性动画来对比较难做动画的布局进行一些改变。比如交换一段文本和图片，或者用一段网格视图来替换，等等。属性动画只对图层的可动画属性起作用，所以如果要改变一个不能动画的属性（比如图片），或者从层级关系中添加或者移除图层，属性动画将不起作用。</li>
+<li>renderInContext截图<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">UIGraphicsBeginImageContextWithOptions</span>(view.bounds.size, <span class="literal">YES</span>, <span class="number">0.0</span>);</span><br><span class="line">[view.layer renderInContext:<span class="built_in">UIGraphicsGetCurrentContext</span>()];</span><br><span class="line"><span class="built_in">UIImage</span> *coverImage = <span class="built_in">UIGraphicsGetImageFromCurrentImageContext</span>();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="9-图层时间"><a href="#9-图层时间" class="headerlink" title="9.图层时间"></a>9.图层时间</h2><ul>
+<li>CoreAnimation有一个全局时间的概念，也就是所谓的Mach内核时间，CFTimeInterval time = CACurrentMediaTime()，它返回了设备自从上次启动后的秒数，当设备休眠的时候马赫时间会暂停，故该时间不准</li>
+<li>对CALayer或者CAGroupAnimation调整duration和repeatCount/repeatDuration属性并不会影响到子动画。但是beginTime，timeOffset和speed属性将会影响到子动画，设置.keyWindow.speed = 0会让所有window上的视图动画停止，当然UIAlertView不会受影响（不在当前keyWindow上）</li>
+</ul>
+<h2 id="10-缓冲"><a href="#10-缓冲" class="headerlink" title="10.缓冲"></a>10.缓冲</h2><ul>
+<li>动画执行速率，匀速、淡入淡出等</li>
+<li><a href="http://robertpenner.com/easing/" target="_blank" rel="noopener">不同动画效果缓冲函数的算法</a>，了解有关缓冲和CAMediaTimingFunction类，它可以允许我们创建自定义的缓冲函数来完善我们的动画，同样了解了如何用CAKeyframeAnimation来避开CAMediaTimingFunction的限制，创建完全自定义的缓冲函数。</li>
+<li>CAAnimation &gt; [CATransaction setAnimationTimingFunction:]</li>
+<li><p>UIKit &gt; </p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[<span class="built_in">UIView</span> animateWithDuration:<span class="number">1.0</span> delay:<span class="number">0.0</span></span><br><span class="line">                        options:<span class="built_in">UIViewAnimationOptionCurveEaseOut</span></span><br><span class="line">                     animations:^&#123;</span><br><span class="line">                            <span class="comment">//set the position</span></span><br><span class="line">                            <span class="keyword">self</span>.colorView.center = [[touches anyObject] locationInView:<span class="keyword">self</span>.view];</span><br><span class="line">                        &#125;</span><br><span class="line">                     completion:<span class="literal">NULL</span>];</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>关键帧动画有一个NSArray类型的timingFunctions属性，但是指定函数的个数一定要等于keyframes数组的元素个数减一，因为它是描述每一帧之间动画速度的函数。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="comment">//create a keyframe animation</span></span><br><span class="line">    <span class="built_in">CAKeyframeAnimation</span> *animation = [<span class="built_in">CAKeyframeAnimation</span> animation];</span><br><span class="line">    animation.keyPath = <span class="string">@"backgroundColor"</span>;</span><br><span class="line">    animation.duration = <span class="number">2.0</span>;</span><br><span class="line">    animation.values = @[</span><br><span class="line">                         (__bridge <span class="keyword">id</span>)[<span class="built_in">UIColor</span> blueColor].CGColor,</span><br><span class="line">                         (__bridge <span class="keyword">id</span>)[<span class="built_in">UIColor</span> redColor].CGColor,</span><br><span class="line">                         (__bridge <span class="keyword">id</span>)[<span class="built_in">UIColor</span> greenColor].CGColor,</span><br><span class="line">                         (__bridge <span class="keyword">id</span>)[<span class="built_in">UIColor</span> blueColor].CGColor ];</span><br><span class="line">    <span class="comment">//add timing function</span></span><br><span class="line">    <span class="built_in">CAMediaTimingFunction</span> *fn = [<span class="built_in">CAMediaTimingFunction</span> functionWithName: kCAMediaTimingFunctionEaseIn];</span><br><span class="line">    animation.timingFunctions = @[fn, fn, fn];</span><br><span class="line">    <span class="comment">//apply animation to layer</span></span><br><span class="line">    [<span class="keyword">self</span>.colorLayer addAnimation:animation forKey:<span class="literal">nil</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="11-基于定时器的动画"><a href="#11-基于定时器的动画" class="headerlink" title="11.基于定时器的动画"></a>11.基于定时器的动画</h2><ul>
+<li>CADisplayLink &gt; 用法与NSTimer一致，但是NSTimer当错过了时间点会在下一次执行（延后），而CADisplayLink错过了时间点直接丢弃（丢帧）</li>
+<li>NSRunLoopCommonModes来替代。但是要小心，因为如果动画在一个高帧率情况下运行，你会发现一些别的类似于定时器的任务或者类似于滑动的其他iOS动画会暂停，直到动画结束。<br><br>同样可以同时对CADisplayLink指定多个run loop模式，于是我们可以同时加入NSDefaultRunLoopMode和UITrackingRunLoopMode来保证它不会被滑动打断，也不会被其他UIKit控件动画影响性能<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)animate</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//reset ball to top of screen</span></span><br><span class="line">    <span class="keyword">self</span>.ballView.center = <span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">32</span>);</span><br><span class="line">    <span class="comment">//configure the animation</span></span><br><span class="line">    <span class="keyword">self</span>.duration = <span class="number">1.0</span>;</span><br><span class="line">    <span class="keyword">self</span>.timeOffset = <span class="number">0.0</span>;</span><br><span class="line">    <span class="keyword">self</span>.fromValue = [<span class="built_in">NSValue</span> valueWithCGPoint:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">32</span>)];</span><br><span class="line">    <span class="keyword">self</span>.toValue = [<span class="built_in">NSValue</span> valueWithCGPoint:<span class="built_in">CGPointMake</span>(<span class="number">150</span>, <span class="number">268</span>)];</span><br><span class="line">    <span class="comment">//stop the timer if it's already running</span></span><br><span class="line">    [<span class="keyword">self</span>.timer invalidate];</span><br><span class="line">    <span class="comment">//start the timer</span></span><br><span class="line">    <span class="keyword">self</span>.lastStep = <span class="built_in">CACurrentMediaTime</span>();</span><br><span class="line">    <span class="keyword">self</span>.timer = [<span class="built_in">CADisplayLink</span> displayLinkWithTarget:<span class="keyword">self</span></span><br><span class="line">                                             selector:<span class="keyword">@selector</span>(step:)];</span><br><span class="line">    [<span class="keyword">self</span>.timer addToRunLoop:[<span class="built_in">NSRunLoop</span> mainRunLoop]</span><br><span class="line">                     forMode:<span class="built_in">NSDefaultRunLoopMode</span>];</span><br><span class="line">    [<span class="keyword">self</span>.timer addToRunLoop:[<span class="built_in">NSRunLoop</span> mainRunLoop] forMode:<span class="built_in">UITrackingRunLoopMode</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)step:(<span class="built_in">CADisplayLink</span> *)timer</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//calculate time delta</span></span><br><span class="line">    <span class="built_in">CFTimeInterval</span> thisStep = <span class="built_in">CACurrentMediaTime</span>();</span><br><span class="line">    <span class="built_in">CFTimeInterval</span> stepDuration = thisStep - <span class="keyword">self</span>.lastStep;</span><br><span class="line">    <span class="keyword">self</span>.lastStep = thisStep;</span><br><span class="line">    <span class="comment">//update time offset</span></span><br><span class="line">    <span class="keyword">self</span>.timeOffset = MIN(<span class="keyword">self</span>.timeOffset + stepDuration, <span class="keyword">self</span>.duration);</span><br><span class="line">    <span class="comment">//get normalized time offset (in range 0 - 1)</span></span><br><span class="line">    <span class="keyword">float</span> time = <span class="keyword">self</span>.timeOffset / <span class="keyword">self</span>.duration;</span><br><span class="line">    <span class="comment">//apply easing</span></span><br><span class="line">    time = bounceEaseOut(time);</span><br><span class="line">    <span class="comment">//interpolate position</span></span><br><span class="line">    <span class="keyword">id</span> position = [<span class="keyword">self</span> interpolateFromValue:<span class="keyword">self</span>.fromValue toValue:<span class="keyword">self</span>.toValue</span><br><span class="line">                                        time:time];</span><br><span class="line">    <span class="comment">//move ball view to new position</span></span><br><span class="line">    <span class="keyword">self</span>.ballView.center = [position <span class="built_in">CGPointValue</span>];</span><br><span class="line">    <span class="comment">//stop the timer if we've reached the end of the animation</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>.timeOffset &gt;= <span class="keyword">self</span>.duration) &#123;</span><br><span class="line">        [<span class="keyword">self</span>.timer invalidate];</span><br><span class="line">        <span class="keyword">self</span>.timer = <span class="literal">nil</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="12-性能优化"><a href="#12-性能优化" class="headerlink" title="12.性能优化"></a>12.性能优化</h2><h3 id="CPU-VS-GPU"><a href="#CPU-VS-GPU" class="headerlink" title="CPU VS GPU"></a>CPU VS GPU</h3><p>关于绘图和动画有两种处理的方式：CPU（中央处理器）和GPU（图形处理器）。在现代iOS设备中，都有可以运行不同软件的可编程芯片，但是由于历史原因，我们可以说CPU所做的工作都在软件层面，而GPU在硬件层面。<br><br>总的来说，我们可以用软件（使用CPU）做任何事情，但是对于图像处理，通常用硬件会更快，因为GPU使用图像对高度并行浮点运算做了优化。由于某些原因，我们想尽可能把屏幕渲染的工作交给硬件去处理。问题在于GPU并没有无限制处理性能，而且一旦资源用完的话，性能就会开始下降了（即使CPU并没有完全占用）<br><br>大多数动画性能优化都是关于智能利用GPU和CPU，使得它们合理配合，都不会超出负荷。</p>
+<h3 id="渲染服务"><a href="#渲染服务" class="headerlink" title="渲染服务"></a>渲染服务</h3><p><strong>1.概念：</strong><br>动画和屏幕上组合的图层实际上被一个单独的进程管理，而不是你的应用程序。这个进程就是所谓的渲染服务。在iOS5和之前的版本是SpringBoard进程（同时管理着iOS的主屏）。在iOS6之后的版本中叫做BackBoard<br><br><strong>2.视图/动画渲染的过程一共有6个阶段：</strong> 最后两个阶段在动画过程中不停地重复。前五个阶段都在软件层面处理（通过CPU），只有最后一个被GPU执行。而且，你真正只能控制前两个阶段：布局和显示。Core Animation框架在内部处理剩下的事务，你也控制不了它。</p>
+<p>这并不是个问题，因为在布局和显示阶段，你可以决定哪些由CPU执行，哪些交给GPU去做。</p>
+<blockquote>
+<p>app内部处理的4个阶段</p>
+<ul>
+<li>1.布局 - 这是准备你的视图/图层的层级关系，以及设置图层属性（位置，背景色，边框等等）的阶段。</li>
+<li>2.显示 - 这是图层的寄宿图片被绘制的阶段。绘制有可能涉及你的-drawRect:和-drawLayer:inContext:方法的调用路径。</li>
+<li>3.准备 - 这是Core Animation准备发送动画数据到渲染服务的阶段。这同时也是Core Animation将要执行一些别的事务例如解码动画过程中将要显示的图片的时间点。</li>
+<li>4.提交 - 这是最后的阶段，Core Animation打包所有图层和动画属性，然后通过IPC（内部处理通信）发送到渲染服务进行显示。</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>渲染服务进程处理的2个阶段<br><br>一旦打包的图层和动画到达渲染服务进程，他们会被反序列化来形成另一个叫做渲染树的图层树。使用这个树状结构，渲染服务对动画的每一帧做出如下工作：<br></p>
+<ul>
+<li>1.对所有的图层属性计算中间值，设置OpenGL几何形状（纹理化的三角形）来执行渲染</li>
+<li>2.在屏幕上渲染可见的三角形</li>
+</ul>
+</blockquote>
+<h3 id="GUP相关操作"><a href="#GUP相关操作" class="headerlink" title="GUP相关操作"></a>GUP相关操作</h3><p>GPU为一个具体的任务做了优化：它用来采集图片和形状（三角形），运行变换，应用纹理和混合然后把它们输送到屏幕上。现代iOS设备上可编程的GPU在这些操作的执行上又很大的灵活性，但是Core Animation并没有暴露出直接的接口。除非你想绕开Core Animation并编写你自己的OpenGL着色器，从根本上解决硬件加速的问题，那么剩下的所有都还是需要在CPU的软件层面上完成。<br><br>宽泛的说，大多数CALayer的属性都是用GPU来绘制。比如如果你设置图层背景或者边框的颜色，那么这些可以通过着色的三角板实时绘制出来。如果对一个contents属性设置一张图片，然后裁剪它 - 它就会被纹理的三角形绘制出来，而不需要软件层面做任何绘制。<br><br>但是有一些事情会降低（基于GPU）图层绘制，比如：</p>
+<ul>
+<li>太多的几何结构 - 这发生在需要太多的三角板来做变换，以应对处理器的栅格化的时候。现代iOS设备的图形芯片可以处理几百万个三角板，所以在Core Animation中几何结构并不是GPU的瓶颈所在。但由于图层在显示之前通过IPC发送到渲染服务器的时候（图层实际上是由很多小物体组成的特别重量级的对象），太多的图层就会引起CPU的瓶颈。这就限制了一次展示的图层个数</li>
+<li>重绘 - 主要由重叠的半透明图层引起。GPU的填充比率（用颜色填充像素的比率）是有限的，所以需要避免重绘（每一帧用相同的像素填充多次）的发生。在现代iOS设备上，GPU都会应对重绘；即使是iPhone 3GS都可以处理高达2.5的重绘比率，并任然保持60帧率的渲染（这意味着你可以绘制一个半的整屏的冗余信息，而不影响性能），并且新设备可以处理更多</li>
+<li>离屏绘制 - 这发生在当不能直接在屏幕上绘制，并且必须绘制到离屏图片的上下文中的时候。离屏绘制发生在基于CPU或者是GPU的渲染，或者是为离屏图片分配额外内存，以及切换绘制上下文，这些都会降低GPU性能。对于特定图层效果的使用，比如圆角，图层遮罩，阴影或者是图层光栅化都会强制Core Animation提前渲染图层的离屏绘制。但这不意味着你需要避免使用这些效果，只是要明白这会带来性能的负面影响</li>
+<li>过大的图片 - 如果视图绘制超出GPU支持的2048x2048或者4096x4096尺寸的纹理，就必须要用CPU在图层每次显示之前对图片预处理，同样也会降低性能<h4 id="GPU屏幕渲染有以下两种方式"><a href="#GPU屏幕渲染有以下两种方式" class="headerlink" title="GPU屏幕渲染有以下两种方式"></a>GPU屏幕渲染有以下两种方式</h4></li>
+<li>On-Screen Rendering 意为当前屏幕渲染，指的是GPU的渲染操作是在当前用于显示的屏幕缓冲区中进行</li>
+<li>Off-Screen Rendering 意为离屏渲染，指的是GPU在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作<br></li>
+</ul>
+<h3 id="离屏渲染性能差原因"><a href="#离屏渲染性能差原因" class="headerlink" title="离屏渲染性能差原因"></a>离屏渲染性能差原因</h3><p>相比于当前屏幕渲染，离屏渲染的代价是很高的，主要体现在两个方面：</p>
+<blockquote>
+<p>1.创建新缓冲区 要想进行离屏渲染，首先要创建一个新的缓冲区。<br><br>2.上下文切换 离屏渲染的整个过程，需要多次切换上下文环境：先是从当前屏幕（On-Screen）切换到离屏（Off-Screen）；等到离屏渲染结束以后，将离屏缓冲区的渲染结果显示到屏幕上又需要将上下文环境从离屏切换到当前屏幕。而上下文环境的切换是要付出很大代价的,涉及到OpenGL的pipeline跟barrier，而且offscreen-render通常在每一帧都会涉及到</p>
+</blockquote>
+<h4 id="造成离屏渲染的原因"><a href="#造成离屏渲染的原因" class="headerlink" title="造成离屏渲染的原因"></a>造成离屏渲染的原因</h4><p>当图层属性的混合体被指定为在未预合成之前不能直接在屏幕中绘制时，屏幕外渲染就被唤起了</p>
+<blockquote>
+<p>CPU的offscreen-render<br>使用CPU来完成渲染操纵，通常在你使用：</p>
+<ul>
+<li>1.drawRect (如果没有自定义绘制的任务就不要在子类中写一个空的drawRect方法，因为只要实现了该方法，就会为视图分配一个寄宿图，这个寄宿图的像素尺寸等于视图大小乘以 contentsScale的值，造成资源浪费)</li>
+<li>2.使用Core Graphics<br>上面的两种情况使用的就是CPU离屏渲染，首先分配一块内存，然后进行渲染操作生成一份bitmap位图，整个渲染过程会在你的应用中同步的进行，接着再将位图打包发送到iOS里一个单独的进程–render server，理想情况下，render server将内容交给GPU直接显示到屏幕上。</li>
+</ul>
+<p>GPU的offscreen-render<br>使用GPU在当前屏幕缓冲区以外开辟一个新的缓冲区进行绘制，通常发生的情况有：</p>
+<ul>
+<li>1.设置cornerRadius(&gt; contensCenter/UIBezierPath), masks(&gt; CAShapeLayer), shadows（&gt; shadowPath）,edge antialiasing等</li>
+<li>2.设置layer.shouldRasterize ＝ YES</li>
+</ul>
+</blockquote>
+<h4 id="CPU相关的操作"><a href="#CPU相关的操作" class="headerlink" title="CPU相关的操作"></a>CPU相关的操作</h4><p>大多数工作在Core Animation的CPU都发生在动画开始之前。这意味着它不会影响到帧率，所以很好，但是他会延迟动画开始的时间，让你的界面看起来会比较迟钝。<br><br>以下CPU的操作都会延迟动画的开始时间：</p>
+<blockquote>
+<ul>
+<li>1.布局计算 - 如果你的视图层级过于复杂，当视图呈现或者修改的时候，计算图层帧率就会消耗一部分时间。特别是使用iOS6的自动布局机制尤为明显，它应该是比老版的自动调整逻辑加强了CPU的工作。</li>
+<li>2.视图懒加载 - iOS只会当视图控制器的视图显示到屏幕上时才会加载它。这对内存使用和程序启动时间很有好处，但是当呈现到屏幕上之前，按下按钮导致的许多工作都会不能被及时响应。比如控制器从数据库中获取数据，或者视图从一个nib文件中加载，或者涉及IO的图片显示，都会比CPU正常操作慢得多。</li>
+<li>3.Core Graphics绘制 - 如果对视图实现了-drawRect:方法，或者CALayerDelegate的-drawLayer:inContext:方法，那么在绘制任何东西之前都会产生一个巨大的性能开销。为了支持对图层内容的任意绘制，Core Animation必须创建一个内存中等大小的寄宿图片。然后一旦绘制结束之后，必须把图片数据通过IPC传到渲染服务器。在此基础上，Core Graphics绘制就会变得十分缓慢，所以在一个对性能十分挑剔的场景下这样做十分不好。</li>
+<li>4.解压图片 - PNG或者JPEG压缩之后的图片文件会比同质量的位图小得多。但是在图片绘制到屏幕上之前，必须把它扩展成完整的未解压的尺寸（通常等同于图片宽 x 长 x 4个字节）。为了节省内存，iOS通常直到真正绘制的时候才去解码图片。根据你加载图片的方式，第一次对图层内容赋值的时候（直接或者间接使用UIImageView）或者把它绘制到Core Graphics中，都需要对它解压，这样的话，对于一个较大的图片，都会占用一定的时间<br></li>
+</ul>
+</blockquote>
+<p>当图层被成功打包，发送到渲染服务器之后，CPU仍然要做如下工作：为了显示屏幕上的图层，Core Animation必须对渲染树种的每个可见图层通过OpenGL循环转换成纹理三角板。由于GPU并不知晓Core Animation图层的任何结构，所以必须要由CPU做这些事情。这里CPU涉及的工作和图层个数成正比，所以如果在你的层级关系中有太多的图层，就会导致CPU每一帧的渲染，即使这些事情不是你的应用程序可控的。</p>
+<h3 id="IO相关操作"><a href="#IO相关操作" class="headerlink" title="IO相关操作"></a>IO相关操作</h3><p>上下文中的IO（输入/输出）指的是例如闪存或者网络接口的硬件访问。一些动画可能需要从闪存（甚至是远程URL）来加载。一个典型的例子就是两个视图控制器之间的过渡效果，这就需要从一个nib文件或者是它的内容中懒加载，或者一个旋转的图片，可能在内存中尺寸太大，需要动态滚动来加载。<br><br>IO比内存访问更慢，所以如果动画涉及到IO，就是一个大问题。总的来说，这就需要使用聪敏但尴尬的技术，也就是多线程，缓存和投机加载（提前加载当前不需要的资源，但是之后可能需要用到）</p>
+<h3 id="测试哪些点动画性能"><a href="#测试哪些点动画性能" class="headerlink" title="测试哪些点动画性能"></a>测试哪些点动画性能</h3><ul>
+<li>一定要用真机测试（CPU往往比iOS设备要快。相反，GPU和iOS设备的完全不一样，模拟器不得已要在软件层面（CPU）模拟设备的GPU，这意味着GPU相关的操作在模拟器上运行的更慢，尤其是使用CAEAGLLayer来写一些OpenGL的代码时候）</li>
+<li>一定要用发布模式，而不是调试模式（编译器会引入一系列提高性能的优化，例如去掉调试符号或者移除并重新组织代码</li>
+<li>最好在你支持的设备中性能最差的设备上测试</li>
+</ul>
+<h3 id="iOS性能优化"><a href="#iOS性能优化" class="headerlink" title="iOS性能优化"></a>iOS性能优化</h3><h4 id="当你碰到性能问题的时候（WWDC2014）"><a href="#当你碰到性能问题的时候（WWDC2014）" class="headerlink" title="当你碰到性能问题的时候（WWDC2014）"></a>当你碰到性能问题的时候（WWDC2014）</h4><ul>
+<li>是否受到CPU或者GPU的限制？</li>
+<li>是否有不必要的CPU渲染？</li>
+<li>是否有太多的离屏渲染操作？</li>
+<li>是否有太多的图层混合操作？</li>
+<li>是否有奇怪的图片格式或者尺寸？</li>
+<li>是否涉及到昂贵的view或者效果？</li>
+<li>view的层次结构是否合理？</li>
+</ul>
+<p>tips:<br>1.Blending : 避免使用透明/半透明颜色效果，需要计算该视图透视的下面的图，对性能又影响<br>2.OffScreen-render:</p>
+<blockquote>
+<p>1.避免离屏渲染cornerRadius, masks, shadows,edge antialiasing，layer.shouldRasterize ＝ YES等会造成离屏渲染</p>
+<ul>
+<li>cornerRadius,mask &gt; CG绘制</li>
+<li>shadows &gt; shadowPath:[UIBezierPath  bezierPathWithRect:view.bounds].CGPath;</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>2.对于不可避免的离屏渲染<br><br>使用shouldRasterize = YES缓存，避免重复创建缓存区<br><br>会把被光栅化的图层保存成bitmap并缓存起来，其中圆角或者阴影之类的效果也是直接保存到位图当中，当需要渲染到屏幕上的时候只需要到缓存中去取对应的位图进行显示就行了，相当于光栅化是把GPU的操作转到CPU上了，生成位图缓存，直接读取复用，加快了整个渲染过程。光栅化对于那些有很多子view嵌套在一起、view的层级复杂或者有很复杂特效效果的图层有很明显的提升，因为这些内容都被缓存到位图当中了。<br><br><strong>光栅化应用⚠️</strong><br></p>
+<ul>
+<li><ol>
+<li>适用于内容基本不变的图层<br>假如图层的内容经常变化，比如cell里面有涉及到动画之类的，那么缓存的内容就无效了，GPU需要重新创建缓存区，导致离屏渲染，这又涉及到OpenGL的上下文环境切换，反而降低性能。<br></li>
+</ol>
+</li>
+<li><ol start="2">
+<li>不要过度使用<br>缓存区的大小被设置为屏幕大小的2.5倍，假如过分使用同样会导致大量的离屏渲染。<br></li>
+</ol>
+</li>
+<li><ol start="3">
+<li>如果缓存的内容超过100ms没有被使用则会被回收。<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">UITableViewCell</span> *)tableView:(<span class="built_in">UITableView</span> *)tableView cellForRowAtIndexPath:(<span class="built_in">NSIndexPath</span> *)indexPath</span><br><span class="line">￼&#123;</span><br><span class="line">    <span class="comment">//dequeue cell</span></span><br><span class="line">    <span class="built_in">UITableViewCell</span> *cell = [<span class="keyword">self</span>.tableView dequeueReusableCellWithIdentifier:<span class="string">@"Cell"</span></span><br><span class="line">                                                                 forIndexPath:indexPath];</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//set text shadow</span></span><br><span class="line">    cell.textLabel.backgroundColor = [<span class="built_in">UIColor</span> clearColor];</span><br><span class="line">    cell.textLabel.layer.shadowOffset = <span class="built_in">CGSizeMake</span>(<span class="number">0</span>, <span class="number">2</span>);</span><br><span class="line">    cell.textLabel.layer.shadowOpacity = <span class="number">0.5</span>;</span><br><span class="line">    <span class="comment">//rasterize</span></span><br><span class="line">    cell.layer.shouldRasterize = <span class="literal">YES</span>;</span><br><span class="line">    cell.layer.rasterizationScale = [<span class="built_in">UIScreen</span> mainScreen].scale;</span><br><span class="line">    <span class="keyword">return</span> cell;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>3.其他<br>延迟加载图片(图片加载的极限优化方式：<a href="https://github.com/path/FastImageCache" target="_blank" rel="noopener">FastImageCache</a>)<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">UIImage</span> *downloadedImage = ...;</span><br><span class="line">    [<span class="keyword">self</span>.avatarImageView performSelector:<span class="keyword">@selector</span>(setImage:)</span><br><span class="line">                               withObject:downloadedImage</span><br><span class="line">                               afterDelay:<span class="number">0</span></span><br><span class="line">                                  inModes:@[<span class="built_in">NSDefaultRunLoopMode</span>]];</span><br><span class="line">`</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<h2 id="13-高效绘图"><a href="#13-高效绘图" class="headerlink" title="13.高效绘图"></a>13.高效绘图</h2><h3 id="软件绘图"><a href="#软件绘图" class="headerlink" title="软件绘图"></a>软件绘图</h3><p>术语绘图通常在Core Animation的上下文中指代软件绘图（意即：不由GPU协助的绘图）。在iOS中，软件绘图通常是由Core Graphics框架完成来完成。但是，在一些必要的情况下，相比Core Animation和OpenGL，Core Graphics要慢了不少。<br></p>
+<p>软件绘图不仅效率低，还会消耗可观的内存。CALayer只需要一些与自己相关的内存：只有它的寄宿图会消耗一定的内存空间。即使直接赋给contents属性一张图片，也不需要增加额外的照片存储大小。如果相同的一张图片被多个图层作为contents属性，那么他们将会共用同一块内存，而不是复制内存块。</p>
+<p>但是一旦你实现了CALayerDelegate协议中的-drawLayer:inContext:方法或者UIView中的-drawRect:方法（其实就是前者的包装方法），图层就创建了一个绘制上下文，这个上下文需要的大小的内存可从这个算式得出：图层宽 <em> 图层高 </em> 4字节，宽高的单位均为像素。对于一个在Retina iPad上的全屏图层来说，这个内存量就是 2048 <em> 1526 </em> 4字节，相当于12MB内存，图层每次重绘的时候都需要重新抹掉内存然后重新分配。</p>
+<p>软件绘图的代价昂贵，除非绝对必要，你应该避免重绘你的视图。提高绘制性能的秘诀就在于尽量避免去绘制。</p>
+<h3 id="矢量绘图"><a href="#矢量绘图" class="headerlink" title="矢量绘图"></a>矢量绘图</h3><p>矢量绘图包含一下这些：</p>
+<blockquote>
+<ul>
+<li>任意多边形（不仅仅是一个矩形）</li>
+<li>斜线或曲线</li>
+<li>文本</li>
+<li>渐变</li>
+</ul>
+</blockquote>
+<h4 id="脏矩形"><a href="#脏矩形" class="headerlink" title="脏矩形"></a>脏矩形</h4><p>为了减少不必要的绘制，Mac OS和iOS设备将会把屏幕区分为需要重绘的区域和不需要重绘的区域。那些需要重绘的部分就叫脏区域<br></p>
+<ul>
+<li>-setNeedsDisplayInRect: &gt; 指定脏区域<br></li>
+<li>CGRectIntersectsRect() &gt; 避免重绘覆盖已更新过的区域</li>
+</ul>
+<h3 id="异步绘制"><a href="#异步绘制" class="headerlink" title="异步绘制"></a>异步绘制</h3><p>Core Animation提供了一些选择：</p>
+<ul>
+<li><p>1.CATiledLayer:有趣的特性：在多个线程中为每个小块同时调用-drawLayer:inContext:方法。这就避免了阻塞用户交互而且能够利用多核心新片来更快地绘制。</p>
+</li>
+<li><p>2.drawsAsynchronously属性：iOS6之后，layer引入drawsAsynchronously属性，对传入-drawLayer:inContext:的CGContext进行改动，允许CGContext延缓绘制命令的执行以至于不阻塞用户交互。<br><br>它与CATiledLayer使用的异步绘制并不相同。它自己的-drawLayer:inContext:方法只会在主线程调用，但是CGContext并不等待每个绘制命令的结束。相反地，它会将命令加入队列，当方法返回时，在后台线程逐个执行真正的绘制。这个特性在需要频繁重绘的视图上效果最好（如TableViewCell）</p>
+</li>
+</ul>
+<h2 id="14-图像IO"><a href="#14-图像IO" class="headerlink" title="14.图像IO"></a>14.图像IO</h2><ul>
+<li>1.异步处理</li>
+<li>2.避免延迟解压：<br>[UIImage imageNamed:]立即解压，并且缓存，但只针对app资源库中的图片有效</li>
+<li><p>3.第三种方式就是绕过UIKit，使用CGImageSourceRef加载图片，像下面这样使用ImageIO框架：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSInteger</span> index = indexPath.row;</span><br><span class="line"><span class="built_in">NSURL</span> *imageURL = [<span class="built_in">NSURL</span> fileURLWithPath:<span class="keyword">self</span>.imagePaths[index]];</span><br><span class="line"><span class="built_in">NSDictionary</span> *options = @&#123;(__bridge <span class="keyword">id</span>)kCGImageSourceShouldCache: @YES&#125;; </span><br><span class="line"><span class="built_in">CGImageSourceRef</span> source = <span class="built_in">CGImageSourceCreateWithURL</span>((__bridge <span class="built_in">CFURLRef</span>)imageURL, <span class="literal">NULL</span>);</span><br><span class="line"><span class="built_in">CGImageRef</span> imageRef = <span class="built_in">CGImageSourceCreateImageAtIndex</span>(source, <span class="number">0</span>,(__bridge <span class="built_in">CFDictionaryRef</span>)options);</span><br><span class="line"><span class="built_in">UIImage</span> *image = [<span class="built_in">UIImage</span> imageWithCGImage:imageRef]; </span><br><span class="line"><span class="built_in">CGImageRelease</span>(imageRef);</span><br><span class="line"><span class="built_in">CFRelease</span>(source);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>4.使用CATiledLayer可以用来异步加载和显示大型图片，而不阻塞用户输入<br></p>
+<blockquote>
+<p>缺点是：</p>
+<ol>
+<li>CATiledLayer的队列和缓存算法没有暴露出来，所以我们只能祈祷它能匹配我们的需求。</li>
+<li>CATiledLayer需要我们每次重绘图片到CGContext中，即使它已经解压缩，而且和我们单元格尺寸一样（因此可以直接用作图层内容，而不需要重绘）。</li>
+</ol>
+</blockquote>
+</li>
+<li>5.分辨率交换<br>视网膜分辨率代表了人的肉眼在正常视角距离能够分辨的最小像素尺寸。但是这只能应用于静态像素。当观察一个移动图片时，人眼就会对细节不敏感，对于移动的视图可以添加低质量的图片<br></li>
+<li><p>6.缓存<br></p>
+<blockquote>
+<p>[UIImage imageNamed:]有缓存机制，但是并不适用任何情况</p>
+<ul>
+<li>[UIImage imageNamed:]方法仅仅适用于在应用程序资源束目录下的图片，从网络或者是用户的相机中获取就没法用了。</li>
+<li>[UIImage imageNamed:]缓存用来存储应用界面的图片。如果对照片这种大图也用这种缓存，那么iOS系统就很可能会移除这些图片来节省内存。那么在切换页面时性能就会下降，因为这些图片都需要重新加载。</li>
+<li>[UIImage imageNamed:]缓存机制并不是公开的，所以你不能很好地控制它。例如，你没法做到检测图片是否在加载之前就做了缓存，不能够设置缓存大小，当图片没用的时候也不能把它从缓存中移除。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>7.自定义缓存<br><br>NSCache，用法和NSDictionary相似，-setObject:forKey:和-object:forKey:方法分别来插入，检索。<br><br>NSCache在系统低内存的时候自动丢弃存储的对象。可以通过-setCountLimit:方法设置缓存大小，以及-setObject:forKey:cost:来对每个存储的对象指定消耗的值,值越高，丢弃优先级越低。可以用-setTotalCostLimit:方法来指定全体缓存的尺寸</p>
+</li>
+<li>8.文件格式<br><br><a href="https://blog.ibireme.com/2015/11/02/mobile_image_benchmark/" target="_blank" rel="noopener">图片格式全解析</a></li>
+</ul>
+<h2 id="15-图层性能"><a href="#15-图层性能" class="headerlink" title="15.图层性能"></a>15.图层性能</h2><h3 id="隐式绘制"><a href="#隐式绘制" class="headerlink" title="隐式绘制"></a>隐式绘制</h3><ul>
+<li>1.使用特性的图层属性</li>
+<li>2.特定的视图</li>
+<li>3.特定的图层子类</li>
+</ul>
+<h4 id="文本"><a href="#文本" class="headerlink" title="文本"></a>文本</h4><p>尝试用CATextLayer  Core Text绘制</p>
+<h4 id="光栅化"><a href="#光栅化" class="headerlink" title="光栅化"></a>光栅化</h4><p>开启shouldRasterize后,CALayer会被光栅化为bitmap,layer的阴影等效果也会被保存到bitmap中。但只能用在图像内容不变的前提下<br></p>
+<p><em>光栅化两个特点：</em></p>
+<ul>
+<li>系统限制了缓存的大小为2.5X Screen Size.</li>
+<li>被光栅化的图片如果超过100ms没有被使用,则会被移除<br></li>
+</ul>
+<p><em>需要注意三点问题：</em></p>
+<ul>
+<li>如果我们更新已光栅化的layer,会造成大量的offscreen渲染。<br></li>
+<li>用于避免静态内容的复杂特效的重绘</li>
+<li>用于避免多个View嵌套的复杂View的重绘。</li>
+</ul>
+<h3 id="离屏渲染"><a href="#离屏渲染" class="headerlink" title="离屏渲染"></a>离屏渲染</h3><ul>
+<li>圆角（cornerRadius和maskToBounds独立作用的时候都不会有太大的性能问题，但是当他俩结合在一起，就触发了屏幕外渲染）</li>
+<li>图层蒙板</li>
+<li><p>阴影</p>
+</li>
+<li><p>解决办法：CAShapeLayer，contentsCenter或者shadowPath</p>
+</li>
+</ul>
+<h3 id="混合和过度绘制"><a href="#混合和过度绘制" class="headerlink" title="混合和过度绘制"></a>混合和过度绘制</h3><p>解决办法：</p>
+<ul>
+<li>给视图的backgroundColor属性设置一个固定的，不透明的颜色（superView）</li>
+<li>设置opaque属性为YES</li>
+</ul>
+<h3 id="减少图层数量"><a href="#减少图层数量" class="headerlink" title="减少图层数量"></a>减少图层数量</h3><ul>
+<li>裁切(从subLayer移除) <blockquote>
+<ul>
+<li>图层在屏幕边界之外，或是在父图层边界之外。</li>
+<li>完全在一个不透明图层之后。</li>
+<li>完全透明</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h3 id="视图对象回收"><a href="#视图对象回收" class="headerlink" title="视图对象回收"></a>视图对象回收</h3><p>UITableView/UICollectionView</p>
+<h3 id="Core-Graphics绘制"><a href="#Core-Graphics绘制" class="headerlink" title="Core Graphics绘制"></a>Core Graphics绘制</h3><p>复杂的视图层级(多个UILabel或者UIImageView实例去显示固定内容),你可以把他们全部替换成一个单独的视图，然后用-drawRect:方法绘制出来</p>
+<h3 id="renderInContext"><a href="#renderInContext" class="headerlink" title="-renderInContext:"></a>-renderInContext:</h3><p><code>[layer renderInContext:]</code>你可以将图层及其子图层快照进一个Core Graphics上下文然后得到一个图片，它可以直接显示在UIImageView中，或者作为另一个图层的contents。不同于shouldRasterize —— 要求图层与图层树相关联 —— ，这个方法没有持续的性能消耗。</p>
+<h2 id="16-曲线"><a href="#16-曲线" class="headerlink" title="16.曲线"></a>16.曲线</h2><h3 id="1-贝塞尔曲线"><a href="#1-贝塞尔曲线" class="headerlink" title="1.贝塞尔曲线"></a>1.贝塞尔曲线</h3><h3 id="2-Quartz2D"><a href="#2-Quartz2D" class="headerlink" title="2.Quartz2D"></a>2.Quartz2D</h3><p>Quartz 2D是一个二维绘图引擎，同时支持iOS和Mac系统</p>
+<p>Quartz2D提供了以下几种类型的Graphics Context：</p>
+<ul>
+<li>Bitmap Graphics Context 位图上下文，在这个上下文上绘制或者渲染的内容，可以获取成图片（需要主动创建一个位图上下文来使用，使用完毕，一定要销毁）</li>
+<li>PDF Graphics Context</li>
+<li>Window Graphics Context</li>
+<li>Layer Graphics Context 图层上下文，针对UI控件的上下文<br>Printer Graphics Context</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>学习了使用Core Animation图层可能遇到的性能瓶颈，并讨论了如何避免或减小压力。你学习了如何管理包含上千虚拟图层的场景（事实上只创建了几百个）。同时也学习了一些有用的技巧，选择性地选取光栅化或者绘制图层内容在合适的时候重新分配给CPU和GPU。这些就是我们要讲的关于Core Animation的全部了（至少可以等到苹果发明什么新的玩意儿）</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="https://haojiaqiang.github.io">Hayato</a>
+            <p>原文链接: <a href="https://haojiaqiang.github.io/2018/02/02/iOS-Core-Animation/">https://haojiaqiang.github.io/2018/02/02/iOS-Core-Animation/</a>
+            <p>发表日期: <a href="https://haojiaqiang.github.io/2018/02/02/iOS-Core-Animation/">February 2nd 2018, 5:43:48 pm</a>
+            <p>版权声明: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC-SA 4.0</a></p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2017/09/30/关于死锁的几个经典问题/" title= 关于死锁的几个经典问题 >
+                    <div class="prevTitle">关于死锁的几个经典问题</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+    
+        
+            
+                <a href="https://github.com/haojiaqiang" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://about.me/haojiaqiang" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-图层树"><span class="toc-number">1.</span> <span class="toc-text">1.图层树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-UIView-amp-UILayer的关系"><span class="toc-number">1.1.</span> <span class="toc-text">1.UIView &amp; UILayer的关系</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-寄宿图"><span class="toc-number">2.</span> <span class="toc-text">2.寄宿图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Layer上添加寄宿图"><span class="toc-number">2.1.</span> <span class="toc-text">1.Layer上添加寄宿图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-contentsRect"><span class="toc-number">2.2.</span> <span class="toc-text">2.contentsRect</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-contentsCenter"><span class="toc-number">2.3.</span> <span class="toc-text">3.contentsCenter</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-图层几何学"><span class="toc-number">3.</span> <span class="toc-text">3.图层几何学</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-视觉效果"><span class="toc-number">4.</span> <span class="toc-text">4.视觉效果</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#cornerRadius-沿着图层的边界"><span class="toc-number">4.1.</span> <span class="toc-text">cornerRadius 沿着图层的边界</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#border-沿着图层的边界绘制出来"><span class="toc-number">4.2.</span> <span class="toc-text">border 沿着图层的边界绘制出来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shadow-沿着自身-amp-subView-amp-寄宿图创建阴影-不是Layer自身的边界"><span class="toc-number">4.3.</span> <span class="toc-text">shadow 沿着自身&amp;subView&amp;寄宿图创建阴影(不是Layer自身的边界)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#图层蒙版"><span class="toc-number">4.4.</span> <span class="toc-text">图层蒙版</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#透明度-UIView-alpha-amp-CALayer-opacity"><span class="toc-number">4.5.</span> <span class="toc-text">透明度 (UIView.alpha &amp; CALayer.opacity)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-变换"><span class="toc-number">5.</span> <span class="toc-text">5.变换</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-旋转-amp-缩放-amp-平移"><span class="toc-number">5.1.</span> <span class="toc-text">1.旋转&amp;缩放&amp;平移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用CGAffineTransform-amp-CGAffineTransformConcat计算形变值"><span class="toc-number">5.2.</span> <span class="toc-text">用CGAffineTransform &amp; CGAffineTransformConcat计算形变值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-剪切-CG没有直接提供对应函数"><span class="toc-number">5.3.</span> <span class="toc-text">2.剪切(CG没有直接提供对应函数)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3D变换-CATransform3D"><span class="toc-number">5.4.</span> <span class="toc-text">3.3D变换 CATransform3D</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-专有图层"><span class="toc-number">6.</span> <span class="toc-text">6.专有图层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CAShapeLayer"><span class="toc-number">6.1.</span> <span class="toc-text">CAShapeLayer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CATextLayer"><span class="toc-number">6.2.</span> <span class="toc-text">CATextLayer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CATransformLayer"><span class="toc-number">6.3.</span> <span class="toc-text">CATransformLayer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CAGradientLayer"><span class="toc-number">6.4.</span> <span class="toc-text">CAGradientLayer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CAReplicatorLayer"><span class="toc-number">6.5.</span> <span class="toc-text">CAReplicatorLayer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CAScrollLayer"><span class="toc-number">6.6.</span> <span class="toc-text">CAScrollLayer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CATiledLayer"><span class="toc-number">6.7.</span> <span class="toc-text">CATiledLayer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CAEmitterLayer"><span class="toc-number">6.8.</span> <span class="toc-text">CAEmitterLayer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CAEAGLLayer"><span class="toc-number">6.9.</span> <span class="toc-text">CAEAGLLayer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AVPlayerLayer"><span class="toc-number">6.10.</span> <span class="toc-text">AVPlayerLayer</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-隐式动画"><span class="toc-number">7.</span> <span class="toc-text">7.隐式动画</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#呈现树"><span class="toc-number">7.1.</span> <span class="toc-text">呈现树</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-显示动画"><span class="toc-number">8.</span> <span class="toc-text">8.显示动画</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-CABasicAnimation"><span class="toc-number">8.1.</span> <span class="toc-text">1.CABasicAnimation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-CAKeyframeAnimation"><span class="toc-number">8.2.</span> <span class="toc-text">2.CAKeyframeAnimation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-虚拟属性-CAPropertyAnimation"><span class="toc-number">8.3.</span> <span class="toc-text">3.虚拟属性 CAPropertyAnimation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-CAAnimationGroup"><span class="toc-number">8.4.</span> <span class="toc-text">4.CAAnimationGroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-过渡动画"><span class="toc-number">8.5.</span> <span class="toc-text">5.过渡动画</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-图层时间"><span class="toc-number">9.</span> <span class="toc-text">9.图层时间</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-缓冲"><span class="toc-number">10.</span> <span class="toc-text">10.缓冲</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-基于定时器的动画"><span class="toc-number">11.</span> <span class="toc-text">11.基于定时器的动画</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-性能优化"><span class="toc-number">12.</span> <span class="toc-text">12.性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU-VS-GPU"><span class="toc-number">12.1.</span> <span class="toc-text">CPU VS GPU</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#渲染服务"><span class="toc-number">12.2.</span> <span class="toc-text">渲染服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GUP相关操作"><span class="toc-number">12.3.</span> <span class="toc-text">GUP相关操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#GPU屏幕渲染有以下两种方式"><span class="toc-number">12.3.1.</span> <span class="toc-text">GPU屏幕渲染有以下两种方式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#离屏渲染性能差原因"><span class="toc-number">12.4.</span> <span class="toc-text">离屏渲染性能差原因</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#造成离屏渲染的原因"><span class="toc-number">12.4.1.</span> <span class="toc-text">造成离屏渲染的原因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CPU相关的操作"><span class="toc-number">12.4.2.</span> <span class="toc-text">CPU相关的操作</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IO相关操作"><span class="toc-number">12.5.</span> <span class="toc-text">IO相关操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试哪些点动画性能"><span class="toc-number">12.6.</span> <span class="toc-text">测试哪些点动画性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iOS性能优化"><span class="toc-number">12.7.</span> <span class="toc-text">iOS性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#当你碰到性能问题的时候（WWDC2014）"><span class="toc-number">12.7.1.</span> <span class="toc-text">当你碰到性能问题的时候（WWDC2014）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-高效绘图"><span class="toc-number">13.</span> <span class="toc-text">13.高效绘图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#软件绘图"><span class="toc-number">13.1.</span> <span class="toc-text">软件绘图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#矢量绘图"><span class="toc-number">13.2.</span> <span class="toc-text">矢量绘图</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#脏矩形"><span class="toc-number">13.2.1.</span> <span class="toc-text">脏矩形</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#异步绘制"><span class="toc-number">13.3.</span> <span class="toc-text">异步绘制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-图像IO"><span class="toc-number">14.</span> <span class="toc-text">14.图像IO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-图层性能"><span class="toc-number">15.</span> <span class="toc-text">15.图层性能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#隐式绘制"><span class="toc-number">15.1.</span> <span class="toc-text">隐式绘制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#文本"><span class="toc-number">15.1.1.</span> <span class="toc-text">文本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#光栅化"><span class="toc-number">15.1.2.</span> <span class="toc-text">光栅化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#离屏渲染"><span class="toc-number">15.2.</span> <span class="toc-text">离屏渲染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#混合和过度绘制"><span class="toc-number">15.3.</span> <span class="toc-text">混合和过度绘制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#减少图层数量"><span class="toc-number">15.4.</span> <span class="toc-text">减少图层数量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#视图对象回收"><span class="toc-number">15.5.</span> <span class="toc-text">视图对象回收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Core-Graphics绘制"><span class="toc-number">15.6.</span> <span class="toc-text">Core Graphics绘制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#renderInContext"><span class="toc-number">15.7.</span> <span class="toc-text">-renderInContext:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-曲线"><span class="toc-number">16.</span> <span class="toc-text">16.曲线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-贝塞尔曲线"><span class="toc-number">16.1.</span> <span class="toc-text">1.贝塞尔曲线</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Quartz2D"><span class="toc-number">16.2.</span> <span class="toc-text">2.Quartz2D</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">17.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 18
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/02</span><a class="archive-post-title" href= "/2018/02/02/iOS-Core-Animation/" >iOS Core Animation</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2017/09/30/关于死锁的几个经典问题/" >关于死锁的几个经典问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/02</span><a class="archive-post-title" href= "/2017/08/02/InstallShadowsocks/" >部署Shadowsocks</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/09</span><a class="archive-post-title" href= "/2017/07/09/GCD-queue-and-sync-async/" >GCD队列与同步异步的组合</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/03</span><a class="archive-post-title" href= "/2017/07/03/howRuntimeWorks/" >彻底理解Runtime</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/2017/04/22/Pro-multithreading-and-memory-management-for-iOS-and-OS-X/" >Object-C 高级编程 iOS和OS X多线程和内存管理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/08</span><a class="archive-post-title" href= "/2017/02/08/Computer-Networking-A-Top-Down-Approach-NOTES/" >计算机网络 自顶向下方法</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/20</span><a class="archive-post-title" href= "/2016/11/20/Design-Pattern-Odyssey/" >大话设计模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/Algorithms/" >Algorithms</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/操作系统原理/" >操作系统原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2016/09/08/Effective-Objective-C-2-0/" >Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/03</span><a class="archive-post-title" href= "/2016/08/03/SwiftGrammar/" >SwiftGrammar</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/22</span><a class="archive-post-title" href= "/2016/05/22/Computer-Systems-A-Programmer-s-Perspective/" >深入理解计算机系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/04</span><a class="archive-post-title" href= "/2016/02/04/git/" >Git</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/25</span><a class="archive-post-title" href= "/2015/06/25/special-kind-of-pointer/" >几种特殊指针的含义区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2015/03/30/SQL查询实现方式/" >SQL查询实现方式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span><a class="archive-post-title" href= "/2015/03/11/SQL/" >SQL</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2015/01/01/How-does-the-program-run/" >程序是怎样跑起来的</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="计算机系统"><span class="iconfont-archer">&#xe606;</span>计算机系统</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机网络"><span class="iconfont-archer">&#xe606;</span>计算机网络</span>
+    
+        <span class="sidebar-tag-name" data-tags="async"><span class="iconfont-archer">&#xe606;</span>async</span>
+    
+        <span class="sidebar-tag-name" data-tags="sync"><span class="iconfont-archer">&#xe606;</span>sync</span>
+    
+        <span class="sidebar-tag-name" data-tags="queue"><span class="iconfont-archer">&#xe606;</span>queue</span>
+    
+        <span class="sidebar-tag-name" data-tags="消息"><span class="iconfont-archer">&#xe606;</span>消息</span>
+    
+        <span class="sidebar-tag-name" data-tags="load"><span class="iconfont-archer">&#xe606;</span>load</span>
+    
+        <span class="sidebar-tag-name" data-tags="Shadowsocks"><span class="iconfont-archer">&#xe606;</span>Shadowsocks</span>
+    
+        <span class="sidebar-tag-name" data-tags="CentOS"><span class="iconfont-archer">&#xe606;</span>CentOS</span>
+    
+        <span class="sidebar-tag-name" data-tags="AWS root"><span class="iconfont-archer">&#xe606;</span>AWS root</span>
+    
+        <span class="sidebar-tag-name" data-tags="app"><span class="iconfont-archer">&#xe606;</span>app</span>
+    
+        <span class="sidebar-tag-name" data-tags="SQL"><span class="iconfont-archer">&#xe606;</span>SQL</span>
+    
+        <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存管理"><span class="iconfont-archer">&#xe606;</span>内存管理</span>
+    
+        <span class="sidebar-tag-name" data-tags="Git"><span class="iconfont-archer">&#xe606;</span>Git</span>
+    
+        <span class="sidebar-tag-name" data-tags="Swift"><span class="iconfont-archer">&#xe606;</span>Swift</span>
+    
+        <span class="sidebar-tag-name" data-tags="runtime"><span class="iconfont-archer">&#xe606;</span>runtime</span>
+    
+        <span class="sidebar-tag-name" data-tags="deadLock"><span class="iconfont-archer">&#xe606;</span>deadLock</span>
+    
+        <span class="sidebar-tag-name" data-tags="pointer"><span class="iconfont-archer">&#xe606;</span>pointer</span>
+    
+        <span class="sidebar-tag-name" data-tags="id"><span class="iconfont-archer">&#xe606;</span>id</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSObject"><span class="iconfont-archer">&#xe606;</span>NSObject</span>
+    
+        <span class="sidebar-tag-name" data-tags="id<NSObject>"><span class="iconfont-archer">&#xe606;</span>id<NSObject></span>
+    
+        <span class="sidebar-tag-name" data-tags="void *"><span class="iconfont-archer">&#xe606;</span>void *</span>
+    
+        <span class="sidebar-tag-name" data-tags="nil"><span class="iconfont-archer">&#xe606;</span>nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="Nil"><span class="iconfont-archer">&#xe606;</span>Nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSNull"><span class="iconfont-archer">&#xe606;</span>NSNull</span>
+    
+        <span class="sidebar-tag-name" data-tags="Core Animation"><span class="iconfont-archer">&#xe606;</span>Core Animation</span>
+    
+        <span class="sidebar-tag-name" data-tags="OS"><span class="iconfont-archer">&#xe606;</span>OS</span>
+    
+        <span class="sidebar-tag-name" data-tags="Algorithms"><span class="iconfont-archer">&#xe606;</span>Algorithms</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Hayato"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Hayato">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Hayato">
+    <meta name="keywords" content="Hayato's Studio | Hayato">
+    <meta name="description" content="">
+    <meta name="Cache-Control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法 · Hayato&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Hayato&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Hayato's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style=
+
+
+
+
+
+
+
+
+height:50vh;
+
+>
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "消息">消息</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "load">load</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">3,229</span> / Reading time: <span class="post-count">13 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2016/09/08</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="1-属性"><a href="#1-属性" class="headerlink" title="1.属性"></a>1.属性</h2><ol>
+<li><p>属性 = 成员变量 + getter + setter；<br><br> 成员变量 = 偏移量(表示<code>该变量</code> <code>距</code>存放该变量的<code>对象</code>的起始地址<code>有多远</code>) <br></p>
+</li>
+<li><p>关键字<br><br>@synthesize:合成成语成员变量、指定成员变量名称<br><br>@dynamic:<code>告诉编译器</code>后面<code>会有getter &amp; setter但不合成getter &amp; setter</code><br></p>
+</li>
+</ol>
+<h2 id="2-对象等同性"><a href="#2-对象等同性" class="headerlink" title="2.对象等同性"></a>2.对象等同性</h2><ol>
+<li>objFun == objFoo,地址相等</li>
+<li><p>isEqual:默认比较地址的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">- (BOOL)isEqual:(id)object &#123;</span><br><span class="line">    if ([self class]) == [object class]) &#123;</span><br><span class="line">        return [self isEqualToFoo:object];</span><br><span class="line">    &#125;</span><br><span class="line">    return [super isEqual:object];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (BOOL)isEqualToFoo:(Foo *)foo &#123;</span><br><span class="line">    if (self == foo) return YES:</span><br><span class="line">    </span><br><span class="line">    if (! [_fun isEqualToString:foo.fun]) &#123;</span><br><span class="line">        return NO;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    return YES;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>hash:被用做对象 collection中检索时的索引，hash相同的两个对象不一定相等，两个相等的对象一定hash相同，减少hash碰撞和hash性能但不可避免碰撞</p>
+<figure class="highlight plain"><figcaption><span>标准写法</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- (NSInteger)hash &#123;</span><br><span class="line">    NSInteger funHash = [_objFun hash];</span><br><span class="line">    NSInteger fooHash = [_objFoo hash];</span><br><span class="line">    NSInteger exampleHash = _example;</span><br><span class="line">    return funHash ^ fooHash &amp; exampleHash;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="3-关联对象-3个方法"><a href="#3-关联对象-3个方法" class="headerlink" title="3.关联对象(3个方法)"></a>3.关联对象(3个方法)</h2><ol>
+<li><p>set associated object(<code>value可以是block</code>,当value==nil即清空该关联object)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void objc_setAssociatedObject(id _Nonnull object, const void * _Nonnull key,id _Nullable value, objc_AssociationPolicy policy)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>get associated object</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id objc_getAssociatedObject(id _Nonnull object, const void * _Nonnull key)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>remove all associated object</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void objc_removeAssociatedObjects(id _Nonnull object)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="4-objc-msgSend"><a href="#4-objc-msgSend" class="headerlink" title="4.objc_msgSend"></a>4.objc_msgSend</h2><ol>
+<li>原理：动态绑定<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">void funFunc() &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void fooFunc() &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void doTheThing(int type) &#123;</span><br><span class="line">    void (*func) ();</span><br><span class="line">    if (type == 0) &#123;</span><br><span class="line">        func = funFunc();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        func = fooFunc();</span><br><span class="line">    &#125;</span><br><span class="line">    func();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>2.发送消息</p>
+<blockquote>
+<p>1.主函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void objc_msgSend(id self, SEL cmd,...);</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<blockquote>
+<p>2.消息转换成函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">id returnValue = [someObject messageName:parameter];</span><br><span class="line">实际处理为：</span><br><span class="line">id returnValue = objc_msgSend(someObject, </span><br><span class="line">                             @selector(messageName:),</span><br><span class="line">                             parameter);</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<blockquote>
+<p>3.edge case交由另外一些函数来处理<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">objc_msgSend_stret；//处理返回值为结构体的消息</span><br><span class="line">objc_msgSend_fpret；//处理返回值为浮点数的消息</span><br><span class="line">objc_msgSendSuper；//处理给超类发送的消息，如[super message:parameter]</span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<ol start="3">
+<li><p>消息缓存<br><br>在method_list中查询到对应的method,objc_msgSend会将匹配结果缓存在“快速映射表(fast map)”里面，每个类都有这样一块缓存。objc_msgSend每次查找SEL对应的IMP会首先去cache里面查找，然后再是method_list，再然后super cache,super method_list</p>
+</li>
+<li><p>归纳<br><br>1.消息由接受者、选择子及参数构成。给某对象“发送消息”(invoke a message)也就是相当于在该对象上“调用方法”(call a method)<br><br>2.发给某对象的全部消息都要由“动态消息派发系统”（dynamic message dispatch system)来处理，该系统会查出对应的方法，并执行其代码<br></p>
+</li>
+</ol>
+<h2 id="5-消息转发机制"><a href="#5-消息转发机制" class="headerlink" title="5.消息转发机制"></a>5.消息转发机制</h2><h3 id="1-触发原因及默认实现"><a href="#1-触发原因及默认实现" class="headerlink" title="1.触发原因及默认实现"></a>1.触发原因及默认实现</h3><ol>
+<li><code>对象接收到无法解读的消息</code>后，就会<code>启动“消息转发(message forwarding)”</code>机制，<code>程序员可经由此过程告诉对象</code>应该<code>如何处理未知消息</code></li>
+<li>如果没有处理异常，默认实现：消息转发给NSObject，@selctor(doesNotRecognizeSelector：)</li>
+</ol>
+<h3 id="2-message-forwarding-2大阶段"><a href="#2-message-forwarding-2大阶段" class="headerlink" title="2.message forwarding 2大阶段"></a>2.message forwarding 2大阶段</h3><p><a href="http://www.cnblogs.com/kesalin/archive/2012/11/14/dynamic_method_resolve.html" target="_blank" rel="noopener">深入浅出Cocoa 消息转发</a></p>
+<h4 id="1-动态方法解析-dynamic-method-resolution"><a href="#1-动态方法解析-dynamic-method-resolution" class="headerlink" title="1. 动态方法解析 dynamic method resolution"></a>1. 动态方法解析 dynamic method resolution</h4><ol>
+<li>原理：第一阶段先征询接受者所属的类，看其是否能动态添加方法，以处理当前这个<code>unknown selector</code>,叫做动态方法解析</li>
+<li>方式：我们只要实现 <code>+resolveInstanceMethod:</code>/<code>+resolveClassMethod:</code> 方法，并在其中为指定的<code>selector</code>提供实现即可（通过调用运行时函数<code>class_addMethod</code>来添加）。这两个方法都是 NSObject 中的类方法，其原型为：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel；&lt;br&gt;</span><br><span class="line">+ (BOOL)resolveClassMethod:(SEL)sel；</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BOOL class_addMethod(Class _Nullable cls, SEL _Nonnull name, IMP _Nonnull imp, const char * _Nullable types)</span><br></pre></td></tr></table></figure>
+<p>参数sel是需要被动态决议的 selector；返回值文档中说是表示动态决议成功与否。但在上面的例子中（不涉及消息转发的情况下），如果在该函数内为指定的 selector  提供实现，无论返回 YES 还是 NO，编译运行都是正确的；但如果在该函数内并不真正为 selector 提供实现，无论返回 YES 还是 NO，运行都会 crash，道理很简单，selector 并没有对应的实现，而又没有实现消息转发。</p>
+<p>下面我们用动态方法决议手段来修改上面的代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">void dynamicMethodIMP(id self, SEL _cmd) &#123;</span><br><span class="line">    // method implementation</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)name</span><br><span class="line">&#123;   </span><br><span class="line">    if (name == @selector(MissMethod)) &#123;</span><br><span class="line">        class_addMethod([self class], name, (IMP)dynamicMethodIMP, &quot;v@:&quot;);</span><br><span class="line">        return YES;</span><br><span class="line">    &#125;</span><br><span class="line">    return [super resolveInstanceMethod:name];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (BOOL)resolveClassMethod:(SEL)name</span><br><span class="line">&#123;</span><br><span class="line">    return [super resolveClassMethod:name];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-备援接受者"><a href="#2-备援接受者" class="headerlink" title="2. 备援接受者"></a>2. 备援接受者</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 返回一个可以处理self不能响应的selector的对象，此特点可以模拟出“多重继承”</span><br><span class="line">- (id)forwardingTargetForSelector:(SEL)aSelector &#123;</span><br><span class="line">    return aCapableObject;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-完整的消息转发"><a href="#3-完整的消息转发" class="headerlink" title="3. 完整的消息转发"></a>3. 完整的消息转发</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 首先创建NSIvocation对象，把尚未处理的那条消息有关的细节全部封到其中,传递到此方法中</span><br><span class="line">- (void)forwardInvocation:(NSInvocation *)anInvocation &#123;</span><br><span class="line">    // do something with invocation</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://ws4.sinaimg.cn/large/006tKfTcgy1fshly7d1jaj30r60hw0uz.jpg" alt=""></p>
+<p>注意：<br><br>接收者在每一步中均有机会处理消息。步骤越往后，处理消息的代价就会越大。最好能在第一步就完成，这样的话，运行期系统就可以将此方法缓存起来。如果这个类的实例后面还收到同名的选择子，那么根本就无须启动消息转发流程。若想在第三步把消息转发给备援接收者，还不如把转发操作提前到第二步。以为第三步只是修改了调用目标，这项改动放在第二步执行的话会更加简单，不然还得创建并处理完整的NSIvocation。</p>
+<h2 id="6-方法调换"><a href="#6-方法调换" class="headerlink" title="6.方法调换"></a>6.方法调换</h2><p>方法用函数指针的形式表示，这种指针叫做IMP,其原型如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id (*IMP)(id, SEL,...)</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">/// 交换方法函数</span><br><span class="line">- (void)exchangeImpMethod &#123;</span><br><span class="line">    Method originalMethod = class_getInstanceMethod([self class], @selector(originMethod));</span><br><span class="line">    </span><br><span class="line">    Method customSwappedMethod = class_getInstanceMethod([self class], @selector(customSwappedMethod));</span><br><span class="line">    </span><br><span class="line">    method_exchangeImplementations(originalMethod, customSwappedMethod);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/// 相关代码</span><br><span class="line">- (void)performExchangeImpMethod &#123;</span><br><span class="line">    static dispatch_once_t onceToken;</span><br><span class="line">    dispatch_once(&amp;onceToken, ^&#123;</span><br><span class="line">        [self exchangeImpMethod];</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    [self originMethod];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)originMethod &#123;</span><br><span class="line">    DLog(@&quot;&gt;&gt; call originMethod&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)customSwappedMethod &#123;</span><br><span class="line">    DLog(@&quot;&gt;&gt; do something in swappedMethod&quot;);</span><br><span class="line">    [self customSwappedMethod];// 非死循环</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="7-理解类对象"><a href="#7-理解类对象" class="headerlink" title="7.理解类对象"></a>7.理解类对象</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">// id</span><br><span class="line">typedef struct objc_object &#123;</span><br><span class="line">    Class isa;</span><br><span class="line">&#125; *id;</span><br><span class="line"></span><br><span class="line">// Class</span><br><span class="line">typedef struct objc_class *Class;</span><br><span class="line">struct objc_class &#123;  </span><br><span class="line">    Class isa; // instance:类 &amp;&amp; class:元类 </span><br><span class="line">    Class super_class; // 继承关系 </span><br><span class="line">    const charchar *name;  </span><br><span class="line">    long version;  </span><br><span class="line">    long info;  </span><br><span class="line">    long instance_size;  </span><br><span class="line">    struct objc_ivar_list *ivars;  </span><br><span class="line">    struct objc_method_list **methodLists;  </span><br><span class="line">    struct objc_cache *cache;  </span><br><span class="line">    struct objc_protocol_list *protocols;  </span><br><span class="line">  </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">// NSObject</span><br><span class="line">@interface NSObject &lt;NSObject&gt; &#123;  </span><br><span class="line">    Class isa;  </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line">#  2. 接口与API设计</span><br><span class="line">## 1. 指定/全能初始化方法</span><br><span class="line">&gt; 1.在类中提供一个全能初始化方法，并于文档中说明。其他初始化方法均应调用此方法&lt;br&gt;</span><br><span class="line">&gt; 2.若全能初始化方法与super不同，则需覆写超类中的对应方法&lt;br&gt;</span><br><span class="line">&gt; 3.若super的初始化方法不适用于子类，则应该覆写这个super方法，并在其中抛出异常&lt;br&gt;</span><br><span class="line">&gt; 4.子类中的初始化方法应该先调用super的相关方法，然后再执行与本类有关的任务&lt;br&gt;</span><br><span class="line"></span><br><span class="line">## 2. 尽量不要对外暴露可变对象</span><br><span class="line">&gt;1.不把可变的collection作为属性对外暴露，而是对外暴露一个readonly的不可变collection，提供一个相关方法修改可变collection，返回一个不可变的copy</span><br><span class="line"></span><br><span class="line">## 3.异常</span><br><span class="line">&gt; 1.只有发生了重大的可致使整个app崩溃的严重错误时，才应使用异常&lt;br&gt;</span><br><span class="line">&gt; 2.在错误不那么严重时，可通过delegate来处理错误，也可以把错误信息放在NSError对象里，经由“输出参数”返回给调用者&lt;br&gt;</span><br><span class="line"></span><br><span class="line">## 4.异常安全代码的内存管理问题</span><br></pre></td></tr></table></figure>
+<p>@try {<br>    object…<br>}<br>@catch (…){</p>
+<p>}<br>@finally {<br>    // release object 但ARC无法手动调用内存管理语句<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">注意：</span><br><span class="line">&gt; 1.`ARC默认不对异常安全代码进行内存管理`（针对此种case ARC需要加入大量的样本代码，且严重影响性能），如果需要管理，可以通过`打开编译器标志：-fobjc-arc-exceptions实现`&lt;br&gt;</span><br><span class="line">&gt; 2.@try会保留对内部对象object的引用，需要释放&lt;br&gt;</span><br><span class="line">&gt; 3.如果编译器处理Objective-C++模式，因为C++处理异常的代码与ARC实现的附加代码类似，并且C++会频繁的使用异常，故而添加ARC附加异常处理代码性能损失不大，故Objective-C++模式下自动开启-fobjc-arc-exceptions</span><br><span class="line"></span><br><span class="line">## 5.自动释放池 autoReleasePool</span><br><span class="line">`自动释放池机制就像&quot;栈(stack)&quot;一样`。系统`创建好autoReleasePool后就将其推入栈中`。而`清空autoReleasePool`，则相当于`将其从栈中弹出`。`向对象发送一个autoRelease消息，就等于将其放入栈顶的autoReleasePool`</span><br><span class="line"></span><br><span class="line">注意⚠️：&lt;br&gt;</span><br><span class="line">**ARC不可用**&lt;br&gt;</span><br></pre></td></tr></table></figure></p>
+<p>NSAutoreleasePool </p>
+<p>autorelease方法(NSObject)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">**ARC可用**</span><br></pre></td></tr></table></figure></p>
+<p>@autoreleasepool{ };</p>
+<p>//用法<br>for (int i = 0;  i &lt; 10000; i++) {<br>    @autoreleasepool {<br>        NSNumber *number = [self creatNumberWithInt:i];<br>        [number autorelease];<br>        [arrM addObject:number];<br>    }<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 3. 内存管理</span><br><span class="line">## 1. Block</span><br><span class="line">1. Block可视为对象，实际上`block可以响应很多`OC对象可以响应的`selector`。最重要的一点，`block也有引用计数`</span><br><span class="line">2. 全局block，栈block,堆block&lt;br&gt;</span><br><span class="line">栈block拷贝成为堆block,堆block与OC对象一样，具备引用计数&lt;br&gt;</span><br><span class="line">3. 值捕获</span><br><span class="line">`block`捕获对象类型，`如果捕获_成员变量,那么`该成员变量`所属的对象也被捕获了`</span><br></pre></td></tr></table></figure></p>
+<p> ^ (id data){<br>     _data = data;// self被捕获了<br> }<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## 2. performSelector</span><br><span class="line">performSelector系列方法在内存管理方面容易有疏失。它无法确定将要执行的selector具体是什么，有无返回值等，因而ARC编译器无法插入适当的内存管理语句</span><br><span class="line"></span><br><span class="line">## 3.Foundation与Core Foundation的桥接</span><br><span class="line">### 1. 概念:</span><br><span class="line">桥接：在Foundation框架中的对象和Core Foundation框架中的变量之间进行类型转换&lt;br&gt;</span><br><span class="line">* Core Foundation比Foundation框架更加底层，是纯C语言的框架&lt;br</span><br><span class="line">* Foundation框架在Core Foundation框架的基础上进行封装，增加了面向对象的思想&lt;br&gt;</span><br><span class="line"></span><br><span class="line">### 2. Foundation 转 Core Foundation</span><br><span class="line">1. 不转移控制权 `__bridge targetType`</span><br></pre></td></tr></table></figure></p>
+<p> stringC = (__bridge CFStringRef)stringOC;<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> 只是把`stringOC`所指向对象的地址交给了`stringC`，原来对象的所有权属于`stringOC`，转换之后还是属于`stringOC`，原来是由`stringOC`管理的内存，现在还是由`stringOC`管理，在`ARC`环境下，`stringOC`可以自动释放</span><br><span class="line"></span><br><span class="line">2. 转移控制权 `__bridge_retain CF type`/`CFBridgingRetain`</span><br></pre></td></tr></table></figure></p>
+<p>strC = (__bridge_retain CFStringRef)strOC<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">* 把`Foundation`框架的对象转换成`Core Foundation`框架的变量</span><br><span class="line">* 同时转让对象的所有权，把对象的所有权从`stringOC`转移给`stringC`，原来是由`stringOC`管理的内存，现在让`stringC`来管理，需要手动释放，调用`CFRelease`方法</span><br><span class="line">* `CFBridgingRetain`方法和它等价</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"> ### 3. Core Foundation 转 Foundation</span><br><span class="line"> 1. 不转移控制权 `__bridge targetType`</span><br></pre></td></tr></table></figure></p>
+<p> stringOC = (__bridge NSString *)stringC;<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">只是把`stringC`所指向变量的地址交给了`stringOC`，原来变量的所有权属于`stringC`，转换之后还是属于`stringC`，原来是由`stringC`管理的内存，现在还是由`stringC`管理，需要手动释放，调用`CFRelease`方法</span><br><span class="line"></span><br><span class="line">2. 转移控制权`__bridge_transfer Objective-C type`/`CFBridgingRelease`</span><br></pre></td></tr></table></figure></p>
+<p> stringOC = (__bridge_transfer NSString*)stringC;<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">* 把`Core Foundation`框架的变量转换成`Foundation`框架的对象</span><br><span class="line">* 同时转让变量的所有权，把变量的所有权从`stingrC`转移给`stringOC`，原来是由`stringC`管理的内存，现在让`stringOC`来管理，在`ARC`环境下，`stringOC`可以自动释放</span><br><span class="line">* `CFBridgingRelease`方法和它等价</span><br><span class="line"></span><br><span class="line">### 4.归纳</span><br><span class="line">1. 桥接</span><br></pre></td></tr></table></figure></p>
+<p>  __bridge//只做类型转换，但是不修改对象（内存）管理权;<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> </span><br></pre></td></tr></table></figure></p>
+<p> __bridge_retain //（也可以使用CFBridgingRetain）将Objective-C的对象转换为Core Foundation的对象,同时将对象（内存）的管理权交给我们,后续需要手动使用CFRelease或者相关方法来释放对象;<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"> </span><br></pre></td></tr></table></figure></p>
+<p>  __bridge_transfer//（也可以使用CFBridgingRelease）将Core Foundation的对象转换为Objective-C的对象,同时将对象（内存）的管理权交给ARC自动管理，无需手动释放<br> <code>`</code></p>
+<h2 id="4-精简initialize与load的实现代码"><a href="#4-精简initialize与load的实现代码" class="headerlink" title="4. 精简initialize与load的实现代码"></a>4. 精简initialize与load的实现代码</h2><h3 id="void-load"><a href="#void-load" class="headerlink" title="+ (void)load"></a>+ (void)load</h3><ol>
+<li><p>调用时机<br><code>程序启动时</code>，载入类和分类文件就会调用此方法，会把所有类和分类的load方法全部调用，且仅调用一次，调用load方法是依次阻塞执行的，完成之后程序才进入可用状态<br></p>
+</li>
+<li><p>特别之处</p>
+</li>
+</ol>
+<ul>
+<li>load方法不遵循那套继承规则，如果某类没有实现load方法，那么不管其各类super是否实现此方法，<code>系统都不会调用[super load]</code><br></li>
+<li><p>分类和所属的类里都实现load方法，<code>本类和分类的load方法都会调用</code>，本类的实现比分类的实现先执行<br></p>
+<h3 id="void-initialize（推荐把load中的操作移动到initialize）"><a href="#void-initialize（推荐把load中的操作移动到initialize）" class="headerlink" title="+ (void)initialize（推荐把load中的操作移动到initialize）"></a>+ (void)initialize（推荐把load中的操作移动到initialize）</h3></li>
+</ul>
+<ol>
+<li><p>调用时机<br><code>程序首次使用该类之前调用，懒加载</code>，且只会调用一次。</p>
+</li>
+<li><p>特别之处</p>
+</li>
+</ol>
+<ul>
+<li>懒加载，且调用时机是程序处理正常状态时</li>
+<li>线程安全的</li>
+<li><p>遵守继承规则，如果本类没有override initialize，就会调用[super initialize]</p>
+<p><a href="https://www.jianshu.com/p/9c93c7ab734d" target="_blank" rel="noopener">可参考另一博客 Effective Objective-C 干货三步曲</a></p>
+</li>
+</ul>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="https://haojiaqiang.github.io">Hayato</a>
+            <p>原文链接: <a href="https://haojiaqiang.github.io/2016/09/08/Effective-Objective-C-2-0/">https://haojiaqiang.github.io/2016/09/08/Effective-Objective-C-2-0/</a>
+            <p>发表日期: <a href="https://haojiaqiang.github.io/2016/09/08/Effective-Objective-C-2-0/">September 8th 2016, 10:41:16 am</a>
+            <p>版权声明: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC-SA 4.0</a></p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2016/09/30/操作系统原理/" title= 操作系统原理 >
+                    <div class="nextTitle">操作系统原理</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2016/08/03/SwiftGrammar/" title= SwiftGrammar >
+                    <div class="prevTitle">SwiftGrammar</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+    
+        
+            
+                <a href="https://github.com/haojiaqiang" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://about.me/haojiaqiang" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-属性"><span class="toc-number">1.</span> <span class="toc-text">1.属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-对象等同性"><span class="toc-number">2.</span> <span class="toc-text">2.对象等同性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-关联对象-3个方法"><span class="toc-number">3.</span> <span class="toc-text">3.关联对象(3个方法)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-objc-msgSend"><span class="toc-number">4.</span> <span class="toc-text">4.objc_msgSend</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-消息转发机制"><span class="toc-number">5.</span> <span class="toc-text">5.消息转发机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-触发原因及默认实现"><span class="toc-number">5.1.</span> <span class="toc-text">1.触发原因及默认实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-message-forwarding-2大阶段"><span class="toc-number">5.2.</span> <span class="toc-text">2.message forwarding 2大阶段</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-动态方法解析-dynamic-method-resolution"><span class="toc-number">5.2.1.</span> <span class="toc-text">1. 动态方法解析 dynamic method resolution</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-备援接受者"><span class="toc-number">5.2.2.</span> <span class="toc-text">2. 备援接受者</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-完整的消息转发"><span class="toc-number">5.2.3.</span> <span class="toc-text">3. 完整的消息转发</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-方法调换"><span class="toc-number">6.</span> <span class="toc-text">6.方法调换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-理解类对象"><span class="toc-number">7.</span> <span class="toc-text">7.理解类对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-精简initialize与load的实现代码"><span class="toc-number">8.</span> <span class="toc-text">4. 精简initialize与load的实现代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#void-load"><span class="toc-number">8.1.</span> <span class="toc-text">+ (void)load</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#void-initialize（推荐把load中的操作移动到initialize）"><span class="toc-number">8.2.</span> <span class="toc-text">+ (void)initialize（推荐把load中的操作移动到initialize）</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 20
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span><a class="archive-post-title" href= "/2020/11/19/网游加速器原理/" >网游加速器原理、技术与实现</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/30</span><a class="archive-post-title" href= "/2017/11/30/关于死锁的几个经典问题/" >关于死锁的几个经典问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/03</span><a class="archive-post-title" href= "/2017/09/03/howRuntimeWorks/" >彻底理解Runtime</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/29</span><a class="archive-post-title" href= "/2017/06/29/Runloop/" >Runloop</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2017/05/08/Computer-Networking-A-Top-Down-Approach-NOTES/" >计算机网络 自顶向下方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span><a class="archive-post-title" href= "/2017/04/19/GCD-queue-and-sync-async/" >GCD队列与同步异步的组合</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/02</span><a class="archive-post-title" href= "/2017/01/02/iOS-Core-Animation/" >iOS Core Animation</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/20</span><a class="archive-post-title" href= "/2016/11/20/Design-Pattern-Odyssey/" >大话设计模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/Algorithms/" >Algorithms</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/操作系统原理/" >操作系统原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2016/09/08/Effective-Objective-C-2-0/" >Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/03</span><a class="archive-post-title" href= "/2016/08/03/SwiftGrammar/" >SwiftGrammar</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/22</span><a class="archive-post-title" href= "/2016/05/22/Computer-Systems-A-Programmer-s-Perspective/" >深入理解计算机系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/2016/04/22/Pro-multithreading-and-memory-management-for-iOS-and-OS-X/" >Object-C 高级编程 iOS和OS X多线程和内存管理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/12</span><a class="archive-post-title" href= "/2016/03/12/git/" >Git</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/25</span><a class="archive-post-title" href= "/2015/06/25/special-kind-of-pointer/" >几种特殊指针的含义区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2015/05/08/InstallShadowsocks/" >部署Shadowsocks</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2015/03/30/SQL查询实现方式/" >SQL查询实现方式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span><a class="archive-post-title" href= "/2015/03/11/SQL/" >SQL</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2015/01/01/How-does-the-program-run/" >程序是怎样跑起来的</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="app"><span class="iconfont-archer">&#xe606;</span>app</span>
+    
+        <span class="sidebar-tag-name" data-tags="async"><span class="iconfont-archer">&#xe606;</span>async</span>
+    
+        <span class="sidebar-tag-name" data-tags="sync"><span class="iconfont-archer">&#xe606;</span>sync</span>
+    
+        <span class="sidebar-tag-name" data-tags="queue"><span class="iconfont-archer">&#xe606;</span>queue</span>
+    
+        <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存管理"><span class="iconfont-archer">&#xe606;</span>内存管理</span>
+    
+        <span class="sidebar-tag-name" data-tags="SQL"><span class="iconfont-archer">&#xe606;</span>SQL</span>
+    
+        <span class="sidebar-tag-name" data-tags="pointer"><span class="iconfont-archer">&#xe606;</span>pointer</span>
+    
+        <span class="sidebar-tag-name" data-tags="id"><span class="iconfont-archer">&#xe606;</span>id</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSObject"><span class="iconfont-archer">&#xe606;</span>NSObject</span>
+    
+        <span class="sidebar-tag-name" data-tags="id<NSObject>"><span class="iconfont-archer">&#xe606;</span>id<NSObject></span>
+    
+        <span class="sidebar-tag-name" data-tags="void *"><span class="iconfont-archer">&#xe606;</span>void *</span>
+    
+        <span class="sidebar-tag-name" data-tags="nil"><span class="iconfont-archer">&#xe606;</span>nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="Nil"><span class="iconfont-archer">&#xe606;</span>Nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSNull"><span class="iconfont-archer">&#xe606;</span>NSNull</span>
+    
+        <span class="sidebar-tag-name" data-tags="deadLock"><span class="iconfont-archer">&#xe606;</span>deadLock</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机系统"><span class="iconfont-archer">&#xe606;</span>计算机系统</span>
+    
+        <span class="sidebar-tag-name" data-tags="消息"><span class="iconfont-archer">&#xe606;</span>消息</span>
+    
+        <span class="sidebar-tag-name" data-tags="load"><span class="iconfont-archer">&#xe606;</span>load</span>
+    
+        <span class="sidebar-tag-name" data-tags="Shadowsocks"><span class="iconfont-archer">&#xe606;</span>Shadowsocks</span>
+    
+        <span class="sidebar-tag-name" data-tags="CentOS"><span class="iconfont-archer">&#xe606;</span>CentOS</span>
+    
+        <span class="sidebar-tag-name" data-tags="AWS root"><span class="iconfont-archer">&#xe606;</span>AWS root</span>
+    
+        <span class="sidebar-tag-name" data-tags="Swift"><span class="iconfont-archer">&#xe606;</span>Swift</span>
+    
+        <span class="sidebar-tag-name" data-tags="Git"><span class="iconfont-archer">&#xe606;</span>Git</span>
+    
+        <span class="sidebar-tag-name" data-tags="proxy"><span class="iconfont-archer">&#xe606;</span>proxy</span>
+    
+        <span class="sidebar-tag-name" data-tags="加速器"><span class="iconfont-archer">&#xe606;</span>加速器</span>
+    
+        <span class="sidebar-tag-name" data-tags="OS"><span class="iconfont-archer">&#xe606;</span>OS</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机网络"><span class="iconfont-archer">&#xe606;</span>计算机网络</span>
+    
+        <span class="sidebar-tag-name" data-tags="Runloop"><span class="iconfont-archer">&#xe606;</span>Runloop</span>
+    
+        <span class="sidebar-tag-name" data-tags="runtime"><span class="iconfont-archer">&#xe606;</span>runtime</span>
+    
+        <span class="sidebar-tag-name" data-tags="Core Animation"><span class="iconfont-archer">&#xe606;</span>Core Animation</span>
+    
+        <span class="sidebar-tag-name" data-tags="Algorithms"><span class="iconfont-archer">&#xe606;</span>Algorithms</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Hayato"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html>
+    <!-- title -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="Hayato">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Hayato">
+    <meta name="keywords" content="Hayato's Studio | Hayato">
+    <meta name="description" content="">
+    <meta name="Cache-Control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>计算机网络 自顶向下方法 · Hayato&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s 1;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/assets/favicon.ico" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Hayato&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">计算机网络 自顶向下方法</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Hayato's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style=
+
+
+
+
+
+
+
+
+height:50vh;
+
+>
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            计算机网络 自顶向下方法
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "计算机网络">计算机网络</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count">13,017</span> / Reading time: <span class="post-count">48 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2017/05/08</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h1 id="1-计算机网络和英特网"><a href="#1-计算机网络和英特网" class="headerlink" title="1.计算机网络和英特网"></a>1.计算机网络和英特网</h1><h2 id="1-物理媒介"><a href="#1-物理媒介" class="headerlink" title="1.物理媒介"></a>1.物理媒介</h2><p>1.双绞铜线、同轴电缆、多模光纤、陆地无线电频谱、卫星无线电频谱<br>2.分类</p>
+<blockquote>
+<p>1.引导线媒体：沿着特定的固体媒体前行 》双绞铜线、同轴电缆、多模光纤<br>2.非引导型媒体：不能指定传播方向 》 陆地无线电频谱、卫星无线电频谱</p>
+</blockquote>
+<h2 id="2-数据传输的2中方法："><a href="#2-数据传输的2中方法：" class="headerlink" title="2.数据传输的2中方法："></a>2.数据传输的2中方法：</h2><p>1.分组交换(packet switching) &gt; 不预留带宽 <code>趋势</code><br>2.电路交换(circuit switching) &gt; 建立链接，预留1条通道（稳定，但通道会闲置浪费） <code>分频复用 &amp;&amp; 分时复用</code></p>
+<h2 id="3-协议栈"><a href="#3-协议栈" class="headerlink" title="3.协议栈"></a>3.协议栈</h2><h3 id="1-协议栈分层"><a href="#1-协议栈分层" class="headerlink" title="1.协议栈分层"></a>1.协议栈分层</h3><p>ISO. OSI(开放互联)标准 7层协议栈 英特网 5层协议栈     应用层 应用层   表示层    会话层    传输层 传输层   网络层 网络层   数据链路层 数据链路层   物理层 物理层</p>
+<h3 id="2-协议含义"><a href="#2-协议含义" class="headerlink" title="2.协议含义"></a>2.协议含义</h3><p>分组/packet = 本层首部字段 + 上一层有效载荷字段（最高到应用层报文）<br>1.应用层：A主机程序⬅ 报文/message ➡B主机程序; (HTTP、SMTP、FTP、DNS)<br>2.传输层：A主机程序端点⬅ 报文段/segment ➡B主机程序端点; (TCP、UDP)<br>3.网络层：A主机⬅ 数据报/datagram ➡B主机;(IP,路由选择协议)<br>4.链路层：A结点⬅ 帧/frame ➡B结点,作用于链接结点之间的链路上的协议；（以太网，WiFi,DOCSIS协议）<br>5.物理层：A结点 ⬅ bit ➡ B结点，作用于链路，与实际传输媒体相关，决定链路层帧的每一bit的移动;(关于双绞线，同轴电缆，光纤的协议)<br>表示层 &amp;&amp; 会话层:互联网协议中未包含表示层+会话层，这2层功能由开发者决定是否在其程序中构建对应功能。<br>6.表示层：使通讯的程序能够解释交换数据的含义；（数据压缩、加密、描述）<br>7.会话层：数据交换定界和同步功能，包括建立检查点和恢复方案的方法。<br>结点实现的协议：</p>
+<blockquote>
+<p>1.链路层交换机：物理层+链路层（不能识别IP地址，但可以识别链路层地址如以太网地址）<br>2.路由器：物理层+链路层+网络层<br>3.主机端：物理层+链路层+网络层+传输层+应用层（与英特网结构将它的复杂性放在网络边缘的观点一致）</p>
+</blockquote>
+<h1 id="2-应用层"><a href="#2-应用层" class="headerlink" title="2.应用层"></a>2.应用层</h1><h2 id="1-应用层协议原理"><a href="#1-应用层协议原理" class="headerlink" title="1.应用层协议原理"></a>1.应用层协议原理</h2><h3 id="1-网络应用程序体系结构-applkcation-architecture"><a href="#1-网络应用程序体系结构-applkcation-architecture" class="headerlink" title="1.网络应用程序体系结构(applkcation architecture)"></a>1.网络应用程序体系结构(applkcation architecture)</h3><blockquote>
+<p>1.用户-服务器体系结构(client-server architecture)<br>2.对等（P2P）体系结构 (不经过服务器：迅雷p2p下载)</p>
+</blockquote>
+<h3 id="2-套接字socket"><a href="#2-套接字socket" class="headerlink" title="2.套接字socket"></a>2.套接字socket</h3><p>定义：用于网络发送接收报文的软件接口。为同一台主机内应用层和传输层之间的接口，也称为应用程序和网络之间的应用程序编程接口；<br>开发者可以 <code>控制套接字在</code> 应用层端的一切 <code>，但是对于传输层的控制</code> 仅限于选择传输层协议&amp;&amp;设定几个传输层参数 `</p>
+<h3 id="3-传输服务"><a href="#3-传输服务" class="headerlink" title="3.传输服务"></a>3.传输服务</h3><p>数据传输的4个指标：可靠数据传输、吞吐量、定时和安全性</p>
+<blockquote>
+<p>1.可靠数据传输：数据完整性；不可靠 》 容忍丢失应用（音视频应用，扰动但不致命）<br>2.吞吐量：宽带敏感应用&lt;数据编码下限要求;弹性应用&lt;动态利用可用吞吐量<br>3.定时：时效性要求的应用<br>4.安全性：可以进行传输层加解密、数据完整性校验和端点鉴别</p>
+</blockquote>
+<h3 id="4-SSL"><a href="#4-SSL" class="headerlink" title="4.SSL"></a>4.SSL</h3><p>定义：是对TCP的加强，这种强化 <code>是在应用层上实现的</code>,提供关键的进程到进程的安全性服务：加密、数据完整性和端点鉴别。报文&gt;SSL➡发送方socket ➡️ 接收方socket➡SSl&gt;报文</p>
+<h3 id="5-应用层协议"><a href="#5-应用层协议" class="headerlink" title="5.应用层协议"></a>5.应用层协议</h3><p>定义了：</p>
+<blockquote>
+<p>1.交换的报文类型，例如请求报文和响应报文<br>2.各种报文类型的语法，如报文中的各个字段及这些字段是如何描述的<br>3.字段的语义，即这些字段中包含的信息的含义<br>4.一个进程何时以及如何发送报文，对报文进行响应的规则</p>
+</blockquote>
+<h2 id="2-HTTP协议"><a href="#2-HTTP协议" class="headerlink" title="2.HTTP协议"></a>2.HTTP协议</h2><p>定义：超文本传输协议;HTTP服务器不保存关于客户的任何信息，因此被称为无状态协议<br>端口号：80</p>
+<h3 id="1-HTTP请求报文"><a href="#1-HTTP请求报文" class="headerlink" title="1.HTTP请求报文:"></a>1.HTTP请求报文:</h3><p>请求行1: 3字段 方法 &amp; URL字段 &amp; HTTP版本<br>首部行n(主要为缓存/代理服务器使用) ：首部行1 Host<br>请求实体: GET无，POST有</p>
+<h3 id="2-HTTP响应报文："><a href="#2-HTTP响应报文：" class="headerlink" title="2.HTTP响应报文："></a>2.HTTP响应报文：</h3><p>状态行1：HTTP版本 &amp; 状态吗 &amp; 状态<br>部行n：<br>响应实体</p>
+<h3 id="3-HTTP的长链接和短链接"><a href="#3-HTTP的长链接和短链接" class="headerlink" title="3.HTTP的长链接和短链接"></a>3.HTTP的长链接和短链接</h3><p>1.ability:HTTP既能长链接也能短链接，默认长链接（首部字段connection:)<br>2.常用：HTTP一般开启长链接，但会配置时间间隔，超时后自动断开链接。（实际场景一个Web页面有N多个对象需要多次通讯，短链接多次链接太浪费时间,并且一般会有并行链接，可配置并行链接数，默认5～10）</p>
+<h3 id="4-HTTP状态吗-（1xx-5xx）"><a href="#4-HTTP状态吗-（1xx-5xx）" class="headerlink" title="4.HTTP状态吗 （1xx ~ 5xx）"></a>4.HTTP状态吗 （1xx ~ 5xx）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1xx:临时响应</span><br><span class="line">2xx:成功</span><br><span class="line">3xx:重定向</span><br><span class="line">4xx:请求错误</span><br><span class="line">5xx:服务器错误</span><br></pre></td></tr></table></figure>
+<p>状态码 描述     ::1xx:: ::(临时响应)表示临时响应并需要请求者继续执行操作的状态代码::   100 (继续) 请求者应当继续提出请求。 服务器返回此代码表示已收到请求的第一部分，正在等待其余部分   101 (切换协议) 请求者已要求服务器切换协议，服务器已确认并准备切换       ::2xx:: ::(成功)表示成功处理了请求的状态代码::   200 (成功) 服务器已成功处理了请求。 通常，这表示服务器提供了请求的网页。   201 (已创建) 请求成功并且服务器创建了新的资源。   202 (已接受) 服务器已接受请求，但尚未处理。   203 (非授权信息) 服务器已成功处理了请求，但返回的信息可能来自另一来源。   204 (无内容) 服务器成功处理了请求，但没有返回任何内容。   205 (重置内容) 服务器成功处理了请求，但没有返回任何内容。   206 (部分内容) 服务器成功处理了部分 GET 请求。       ::3xx:: ::(重定向) 表示要完成请求，需要进一步操作。 通常，这些状态代码用来重定向::   300 (多种选择) 针对请求，服务器可执行多种操作。 服务器可根据请求者 (user agent) 选择一项操作，或提供操作列表供请求者选择。   301 (永久移动) 请求的网页已永久移动到新位置。 服务器返回此响应(对 GET 或 HEAD 请求的响应)时，会自动将请求者转到新位置。   302 (临时移动) 服务器目前从不同位置的网页响应请求，但请求者应继续使用原有位置来进行以后的请求。   303 (查看其他位置) 请求者应当对不同的位置使用单独的 GET 请求来检索响应时，服务器返回此代码。   304 (未修改) 自从上次请求后，请求的网页未修改过。 服务器返回此响应时，不会返回网页内容。   305 (使用代理) 请求者只能使用代理访问请求的网页。 如果服务器返回此响应，还表示请求者应使用代理。   307 (临时重定向) 服务器目前从不同位置的网页响应请求，但请求者应继续使用原有位置来进行以后的请求。       ::4xx:: ::(请求错误) 这些状态代码表示请求可能出错，妨碍了服务器的处理::   400 (错误请求) 服务器不理解请求的语法   401 (未授权) 请求要求身份验证。 对于需要登录的网页，服务器可能返回此响应   403 (禁止) 服务器拒绝请求   404 (未找到) 服务器找不到请求的网页   405 (方法禁用) 禁用请求中指定的方法   406 (不接受) 无法使用请求的内容特性响应请求的网页   407 (需要代理授权) 此状态代码与 401(未授权)类似，但指定请求者应当授权使用代理   408 (请求超时) 服务器等候请求时发生超时。   409 (冲突) 服务器在完成请求时发生冲突。 服务器必须在响应中包含有关冲突的信息。   410 (已删除) 如果请求的资源已永久删除，服务器就会返回此响应。   411 (需要有效长度) 服务器不接受不含有效内容长度标头字段的请求。   412 (未满足前提条件) 服务器未满足请求者在请求中设置的其中一个前提条件。   413 (请求实体过大) 服务器无法处理请求，因为请求实体过大，超出服务器的处理能力。   414 (请求的 URI 过长) 请求的 URI(通常为网址)过长，服务器无法处理   415 (不支持的媒体类型) 请求的格式不受请求页面的支持   416 (请求范围不符合要求) 如果页面无法提供请求的范围，则服务器会返回此状态代码   417 (未满足期望值) 服务器未满足”期望”请求标头字段的要求。       ::5xx:: ::(服务器错误)这些状态代码表示服务器在尝试处理请求时发生内部错误。 这些错误可能是服务器本身的错误，而不是请求出错::   500 (服务器内部错误) 服务器遇到错误，无法完成请求。   501 (尚未实施) 服务器不具备完成请求的功能。 例如，服务器无法识别请求方法时可能会返回此代码。   502 (错误网关) 服务器作为网关或代理，从上游服务器收到无效响应   503 (服务不可用) 服务器目前无法使用(由于超载或停机维护)。 通常，这只是暂时状态。   504 (网关超时) 服务器作为网关或代理，但是没有及时从上游服务器收到请求   505 (HTTP 版本不受支持) 服务器不支持请求中所用的 HTTP 协议版本    </p>
+<h3 id="5-cookie"><a href="#5-cookie" class="headerlink" title="5.cookie"></a>5.cookie</h3><ol>
+<li><p>用途：解决HTTP服务器无状态但需要内容/权限与用户身份关联的场景</p>
+</li>
+<li><p>4个组件：用户浏览器 ➡️ Web服务器（ 1⃣生成cookie2⃣保存cookie到后端数据库3⃣传递到响应报文首部行set-cookie)➡️用户浏览器（1⃣保存cookie2⃣每次访问对应网站HTTP请求报文都加上首部行cookie：xxx）</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.HTTP响应报文中一个cookie首部行(set-cookie:)</span><br><span class="line">2.HTTP请求报文中一个cookie首部行</span><br><span class="line">3.用户端系统中保留一个cookie文件，并由用户浏览器管理</span><br><span class="line">4.Web站点维护一个数据库</span><br></pre></td></tr></table></figure>
+<h3 id="6-Web代理"><a href="#6-Web代理" class="headerlink" title="6.Web代理"></a>6.Web代理</h3><p>定义：Web缓存服务器，CDN(content Distribution Network)内容分发网络<br>问题:缓存服务器缓存的对象副本可能是陈旧的<br>解决方案:条件GET方法1⃣请求报文使用GET方法2⃣请求报文中添加首部行“If-Modified-Since”:缓存服务器对象的最后修改时间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">用户浏览器（条件GET）➡️缓存服务器（条件GET）➡️原始Web服务器</span><br><span class="line"></span><br><span class="line">1.无变动：原始Web服务器 &gt; 没有实体体，状态码304 Not Modified的报文 &gt; ➡️缓存服务器 &gt; 缓存服务器原来缓存的副本 ➡️ 用户浏览器</span><br><span class="line">2.有变动：原始Web服务器 &gt; 最新的响应报文 &gt; ➡️缓存服务器 &gt; 最新的响应报文 ➡️ 用户浏览器</span><br></pre></td></tr></table></figure>
+<h2 id="3-FTP协议"><a href="#3-FTP协议" class="headerlink" title="3.FTP协议"></a>3.FTP协议</h2><p>定义：文件传输协议<br>服务器默认端口：21（控制链接端口） &amp;&amp; 20（文件传输端口）<br>过程：客户端与FTP服务器21端口建立控制TCP链接，通过控制链接发送user标识和口令，发送改变远程目录的命令。FTP服务器从控制链接接收到文件传输的命令后，就通过20端口发起一个到客户端的TCP数据链接，FTP在该数据链接上准确传送一个文件，然后close该数据链接。在同一会话期间，如果还需要传送另外一个文件，FTP则打开另外一个数据连接。<br>对FTP传输而言，FTP必须在整个会话期间保留用户的状态，包括当前路径控等。制链接贯穿整个用户回话期间，但是会话中的每一次文件传输都需要建立一条新的链接（一次只存在一条数据链接只能传输一个文件，故而文件传输是one by one)。</p>
+<h2 id="4-SMTP"><a href="#4-SMTP" class="headerlink" title="4.SMTP"></a>4.SMTP</h2><p>1.Email组成部分：用户代理，邮件服务器 + SMTP；其中每个邮件服务器包含2部分：SMTP客户端 + SMTP服务端<br>2.特点：一般不使用中间服务器发送，当发送失败后会保存在发送发邮件服务器并定时直接对目的邮件服务器重新发送,几天后重试失败会<br>3.过程：A邮件服务器客户端通过25端口与B邮件服务器服务端建立TCP链接，发送报文，如果有其他报文，亦通过该已建立的链接发送，知道全部发送完毕后，指示TCP关闭链接。<br>4.SMTP与HTTP的差异：</p>
+<blockquote>
+<p>1.SMTP主要是push推协议<br>HTTP主要是pull拉协议<br>2.SMTP报文必须使用7byte ASCII码格式编码<br>HTTP数据编码不受限</p>
+</blockquote>
+<blockquote>
+<p>3.SMTP把所有对象放在一个报文中<br>HTTP把对象分别封装到对象自己的报文中</p>
+</blockquote>
+<p>5.Email的pull协议（SMTP是push协议）</p>
+<blockquote>
+<p>1.第三版邮局协议 POP3 &gt; 不保留状态信息，只能对邮件简单的拉取和删除，邮件目录等状态信息无法关联<br>2.因特网邮件访问协议 IMAP &gt; 保留状态信息，效果类似于fork邮件服务器<br>3.HTTP &gt; Web版邮箱的和邮件服务器之间的pull &amp;&amp; push</p>
+</blockquote>
+<h2 id="5-DNS-Domain-Name-System-应用层协议"><a href="#5-DNS-Domain-Name-System-应用层协议" class="headerlink" title="5.DNS(Domain Name System) 应用层协议"></a>5.DNS(Domain Name System) 应用层协议</h2><p>1.端口：53<br>2.使用的传输层协议：UDP<br>3.DNS的3中类型：</p>
+<blockquote>
+<p>1.根DNS服务器 &gt; 13个服务器群<br>2.顶级域名（TOP-Level Domain，TLD)DNS服务器 com、org、net、edu… &amp;&amp; 国际顶级域 uk、ca、us…<br>3.权威DNS服务器（ <a href="http://dns.qq.com" target="_blank" rel="noopener">dns.qq.com</a>、<a href="http://dns.google.com" target="_blank" rel="noopener">dns.google.com</a>…）（一般是1层，但可能是多层递归的， <a href="http://dns.foo.google.com" target="_blank" rel="noopener">dns.foo.google.com</a> 一般有公司或大学自己维护拥有）<br>4.DNS解析过程： 浏览器等app cache &gt; 主机cache &amp;&amp; DNS文件配置 &gt; 本地DNS服务器cache(一般由ISP提供，严格来说不属于DNS层次机构,而是一个缓存服务器+DNS代理客户端) &gt; TLD服务器cache，如果均没有缓存，则依次执行以下动作<br>1.DNS客户端➡根DNS服务器 return TLD IP address list<br>2.DNS客户端➡TLD (one of the TLD server in the TLD IP address list,default is the first one) return 权威DNS服务器 IP address<br>3.DNS客户端➡权威DNS服务器 return target IP address</p>
+</blockquote>
+<p>注意：DNS各级服务器均有cache机制，自动定时更新cache</p>
+<h2 id="6-P2P"><a href="#6-P2P" class="headerlink" title="6.P2P"></a>6.P2P</h2><ol>
+<li>BitTorrent</li>
+<li>机制：</li>
+<li><p>追踪器tracker，主机向tracker注册自己，并周期性通知tracker自身依旧在洪流中，并从tracker获取所有主机列表</p>
+</li>
+<li><p>最稀缺优先技术，每块256k</p>
+</li>
+<li><p>30s疏通，重新排列链接的4个伙伴</p>
+</li>
+<li><p>激励机制：tit-for-tat</p>
+</li>
+</ol>
+<h2 id="7-UDP-amp-amp-TCP"><a href="#7-UDP-amp-amp-TCP" class="headerlink" title="7.UDP &amp;&amp; TCP"></a>7.UDP &amp;&amp; TCP</h2><p>1.TCP 3次握手：发起方通过欢迎端口发起握手，被动方会生成一个专用的socket与发起方握手并开展后续通讯</p>
+<h1 id="3-传输层"><a href="#3-传输层" class="headerlink" title="3.传输层"></a>3.传输层</h1><h2 id="1-定义与作用域"><a href="#1-定义与作用域" class="headerlink" title="1.定义与作用域"></a>1.定义与作用域</h2><p>1.定义：传输层协议为运行在不通主机上的应用进程之间提供了逻辑通讯<br>2.作用域：作用于端系统，而对网络中的传输无影响（Ann &amp;&amp; Bill）</p>
+<h2 id="2-多路复用与多路分解"><a href="#2-多路复用与多路分解" class="headerlink" title="2.多路复用与多路分解"></a>2.多路复用与多路分解</h2><p>作用：将主机间的交付扩展到进程到进程的交付<br>1.多路复用：源主机从不同的套接字中收集数据块，并为每个数据块封装上首部信息从而生成报文段，然后将报文段传递到网络层<br>2.多路分解：目标主机将运输层报文段中的数据交付到正确的套接字的工作。<br>注意：</p>
+<blockquote>
+<p>1.UDP中的目标主机，目标IP &amp;&amp; 目标端口号相同，那么这些报文段都会通过相同的目的socket定向到目的进程<br>2.TCP中的目标主机，源IP 或者 源port number不通，只有4个参数一致的(表示为同一条链接)才会被定向（解析）到相同的目的socket:1⃣源端口号2⃣源IP地址3⃣目的端口号4⃣目的IP地址<br>3.端口号范围：端口号是16bit的数，在0～65535之间，其中0～1023为保留的周知端口号（well-known port number)</p>
+</blockquote>
+<h2 id="3-UDP"><a href="#3-UDP" class="headerlink" title="3.UDP"></a>3.UDP</h2><h3 id="1-定义"><a href="#1-定义" class="headerlink" title="1.定义"></a>1.定义</h3><p>User Datagram Protocol 用户数据报协议</p>
+<h3 id="2-功能内容"><a href="#2-功能内容" class="headerlink" title="2.功能内容"></a>2.功能内容</h3><ol>
+<li><p>UDP是面向报文的，发送方UDP对应用程序交付下来的报文，在添加首部后就向下交付IP层，对报文既不合并也不拆分，而是一次发送一个完整报文(如果需要分片也是由IP协议处理)</p>
+</li>
+<li><p>除了复用/分解功能以及 <code>少量差错检测</code> 外，几乎没有对IP协议增加别的东西<br>功能有限的差错检测功能由校验报文段首部字段 <code>检验和（checksum field）</code> 来实现，检验和字段来自对报文段所有16bit字的和进行反码运算（实际计算还包括IP首部的一些字段）。然而UDP只能提供差错检测，但对差错无恢复能力，只能丢弃受损报文段或者将受损报文段提供给程序并发出警告。</p>
+<h3 id="3-UDP与TCP的优势"><a href="#3-UDP与TCP的优势" class="headerlink" title="3.UDP与TCP的优势"></a>3.UDP与TCP的优势</h3></li>
+</ol>
+<blockquote>
+<p>1.对于时效性更好:TCP有拥塞控制机制，对于有最低交付速率要求无法实现;而且TCP只管可靠交付而无视实效性，故对于对实效性有要求，但可能容忍一些数据丢失的应用场景更适合,容忍程度由程序自行实现<br>2.无需建立链接：建立链接耗时<br>3.无链接状态：不需维护链接状态，一般能只会更多活跃用户<br>4.分组首部开销小：TCP报文段首部20字节；UDP仅8字节<br>UDP的重要应用：DNS,RIP路由选择表更新，SNMP</p>
+</blockquote>
+<h2 id="4-可靠数据传输原理"><a href="#4-可靠数据传输原理" class="headerlink" title="4.可靠数据传输原理"></a>4.可靠数据传输原理</h2><h3 id="1-可靠数据传输协议-reliable-data-gransfer-protool-实现"><a href="#1-可靠数据传输协议-reliable-data-gransfer-protool-实现" class="headerlink" title="1.可靠数据传输协议 reliable data gransfer protool 实现"></a>1.可靠数据传输协议 reliable data gransfer protool 实现</h3><h4 id="v1-0-经完全可靠信道的可靠数据传输"><a href="#v1-0-经完全可靠信道的可靠数据传输" class="headerlink" title="v1.0 经完全可靠信道的可靠数据传输"></a>v1.0 经完全可靠信道的可靠数据传输</h4><h4 id="v2-0-经具有bit差错信道的可靠数据传输-gt-停止等待协议：stop-and-wait"><a href="#v2-0-经具有bit差错信道的可靠数据传输-gt-停止等待协议：stop-and-wait" class="headerlink" title="v2.0 经具有bit差错信道的可靠数据传输 &gt; 停止等待协议：stop-and-wait"></a>v2.0 经具有bit差错信道的可靠数据传输 &gt; 停止等待协议：stop-and-wait</h4><p>1.差错检测</p>
+<blockquote>
+<p>肯定确认：ACK (acknowledgment)<br>否定确认：NAK (negative acknowledgment)<br>2.接收方反馈<br>一次只能传输一个packet，然后等待，直到等待接收方反馈ACK/NAK再传输下一个packet<br>问题：ACK/NAK的packet无法保证可靠传达（丢失、差错）：引入分组序号</p>
+</blockquote>
+<p>3.重传<br>定时器</p>
+<h4 id="v3-0可能出错或丢包的信道上的可靠数据传输-gt-比特交替协议alternating-bit-protocol"><a href="#v3-0可能出错或丢包的信道上的可靠数据传输-gt-比特交替协议alternating-bit-protocol" class="headerlink" title="v3.0可能出错或丢包的信道上的可靠数据传输 &gt; 比特交替协议alternating-bit protocol"></a>v3.0可能出错或丢包的信道上的可靠数据传输 &gt; 比特交替协议alternating-bit protocol</h4><p>必不可少：检验和、序号、定时器、肯定与否定确认分组</p>
+<h4 id="滑动窗口协议-sliding-window-protocol"><a href="#滑动窗口协议-sliding-window-protocol" class="headerlink" title="滑动窗口协议 sliding-window protocol"></a>滑动窗口协议 sliding-window protocol</h4><p>序号、累计（有序）确认、检验以及超时/重传（选择重传&lt;发送方缓存所有ACK序号 &amp; 接收方缓存所有分组）</p>
+<p>注意：发送方和接收方的窗口可能不同步，窗口大小 &lt;= 序号大小的一半</p>
+<h2 id="5-TCP"><a href="#5-TCP" class="headerlink" title="5.TCP"></a>5.TCP</h2><h3 id="1-定义-1"><a href="#1-定义-1" class="headerlink" title="1.定义"></a>1.定义</h3><p>Transmission Control Protocol 传输控制协议</p>
+<h3 id="2-功能"><a href="#2-功能" class="headerlink" title="2.功能"></a>2.功能</h3><ol>
+<li><p>TCP是面向字节流的，TCP把应用程序交付的报文通过拆分合并转化成适合的序号依次的数据块（大小不一）</p>
+</li>
+<li><p>TCP的可靠数据传输服务确保一个进程从其接收缓存中读出的数据流是无损坏的、无间隔、非冗余和按序的数据流<br>实现方式：流量控制、序号、确认反馈(TCP不使用否定确认)和定时器<br>注意：流量控制是平衡发送速率与接收方app读取接收方TCP缓存的速率,通过控制发送速率达成（UDP没有流量控制，所以可能造成message即使被接收到但依然丢失）<br>拥塞控制：TCP发送方因为IP网络的拥塞而被遏制,同样通过控制发送速率达成</p>
+</li>
+</ol>
+<h3 id="3-参数"><a href="#3-参数" class="headerlink" title="3.参数"></a>3.参数</h3><p>1.最大报文段长度MSS = 最大传输单元MTU (= 链路层frame =) - TCP/IP首部长度（通常40字节）</p>
+<p>2.定时器超时重传间隔： TimeoutInterval = EstimatedRTT + 4 * DevRTT（建议TimeoutInterval初始值 = 1s）</p>
+<blockquote>
+<p>1.估计往返时间：隔一段时间在某个时刻做一次SampleRTT,由以前的ExtimatedRtt与新值SampleRTT加权而成，EstimatedRtt = (1-a)EstimatedRtt + a <em> SampleRTT,其中a = 1/8<br>2.SampleRTT一般会偏离EstimatedRTT的程度：DevRTT = (1-β) </em> DevRTT + β <em> |SampleRTT - EstimatedRTT|,β推荐值0.25<br>3.TCP针对 重传 TimeoutInterval = 2 </em> TimeoutInterval,但一旦接收到应用层的数据并传输或者收到ACK,则TimeoutInterval恢复成公式计算结果<br>3.窗口大小<br>窗口大小一直是动态变化的，发送方通过让接收方实时维护报文段首部的 <code>接收窗口</code> 字段来提供流量控制。</p>
+</blockquote>
+<p>4.报文段</p>
+<p>[image:8408E26C-8548-4836-BFCC-0D5C86BDFC44-27548-0000679B2ADEC2E4/006tNc79gy1frm77212m1j30kv0efaat.jpg]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">(1):源端口与目标端口:分别写入源端口号和目标端口号. </span><br><span class="line">(2):32位序列号:也就是我们tcp三次握手中的seq,表示的是我们tcp数据段发送的第一个字节的序号,范围[0,2^32 - 1],例如,我们的seq = 201,携带的数据有100,那么最后一个字节的序号就为300,那么下一个报文段就应该从301开始. </span><br><span class="line">(3):32位确认序列号:也就是ack(假设为y),它的值是seq+1,表示的意义是y之前的数据我都收到了,下一个我期望收到的数据是y.也就是我回过去的seq = y. </span><br><span class="line">(4):首部长度:占4位.也叫数据偏移,因为tcp中的首部中有长度不确定的字段. </span><br><span class="line">(5):URG:紧急指针（urgent pointer）有效。当URG=1时,表明紧急指针字段有效.它告诉系统中有紧急数据,应当尽快传送,这时不会按照原来的排队序列来传送.而会将紧急数据插入到本报文段数据的最前面. </span><br><span class="line">(6):ACK:确认序号有效。当ACK=1时,我们的确认序列号ack才有效,当ACK=0时,确认序号ack无效,TCP规定:所有建立连接的ACK必须全部置为1. </span><br><span class="line">(7):PSH:推送操作,接收方应该尽快将这个报文段交给应用层</span><br><span class="line">(8):RST:重建连接。当RST=1时,表明TCP连接出现严重错误,此时必须释放连接,之后重新连接,又叫重置位. </span><br><span class="line">(9):SYN:发起一个连接。同步序列号标志位,tcp三次握手中,第一次会将SYN=1,ACK=0,此时表示这是一个连接请求报文段,对方会将SYN=1,ACK=1,表示同意连接,连接完成之后将SYN=0 </span><br><span class="line">(10):FIN:释放一个连接。在tcp四次挥手时第一次将FIN=1,表示此报文段的发送方数据已经发送完毕,这是一个释放链接的标志. </span><br><span class="line">(11):16位窗口的大小:win的值是作为接收方让发送方设置其发送窗口大小的依据. </span><br><span class="line">(13):紧急指针:只有当URG=1时的时候,紧急指针才有效,它指出紧急数据的字节数.</span><br></pre></td></tr></table></figure>
+<h3 id="4-快速重传"><a href="#4-快速重传" class="headerlink" title="4.快速重传"></a>4.快速重传</h3><p>冗余ACK:当TCP接收方接收到一个具有这样序号的报文段时，即其序号大于下一个所期望的、按序的报文段，它检测到了一个流中暂时出现了报文段丢失，因为TCP不使用否定确认，所以发送一个已经收到的最后一个按序字节序号进行重复确认（即冗余ACK）<br>快速重传:当TCP接收到3个冗余ACK时(根据经验演化的指标)，TCP不等待计时器超时就发送冗余ACK起的报文段</p>
+<h3 id="5-3次握手-establish-connection"><a href="#5-3次握手-establish-connection" class="headerlink" title="5. 3次握手 establish connection"></a>5. 3次握手 establish connection</h3><p>1.过程：客户端TCP向服务端TCP发送一个特殊的报文段 <code>SYN报文段</code> （无有效载荷，首部2个字段：SYN=1,序号 = 随机生成client_isn）➡ 服务端接收并提取SYN报文段，为该TCP链接分配缓存和变量，并向TCP客户端发送允许连接的报文段 <code>SYNACK报文段</code> (无有效载荷，首部3个字段：SYN=1,确认号=client_isn+1,序号=随机生成server_isn) ➡ 客户端TCP接收并提取SYNACK报文段,为该TCP链接分配缓存和变量，并发送一个 <code>允许服务端链接的</code> 报文段(首部2字段：确认号=server_isn+1,SYN=0且自此以后该TCP链接SYN一直为0，此3次握手 <code>第三阶段报文段可以携带有效载荷</code> )<br>针对SYN洪泛攻击（客户端不发送第三阶段的对服务端的ACK确认报文段，造成服务端分配的资源被浪费），主流操作系统引入SYN cookie（ = 源和目的IP address &amp; port number + 仅服务器知道的security code 散列得到的特殊序列号）,当收到客户端发来的 <code>SYN报文段</code> ，不立即分配资源（缓存&amp;变量），返回的 <code>SYNACK报文段</code> 序号=SYN cookie,但服务端并不保存此cookie,而是当收到第三阶段报文段时重新计算cookie,判断确认号==cookie+1则正式针对TCP链接分配资源<br>不接受握手：A主机向B主机端口发送 <code>SYN报文段</code> ，该端口不接受连结，则B向A反馈reset报文段（RST=1)。A收到reset报文段则表示 <code>SYN报文段</code> 未被防火墙拦截安全抵达，但B主机对应端口不接受连结。</p>
+<h3 id="6-4次挥手-disconnect"><a href="#6-4次挥手-disconnect" class="headerlink" title="6. 4次挥手 disconnect"></a>6. 4次挥手 disconnect</h3><p>TCP是双全功的，链接的双方A &amp; B，A向B发送 <code>FIN报文段</code> (FIN=1)，并进入FIN_WAIT_1状态，表示A已经向B的数据传送完成，不再发送数据 ➡ B接收FIN报文段，发送对于FIN报文段的确认报文段（ ACK=1） ➡ A收到确认报文段，进入FIN_WAIT_2状态，此时变成单功模式(B&gt;&gt;&gt;A)； A接收B发来的 <code>FIN报文段</code> (FIN=1),反馈一个对此的确认报文段（ACK=1），进入TIME_WAIT状态等待，典型的30s、1min、2min，此等待为预防网络拥塞的工程处理，等待完成后TCP链接正式断开，TCP双方释放资源（包括端口号）</p>
+<h2 id="6-拥塞控制算法"><a href="#6-拥塞控制算法" class="headerlink" title="6.拥塞控制算法"></a>6.拥塞控制算法</h2><p>窗口大小LastByteSent - LastByteAcked &lt;= MIN(cwnd, rwnd) （cwnd:拥塞窗口，rwnd:接收方接收窗口<br>TCP拥塞控制算法包括3个部分：1⃣慢启动2⃣拥塞避免3⃣快速恢复（非必要的补充优化），最通用的是Reno算法<br>注意：UDP在拥塞网络中与TCP竞争占优</p>
+<h3 id="1-慢启动"><a href="#1-慢启动" class="headerlink" title="1.慢启动"></a>1.慢启动</h3><p>启动时拥塞窗口（congestion window）cwnd = 1MSS，每当接收到ACK报文段，则cwnd = 2*cwdn,即cwnd = 2nMSS指数增长。</p>
+<p>切换：<br>1⃣当出现丢包，TCP将cwnd重置为1，并将慢启动阀值ssthresh设置为原swdn/2,重新一次慢启动；<br>2⃣当监测到3个冗余ACK，执行快速重传，进入快速恢复状态；<br>3⃣当cwnd达到ssthresh时，进入到拥塞避免模式。</p>
+<h3 id="2-拥塞避免"><a href="#2-拥塞避免" class="headerlink" title="2.拥塞避免"></a>2.拥塞避免</h3><p>当cwnd达到ssthresh慢启动阀值时，进入拥塞避免模式，此模式下每新收到一个RTT下全部ACK,cwnd + 1MSS<br>切换：<br>1⃣当出现丢包或者<br>2⃣当监测到3个冗余AC时，ssthresh = cwnd/2并进入快速恢复模式</p>
+<h3 id="3-快速恢复"><a href="#3-快速恢复" class="headerlink" title="3.快速恢复"></a>3.快速恢复</h3><p>在慢启动或快速恢复状态，监测到3个冗余ACK即进入快速恢复状态；</p>
+<p>切换:<br>1⃣对于引起TCP进入快速恢复状态的缺失报文段，对收到的每个冗余ACK,cwnd+=1MSS。当丢失报文段的ACK最终抵达是，TCP降低cwnd并进入拥塞避免状态<br>2⃣当出现丢包cwnd的值被置为1MSS,，ssthresh = cwnd/2进入慢启动状态</p>
+<h2 id="7-其他运输层协议"><a href="#7-其他运输层协议" class="headerlink" title="7.其他运输层协议"></a>7.其他运输层协议</h2><p>1.数据报拥塞协议：Datagram Congestion Control Protocol,DCCP ≈ UDP + 拥塞控制<br>2.流控制传输协议:Stream Control Transmission Procotol,SCTP<br>3.TCP友好速率控制协议：TCP-Friendly Rate Control，TFRC 仅仅是一种拥塞控制协议而不是完整齐全的运输层协议</p>
+<h1 id="4-网络层"><a href="#4-网络层" class="headerlink" title="4.网络层"></a>4.网络层</h1><h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1.概述"></a>1.概述</h2><h3 id="1-功能"><a href="#1-功能" class="headerlink" title="1.功能"></a>1.功能</h3><p>转发、路由选择,连结建立</p>
+<p>因特网的网络层油3个主要组件：1⃣IP协议2⃣路由选择部分(路由选择协议)3⃣网络层差错&amp;&amp;信息报告（因特网控制报文协议ICMP）</p>
+<h3 id="2-协议"><a href="#2-协议" class="headerlink" title="2.协议"></a>2.协议</h3><ol>
+<li><p>IP协议 尽力而为服务（best-effort service)</p>
+</li>
+<li><p>ATM（Asynchronous Transfer Mode）协议</p>
+</li>
+</ol>
+<blockquote>
+<p>恒定比特率（Constant Bit Rate，CBR)ATM网络服务<br>可用比特率（Available Bit Rate,ABR)ATM网络服务<br>3.帧中继</p>
+</blockquote>
+<h2 id="2-虚电路和数据报网络"><a href="#2-虚电路和数据报网络" class="headerlink" title="2.虚电路和数据报网络"></a>2.虚电路和数据报网络</h2><p>主流计算机网络体系结构中（IP,ATM,帧中继）网络层只提供虚电路服务或者数据报服务，而不能不同提供2种服务</p>
+<p>运输层的连接仅设计两个端系统，网络中的路由器对这些完全不知情。<br><br>虚电路是由端系统之间的路由器参与建立的，每台路由器都知道经过它的所有虚电路</p>
+<h3 id="1-虚电路网络"><a href="#1-虚电路网络" class="headerlink" title="1.虚电路网络"></a>1.虚电路网络</h3><p>虚电路网络：仅在网络层提供连结服务的计算机网络</p>
+<h3 id="2-数据报网络"><a href="#2-数据报网络" class="headerlink" title="2.数据报网络"></a>2.数据报网络</h3><h2 id="3-路由器工作"><a href="#3-路由器工作" class="headerlink" title="3.路由器工作"></a>3.路由器工作</h2><h3 id="1-路由选择算法"><a href="#1-路由选择算法" class="headerlink" title="1.路由选择算法"></a>1.路由选择算法</h3><ol>
+<li>分类方式1:全局式/分散式<blockquote>
+<p>1.全局式路由选择算法<br><br>代表：链路状态（Link State,LS）算法<br><br>例如 Dijkstra算法：迭代算法，每个结点知晓整个网络拓扑(通常由链路状态广播算法完成)并计算自身到结点中所有目标的路径，通过迭代计算出源结点到目标结点的路径<br></p>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p>2.分散式路由选择算法<br>代表:距离向量(Distance-Vercor， DV)算法<br><br>特点：异步的、迭代的、自我终止的、分布式的算法<br><br>分布式：结点发现与它直接相连的链路（费用）发生变化或从某个邻居接收到一个距离向量的更新时，它就更新其距离向量估计<br></p>
+</blockquote>
+<ol start="2">
+<li><p>分类方式2:静态/动态</p>
+</li>
+<li><p>分类方式3:负载敏感/负载迟钝</p>
+</li>
+</ol>
+<p>4.层次路由选择<br>Autonomous System:处于相同的管理与技术控制下的路由器的集合,在AS之间都运行着康铜的路由选择协议<br><br>路由器组织由自治系统统一管理，AS对外由网关路由器通讯，AS内部通过自治系统内部路由选择协议（intra-autonomoussystem routing protocol)交换路由信息<br></p>
+<p>AS系统内部网关协议，历史上有2个广泛应用的协议分别为RIP 和OSPF<br></p>
+<h3 id="2-因特网中的路由选择"><a href="#2-因特网中的路由选择" class="headerlink" title="2.因特网中的路由选择"></a>2.因特网中的路由选择</h3><h4 id="1-AS内部路由选择"><a href="#1-AS内部路由选择" class="headerlink" title="1.AS内部路由选择"></a>1.AS内部路由选择</h4><h5 id="1-路由选择信息协议（Routing-Information-Protocol，RIP"><a href="#1-路由选择信息协议（Routing-Information-Protocol，RIP" class="headerlink" title="1.路由选择信息协议（Routing Information Protocol，RIP)"></a>1.路由选择信息协议（Routing Information Protocol，RIP)</h5><p>通过<code>UDP</code> 520端口传递RIP响应报文和RIP通告完成。一般RIP路由器大约30s相互交换通告，如果一台路由器超过180s没有从邻居听到报文，则认为邻居路由器为不可达，此中情况RIP路由器会修改本地路由选择表，并向相邻路由器通告该消息<br></p>
+<h5 id="2-开放最短路优先-Open-Shortest-Path-First-OSPF"><a href="#2-开放最短路优先-Open-Shortest-Path-First-OSPF" class="headerlink" title="2.开放最短路优先(Open Shortest Path First,OSPF)"></a>2.开放最短路优先(Open Shortest Path First,OSPF)</h5><p>OSPF报文由IP承载，协议值89（不属于UDP/TCP,这部分功能由OSPF自行实现），其向AS所有其他路由广播而不仅仅是相邻路由,有一下优点：</p>
+<blockquote>
+<p>1.安全:能够授权/鉴别OSPF报文；<br>2.多条相同费用的路径：可以由多条相同费用的路由分载流量<br><br>3.对单播和多播路由选择的综合支持<br>4.支持在单个路由选择域内的层次结构</p>
+</blockquote>
+<h4 id="2-AS间路由选择"><a href="#2-AS间路由选择" class="headerlink" title="2.AS间路由选择"></a>2.AS间路由选择</h4><p>边界网关协议(Broder Gateway Protocol,BGP)<br><br>作用：</p>
+<blockquote>
+<p>1.从相邻AS处获取子网可达性信息 &lt; 外部BGP会话（external BGP session&gt; <br><br>2.向本AS内部所有路由器传播这些可达性信息 &lt; 内部BGPhuihua (internal BGP session&gt;<br><br>3.基于可达性和AS策略，决定到达子网的“好”路由<br></p>
+</blockquote>
+<h2 id="4-IP协议"><a href="#4-IP协议" class="headerlink" title="4.IP协议"></a>4.IP协议</h2><h3 id="1-IP数据报格式"><a href="#1-IP数据报格式" class="headerlink" title="1.IP数据报格式"></a>1.IP数据报格式</h3><p>1.一般IP数据报首部 = 20字节（无选项时）<br></p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79gy1frr23qgof4j30ha0b80u8.jpg" alt=""><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">版本：IP协议的版本，目前的IP协议版本号为4，下一代IP协议版本号为6。</span><br><span class="line"></span><br><span class="line">首部长度：IP报头的长度。固定部分的长度（20字节）和可变部分的长度之和。共占4位。最大为1111，即10进制的15，代表IP报头的最大长度可以为15个32bits（4字节），也就是最长可为15*4=60字节，除去固定部分的长度20字节，可变部分的长度最大为40字节。</span><br><span class="line"></span><br><span class="line">服务类型：Type Of Service。</span><br><span class="line"></span><br><span class="line">总长度：IP报文的总长度。报头的长度和数据部分的长度之和。</span><br><span class="line"></span><br><span class="line">标识：唯一的标识主机发送的每一分数据报。通常每发送一个报文，它的值加一。当IP报文长度超过传输网络的MTU（最大传输单元）时必须分片，这个标识字段的值被复制到所有数据分片的标识字段中，使得这些分片在达到最终目的地时可以依照标识字段的内容重新组成原先的数据。</span><br><span class="line"></span><br><span class="line">标志：共3位。R、DF、MF三位。目前只有后两位有效，DF位：为1表示不分片，为0表示分片。MF：为1表示“更多的片”，为0表示这是最后一片。</span><br><span class="line"></span><br><span class="line">片位移：本分片在原先数据报文中相对首位的偏移位。（需要再乘以8）</span><br><span class="line"></span><br><span class="line">生存时间：IP报文所允许通过的路由器的最大数量。每经过一个路由器，TTL减1，当为0时，路由器将该数据报丢弃。TTL 字段是由发送端初始设置一个 8 bit字段.推荐的初始值由分配数字 RFC 指定，当前值为 64。发送 ICMP 回显应答时经常把 TTL 设为最大值 255。</span><br><span class="line"></span><br><span class="line">协议：指出IP报文携带的数据使用的是那种协议，以便目的主机的IP层能知道要将数据报上交到哪个进程（不同的协议有专门不同的进程处理）。和端口号类似，此处采用协议号，TCP的协议号为6，UDP的协议号为17。ICMP的协议号为1，IGMP的协议号为2.</span><br><span class="line"></span><br><span class="line">首部校验和：计算IP头部的校验和，检查IP报头的完整性。</span><br><span class="line"></span><br><span class="line">源IP地址：标识IP数据报的源端设备。</span><br><span class="line"></span><br><span class="line">目的IP地址：标识IP数据报的目的地址。</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-IP数据报分片"><a href="#2-IP数据报分片" class="headerlink" title="2.IP数据报分片"></a>2.IP数据报分片<br></h3><p>IP数据报需要提交给链路层传输，而某些链路层帧能承载的最大数据量（最大传送单元Maximum Transmission Unit,MTU）小于IP数据报大小，此种情况需要对IP数据报进行分片封装成小于MTU的小片）<br><br>例：以太网帧MTU = 1500字节，而IP数据报可以达到2<sup>16</sup>（65535）字节<br></p>
+<p>注意：IPv6已经取消分片，分片动作被设计成在端系统完成而不是路由器中</p>
+<h3 id="3-IPv4编址"><a href="#3-IPv4编址" class="headerlink" title="3.IPv4编址"></a>3.IPv4编址</h3><p>大小：2<sup>32</sup> 4字节大小,常用10进制点分发<br><br>策略：无类别域间路由选择（Classless Interdomain Routing,CIDR)<br><br>路由选择原则：最长匹配原则</p>
+<h3 id="4-IP分配"><a href="#4-IP分配" class="headerlink" title="4.IP分配"></a>4.IP分配</h3><h4 id="1-组织获取一块地址"><a href="#1-组织获取一块地址" class="headerlink" title="1.组织获取一块地址"></a>1.组织获取一块地址</h4><p>公司/组织 &lt; ISP &lt; 区域性因特网注册机构 &lt; 因特网名字和编号分配机构 (Internet Corporation for Assigned Names and Numbers,ICANN组织)</p>
+<h4 id="2-组织内分配IP"><a href="#2-组织内分配IP" class="headerlink" title="2.组织内分配IP"></a>2.组织内分配IP</h4><p>1.DHCP（Dynamic Host Configuration Protocol，动态主机配置协议）是一个局域网的网络协议，使用UDP协议工作， 主要有两个用途：给内部网络或网络服务供应商自动分配IP地址，给用户或者内部网络管理员作为对所有计算机作中央管理的手段<br></p>
+<p>2.IP由子网中的DHCP服务器提供，如果没有该服务器，则需要一个DHCP中继代理（一般是路由器），中继代理连接DHCP服务器<br></p>
+<blockquote>
+<p>1.DHCP服务器发现：新加入的主机通过67端口发送DHCP发现报文，使用“本主机”源地址0..0.0.0发送255.255.255.255广播<br><br>2.DHCP服务器提供：服务器收到DHCP发现报文，通过255.255.255.255广播提供DHCP提供报文(包含事务I D,推荐IP地址，掩码，IP地址租用期)<br><br>3.DHCP请求：新加入主机选择一个DHCP服务器通过DHCP请求报文进行响应,回显配置参数<br><br>4.DHCP ACK：服务器通过DHCP ACK报文对DHCP请求报文进行确认<br></p>
+</blockquote>
+<p>3.网络地址转换（Network Address Translation,NAT路由器）<br><br>结点路由器介入修改IP地址和端口号。与互联网原则违背，但现实中依旧存在<br></p>
+<h2 id="5-ICMP"><a href="#5-ICMP" class="headerlink" title="5.ICMP"></a>5.ICMP</h2><p>追踪链路路由通道：源主机向目的主机的一个不可达UDP端口号依次发送探测packet UDP报文段，并为每个发送启动timer，有效载荷是一个ICMP报文，数据报的TTL(Time To Live,可达结点数)从1开始依次+1。当第n个数据报到达第n台路由器时，路由器观察到该数据报正好过期。根据IP协议规则，路由器丢弃该数据报并向源主机反馈一个ICMP告警报文（类型11编码0），该报警报文包含路由器的name &amp;&amp; IP address，当第m个报文到达目的主机时，因为端口不可达，目的主机会向源主机反馈一个端口不可达的ICMP报文，故而源主机依次知晓路由器 &amp;&amp; 目的主机的 标识 &amp;&amp; IP address &amp;&amp; time。<br></p>
+<h2 id="6-IPv6"><a href="#6-IPv6" class="headerlink" title="6.IPv6"></a>6.IPv6</h2><p>注意：IPv6和IPv4数据报首部字段不是对应的，不能直接修改IPv6首部的version = 4，且IPv6报文转换IPv4会造成部分报文首部字段丢失<br></p>
+<h3 id="1-数据报格式"><a href="#1-数据报格式" class="headerlink" title="1.数据报格式"></a>1.数据报格式</h3><p><img src="https://ws2.sinaimg.cn/large/006tKfTcgy1frt7f3oenoj30eu0f4wfl.jpg" alt=""><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">1、版本（Version）：4 bit，值为 6（二进制值为 0110）表示 IPv6 报文。</span><br><span class="line"></span><br><span class="line">2、流量类别（Traffic Class）：8 bit，这相当于 IPv4 协议中的 ToS 字段。但是，考虑到 ToS 字段这些年的发展，现在都用来做区分服务等级（Differentiated Class of Service，DiffServ）了。所以，即使这个字段和旧的 ToS 字段有些相似，它们的名字要比所传送的值更能确切地反映目前的用处。</span><br><span class="line"></span><br><span class="line">3、流标签（Flow Label）：20 bit，IPv6 中新增。流标签可用来标记特定流的报文，以便在网络层区分不同的报文。转发路径上的路由器可以根据流标签来区分流并进行处理。由于流标签在 IPv6 报文头中携带，转发路由器可以不必根据报文内容来识别不同的流，目的结点也同样可以根据流标签识别流，同时由于流标签在报文头中，因此使用 IPSec 后仍然可以根据流标签进行 QoS 处理。</span><br><span class="line"></span><br><span class="line">4、有效载荷长度（Payload Length）：16 bit，以字节为单位的 IPv6 载荷长度，也就是 IPv6 报文基本头以后部分的长度（包括所有扩展头部分）。IPv4 的总长度字段是 16 位的，但 IPv6 的有效载荷长度字段却是 20 位，这就意味着该字段能够指定更长的有效载荷（1 048 575 字节，相对 IPv4 中只有 65 535 字节）。</span><br><span class="line"></span><br><span class="line">5、下一报头（Next Header）：8 bit，用来标识当前头（基本头或扩展头）后下一个头的类型。此域内定义的类型与 IPv4 中的协议域值相同。IPv6 定义的扩展头由基本头或扩展头中的扩展头域链接成一条链。这一机制下处理扩展头更高效，转发路由器只处理必须处理的选项头，提高了转发效率。</span><br><span class="line"></span><br><span class="line">6、跳数限制（Hop Limit）：8 bit，和 IPv4 中的 TTL 字段类似。每个转发此报文的结点把此域减 1，如果此域值减到 0 则丢弃。注意：IPv4 中的 TTL 设计之初是以秒（s）为单位的，但实际使用时跟 IPv6 中的 Hop Limit 一样，是以跳数为单位。</span><br><span class="line"></span><br><span class="line">7、源地址（Source Address）：128 bit，报文的源地址。</span><br><span class="line"></span><br><span class="line">8、目的地址（Destination Address）：128 bit，报文的目的地址。</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-IPv6兼容IPv4的方法"><a href="#2-IPv6兼容IPv4的方法" class="headerlink" title="2.IPv6兼容IPv4的方法"></a>2.IPv6兼容IPv4的方法</h3><h4 id="1-双栈（dual-stack）方法"><a href="#1-双栈（dual-stack）方法" class="headerlink" title="1.双栈（dual-stack）方法"></a>1.双栈（dual-stack）方法</h4><p>双栈结点同时具有完整的IPv6和IPv4实现，当与另外一个IPv6 ability结点通讯时使用IPv6,否则使用IPv4（注意IPv6数据报转换成IPv4数据报会有部分报文首部字段丢失）,另外双栈结点虽然都有IPv4能力，但相互之间只会用IPv6通讯。<br></p>
+<p>判断一个结点是否IPv6 ability，可通过DNS等返回的其IP，如果是IPv6 address则说明是IPv6 ability,否则仅支持IPv4<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C为IPv4 only结点，其余为双栈结点</span><br><span class="line">A &lt;IPv6&gt; B &lt;IPv4&gt;  C &lt;IPv4&gt; D &lt;IPv6&gt; E ️</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-隧道-tunneling"><a href="#2-隧道-tunneling" class="headerlink" title="2.隧道(tunneling)"></a>2.隧道(tunneling)</h4><p>特殊的双栈方法，即当双栈结点之间有IPv4 only结点时，以两个双栈结点为两端建立隧道，起始结点把IPv6完整数据报包装成IPv4的有效载荷，并加上IPv4数据报首部，通过IPv4 only结点发送到隧道另一段的双栈结点，并由该双栈结点取出有效载荷部分的IPv6完整数据报并向后传输（此方法不会造成数据报首部字段丢失）</p>
+<h1 id="5-链路层"><a href="#5-链路层" class="headerlink" title="5.链路层"></a>5.链路层</h1><p>注意：链路层是硬件与软件的结合体（如当链路层帧到达时，链路层软件响应控制器中断），即此处是协议栈中软件与硬件交接的地方。</p>
+<h2 id="1-链路层提供的服务"><a href="#1-链路层提供的服务" class="headerlink" title="1.链路层提供的服务"></a>1.链路层提供的服务</h2><p>1.成帧<br><br>2.链路接入:媒体访问控制&lt;Medium Access Control, MAC)协议协调多个结点的帧传输<br><br>3.可靠交付:一般用于无线这类易于产生差错的链路，通常是通过确认和重传取得<br><br>4.差错检测和纠正:差错一般由信号衰减和电磁噪声导致，差错检测根据帧中差错检测和纠正比特   由硬件完成，并能够自行修复<br></p>
+<h2 id="2-差错检测和纠正技术"><a href="#2-差错检测和纠正技术" class="headerlink" title="2.差错检测和纠正技术"></a>2.差错检测和纠正技术</h2><p>注意：链路层的差错检测检测方式非100%</p>
+<p>1.奇偶校验（二维奇偶校验）<br><br>2.检验和<br><br>3.循环冗余检测（Cyclic redundancy check，CRC)<br><br>是一种特殊的检验和，在现今的计算机网络中广泛应用。因为链路层的差错检测由硬件完成，所以相对于传输层(仅用16比特)可以执行更加复杂的CRC操作</p>
+<h2 id="3-多路访问协议-channel-partition-protocol"><a href="#3-多路访问协议-channel-partition-protocol" class="headerlink" title="3.多路访问协议(channel partition protocol)"></a>3.多路访问协议(channel partition protocol)</h2><h3 id="1-信道划分协议"><a href="#1-信道划分协议" class="headerlink" title="1.信道划分协议"></a>1.信道划分协议</h3><p>1.时分多路复用(TDM)<br><br>2.频分多路复用(FDM)<br><br>3.*码分多址(CDMA)<br></p>
+<h4 id="2-随机接入协议-random-access-protocol"><a href="#2-随机接入协议-random-access-protocol" class="headerlink" title="2.随机接入协议(random access protocol)"></a>2.随机接入协议(random access protocol)</h4><p>1.ALOHA协议<br><br>2.载波侦听多路访问（Carrier Sense Multiple Access, CSMA）协议;【带有冲突检测的载波侦听多路访问（Carrier Sense Multiple Access with Collision Detection, CSMA/CD）】</p>
+<h4 id="3-轮流协议（taking-turns-protocol）"><a href="#3-轮流协议（taking-turns-protocol）" class="headerlink" title="3.轮流协议（taking-turns protocol）"></a>3.轮流协议（taking-turns protocol）</h4><p>1.轮流协议（taking-turns protocol）<br>2.令牌传递协议(token-passing protocol)</p>
+<h4 id="4-链路层寻址"><a href="#4-链路层寻址" class="headerlink" title="4.链路层寻址"></a>4.链路层寻址</h4><p>3种类型地址：应用层的主机名，网络层的IP地址以及链路层的MAC地址。<br></p>
+<h5 id="1-MAC地址"><a href="#1-MAC地址" class="headerlink" title="1.MAC地址"></a>1.MAC地址</h5><p>MAC地址（局域网地址）是主机或者路由器的网络适配器具有的链路层地址，故而一个主机可能有多个MAC地址，MAC被设计为永久的（用软件改变是可能的）</p>
+<h5 id="2-地址解析协议（Address-Resolution-Protocol-ARP"><a href="#2-地址解析协议（Address-Resolution-Protocol-ARP" class="headerlink" title="2.地址解析协议（Address Resolution Protocol, ARP)"></a>2.地址解析协议（Address Resolution Protocol, ARP)</h5><p>作用：IP address和MAC地址之间转换<br><br>作用范围：只为同一子网中的主机和路由器接口解析IP地址<br><br>特殊：ARP是跨越链路层与网络层边界的协议<br></p>
+<h4 id="3-路由器和交换机比较"><a href="#3-路由器和交换机比较" class="headerlink" title="3.路由器和交换机比较"></a>3.路由器和交换机比较</h4><p>交换机优点：</p>
+<blockquote>
+<p>1.即插即用<br>2.只需处理到链路层帧，相对速度快</p>
+</blockquote>
+<p>路由器优点：</p>
+<blockquote>
+<p>1.提供了更健壮的流量隔离方式和对广播风暴的控制（主机数量多时需要）</p>
+</blockquote>
+<p>路由器缺点:</p>
+<blockquote>
+<p>1.路由器和连接到路由器的主机都需要配置IP<br><br>2.处理到网络层数据报，相对复杂</p>
+</blockquote>
+<h2 id="4-数据中心网络"><a href="#4-数据中心网络" class="headerlink" title="4.数据中心网络"></a>4.数据中心网络</h2><p>1.负载均衡器（load balancer)<br><br>基于目的IP &amp;&amp; port address协调向数据中心内部的主机分发请求，隐藏网络内部结构和防止用户与主机直接交互的安全性益处。</p>
+<p>2.模块化数据中心（Modular Data Center,MDC)<br><br>数据中心网路发展的趋势</p>
+<h1 id="6-无线网路和移动网络"><a href="#6-无线网路和移动网络" class="headerlink" title="6.无线网路和移动网络"></a>6.无线网路和移动网络</h1><h2 id="1-WiFi-802-11-无线LAN"><a href="#1-WiFi-802-11-无线LAN" class="headerlink" title="1.WiFi:802.11 无线LAN"></a>1.WiFi:802.11 无线LAN</h2><h3 id="1-建立连接"><a href="#1-建立连接" class="headerlink" title="1.建立连接"></a>1.建立连接<br></h3><p>被动扫描：信标帧<br><br>主动扫描：探测帧 &amp;&amp; 探测响应帧<br></p>
+<h3 id="2-MAC协议"><a href="#2-MAC协议" class="headerlink" title="2.MAC协议"></a>2.MAC协议<br></h3><ol>
+<li>CSMA/CA【<code>请求发送控制帧</code>（Request to Send,RTS) &amp;&amp; 短<code>允许发送控制帧</code>(Clear to Send,CTS)】<br></li>
+<li>链路层确认方案【CRC校验确认帧after 短帧间间隔（Short Inter-Frame Spacing， SIFS)】<br></li>
+</ol>
+<h3 id="3-相同子网中的移动性"><a href="#3-相同子网中的移动性" class="headerlink" title="3.相同子网中的移动性"></a>3.相同子网中的移动性</h3><p>由同一交换机S相连的所有站点（包括AP)都属于同一个IP子网。当主机H移动时，随着逐步远离原来连接的AP1,H检测到AP1的信号逐渐减弱，此时H开始扫描其它更强的信号。当H收到来自AP2的信标帧（通常同一IP子网中的AP设置相同的SSID）,H解除与AP1的连接并建立与AP2的连接，同时保持原IP不变和维持已建立的TCP会话。由于交换机S是自学习的，会自动构建新的转发表，之后主机H的通讯交换机S会变更成通过通往AP2的端口转发。</p>
+<h3 id="4-802-11中的高级特色"><a href="#4-802-11中的高级特色" class="headerlink" title="4.802.11中的高级特色"></a>4.802.11中的高级特色</h3><ol>
+<li>802.11速率适应方案，效果类似于TCP的拥塞控制，当丢包/超时发生时，自动降低传输速率<br></li>
+<li>功率管理：节点能够明显的在睡眠与唤醒状态交替。节点P通过802.11帧首部<code>功率管理</code>=1告知接入点AP节点P将进入睡眠状态，同时节点P设置一个定时器，使得正好在AP计划发送它的信标帧前唤醒自身（AP通常 1信标帧/100 ms，节点唤醒仅需250 um）。在睡眠期间需要向P发送的帧都被AP缓存</li>
+</ol>
+<h3 id="5-蓝牙和ZigBee"><a href="#5-蓝牙和ZigBee" class="headerlink" title="5.蓝牙和ZigBee"></a>5.蓝牙和ZigBee</h3><ol>
+<li>IEEE 802.15.1 Bluetooth</li>
+<li>IEEE 802.14.5 ZigBee<br>ZigBee与蓝牙的优缺点：<br><br>优点：低功率节能，设备便宜<br><br>缺点：信道速率低，最高205kbps<br></li>
+</ol>
+<h3 id="6-3G-amp-amp-4G"><a href="#6-3G-amp-amp-4G" class="headerlink" title="6.3G &amp;&amp; 4G"></a>6.3G &amp;&amp; 4G</h3><p>3G：在原核心GSM蜂窝语音网络上增加与其平行的附加蜂窝数据功能<br><br>4G：全”IP”网络，语音&amp;&amp;数据功能全部由IP数据报承载<br></p>
+<h3 id="7-移动通讯-路由选择"><a href="#7-移动通讯-路由选择" class="headerlink" title="7.移动通讯 路由选择"></a>7.移动通讯 路由选择</h3><ol>
+<li>间接路由选择：移动节点P连接到外部网路时，它向外部网络注册，外部代理F向归属代理B注册移动节点P的转交地址（Care-Of Address, COA),即外部代理F的地址，之后所有发往移动节点P的packet都发往归属代理B,归属代理B将通讯者的原始数据报封装在一个以目的地址为COA的数据报内（此封装方式类似于IPv6的隧道技术），通过外部代理转交原始数据报给移动节点P。由于P可以通过数据报知晓原始通讯者，故移动节点到原始通讯者的通讯是直连的无需归属代理和外部代理的转发<br></li>
+<li>直接路由选择：通讯者避开归属代理直接由COA转交数据报，现行解决此种方式的移动性的方式是首个外部代理A为<code>锚外部代理</code>，当移动节点切换到下一外部代理B网路下，B向上一锚外部代理A注册，其后数据报由A转发到B，同样当移动到外部代理C之后，C会向锚外部代理A注册，其后数据由A转发到B</li>
+</ol>
+<h1 id="7-多媒体网络"><a href="#7-多媒体网络" class="headerlink" title="7.多媒体网络"></a>7.多媒体网络</h1><h2 id="1-多媒体网络应用的类型"><a href="#1-多媒体网络应用的类型" class="headerlink" title="1.多媒体网络应用的类型"></a>1.多媒体网络应用的类型</h2><ol>
+<li>流式存储音频和视频</li>
+<li>会话式IP语音和视频</li>
+<li>流式实况音频和视频</li>
+</ol>
+<h2 id="2-流式储存视频（2-amp-amp-3常见）"><a href="#2-流式储存视频（2-amp-amp-3常见）" class="headerlink" title="2.流式储存视频（2 &amp;&amp; 3常见）"></a>2.流式储存视频（2 &amp;&amp; 3常见）</h2><ol>
+<li>UDP流(UDP streaming)</li>
+<li>HTTP流(HTTP streaming)</li>
+<li>适应性HTTP流(adaptive HTTP streaming)</li>
+</ol>
+<h2 id="3-内容分发网"><a href="#3-内容分发网" class="headerlink" title="3.内容分发网"></a>3.内容分发网</h2><p>名称：Content Distribution Newwork, CDN</p>
+<p>IP任播（IP anycast):不通服务器群使用相同的IP地址，当一个BGP路由器接收到相同IP的多个路由通告，它对待这些通告就像对相同物理地址（其实不同）提供了不同的路径，故而BGP路由器根据本地路由选择规则选择“最好”的路径即服务器群<br></p>
+<h2 id="4-丢包处理"><a href="#4-丢包处理" class="headerlink" title="4.丢包处理"></a>4.丢包处理</h2><ol>
+<li>向前纠错（Forward Error Correction, FEC)</li>
+<li>交织</li>
+<li>差错掩盖</li>
+</ol>
+<h2 id="5-实时会话式应用的协议"><a href="#5-实时会话式应用的协议" class="headerlink" title="5.实时会话式应用的协议"></a>5.实时会话式应用的协议</h2><ol>
+<li>RTP(Real Time Protocol)</li>
+<li>会话发起协议（Session Initiation Protocol, SIP)</li>
+</ol>
+<h1 id="8-计算机网络安全"><a href="#8-计算机网络安全" class="headerlink" title="8.计算机网络安全"></a>8.计算机网络安全</h1><h2 id="1-原则"><a href="#1-原则" class="headerlink" title="1.原则"></a>1.原则</h2><ol>
+<li>身份验证：证书验证公钥,用户身份验证（数据报IP首部ip、TCP序号等均可以被篡改）</li>
+<li>数据加密：可逆加密 3DES、AES…</li>
+<li>数据完整性校验：报文鉴别码MAC(Message Authentication Code) 《 数据Hash </li>
+</ol>
+<h2 id="2-HTTPS"><a href="#2-HTTPS" class="headerlink" title="2.HTTPS"></a>2.HTTPS</h2><ol>
+<li><p>密钥唯一性：</p>
+<blockquote>
+<p>每次连接密钥加入一个不重数计算生成，防止过期密钥被使用</p>
+</blockquote>
+</li>
+<li><p>密钥导出：4个密钥均由客户端生成的主密钥切片生成</p>
+<blockquote>
+<p>1.A到B的会话加密密钥<br><br>2.A到B的会话MAC密钥<br><br>3.B到A的会话加密密钥<br><br>4.B到A的会话MAC密钥<br></p>
+</blockquote>
+</li>
+<li><p>防止TCP序号篡改<br></p>
+<blockquote>
+<p>MAC = 数据+MAC密钥+当前序号(由发送发维护的依次顺序，与TCP无关）的Hash<br></p>
+</blockquote>
+</li>
+<li><p>防止TCP状态被影响</p>
+<blockquote>
+<p>特殊状态如TCP FIN均提前通过SSL告知，未经过SSL告知而直接切换TCP状态视为异常</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="3-网路安全层：IPsec"><a href="#3-网路安全层：IPsec" class="headerlink" title="3.网路安全层：IPsec"></a>3.网路安全层：IPsec</h2><p>同应用层的问题，运用到网络层，地毯式加密<br><br>IPSec协议，特殊的IP数据报首部 + 加密/鉴别的内容<br></p>
+<h2 id="4-无线LAN安全"><a href="#4-无线LAN安全" class="headerlink" title="4.无线LAN安全"></a>4.无线LAN安全</h2><ol>
+<li>IEEE 802.11的在线等效保密（Wired Equivalent Privacy, WEP),相对较弱的加密、鉴别方式<br></li>
+<li>IEEE 802.11i 引入强加密、鉴别方式<br> </li>
+</ol>
+<h2 id="5-防火墙"><a href="#5-防火墙" class="headerlink" title="5.防火墙"></a>5.防火墙</h2><ol>
+<li>目的:<blockquote>
+<p>1.防火墙本身免于渗透<br><br>2.外部到内部和内部到外部的所有流量都通过防火墙<br><br>3.仅符合安全策略的授权流量允许通过<br></p>
+</blockquote>
+</li>
+</ol>
+<p>2.方式：</p>
+<blockquote>
+<p>检查packet首部及有效载荷特征，可以应用于网络映射（例如使用nmap进行分析）、端口扫描、TCP栈扫描、DoS带宽泛红攻击、蠕虫和病毒、操作系统脆弱性攻击和应用程序脆弱性攻击</p>
+</blockquote>
+<p>大部分的计算机工作都是工程性的，平衡竞争各方的利益，正确折中的艺术能够满足许多相矛盾的目标                      — Steven M. Bellovin</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者: <a href="https://haojiaqiang.github.io">Hayato</a>
+            <p>原文链接: <a href="https://haojiaqiang.github.io/2017/05/08/Computer-Networking-A-Top-Down-Approach-NOTES/">https://haojiaqiang.github.io/2017/05/08/Computer-Networking-A-Top-Down-Approach-NOTES/</a>
+            <p>发表日期: <a href="https://haojiaqiang.github.io/2017/05/08/Computer-Networking-A-Top-Down-Approach-NOTES/">May 8th 2017, 8:10:20 am</a>
+            <p>版权声明: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC-SA 4.0</a></p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2017/06/29/Runloop/" title= Runloop >
+                    <div class="nextTitle">Runloop</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2017/04/19/GCD-queue-and-sync-async/" title= GCD队列与同步异步的组合 >
+                    <div class="prevTitle">GCD队列与同步异步的组合</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!--PC和WAP自适应版-->
+
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+    
+        
+            
+                <a href="https://github.com/haojiaqiang" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://about.me/haojiaqiang" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-计算机网络和英特网"><span class="toc-number">1.</span> <span class="toc-text">1.计算机网络和英特网</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-物理媒介"><span class="toc-number">1.1.</span> <span class="toc-text">1.物理媒介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-数据传输的2中方法："><span class="toc-number">1.2.</span> <span class="toc-text">2.数据传输的2中方法：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-协议栈"><span class="toc-number">1.3.</span> <span class="toc-text">3.协议栈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-协议栈分层"><span class="toc-number">1.3.1.</span> <span class="toc-text">1.协议栈分层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-协议含义"><span class="toc-number">1.3.2.</span> <span class="toc-text">2.协议含义</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-应用层"><span class="toc-number">2.</span> <span class="toc-text">2.应用层</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-应用层协议原理"><span class="toc-number">2.1.</span> <span class="toc-text">1.应用层协议原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-网络应用程序体系结构-applkcation-architecture"><span class="toc-number">2.1.1.</span> <span class="toc-text">1.网络应用程序体系结构(applkcation architecture)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-套接字socket"><span class="toc-number">2.1.2.</span> <span class="toc-text">2.套接字socket</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-传输服务"><span class="toc-number">2.1.3.</span> <span class="toc-text">3.传输服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-SSL"><span class="toc-number">2.1.4.</span> <span class="toc-text">4.SSL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-应用层协议"><span class="toc-number">2.1.5.</span> <span class="toc-text">5.应用层协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-HTTP协议"><span class="toc-number">2.2.</span> <span class="toc-text">2.HTTP协议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-HTTP请求报文"><span class="toc-number">2.2.1.</span> <span class="toc-text">1.HTTP请求报文:</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-HTTP响应报文："><span class="toc-number">2.2.2.</span> <span class="toc-text">2.HTTP响应报文：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-HTTP的长链接和短链接"><span class="toc-number">2.2.3.</span> <span class="toc-text">3.HTTP的长链接和短链接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-HTTP状态吗-（1xx-5xx）"><span class="toc-number">2.2.4.</span> <span class="toc-text">4.HTTP状态吗 （1xx ~ 5xx）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-cookie"><span class="toc-number">2.2.5.</span> <span class="toc-text">5.cookie</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-Web代理"><span class="toc-number">2.2.6.</span> <span class="toc-text">6.Web代理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-FTP协议"><span class="toc-number">2.3.</span> <span class="toc-text">3.FTP协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-SMTP"><span class="toc-number">2.4.</span> <span class="toc-text">4.SMTP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-DNS-Domain-Name-System-应用层协议"><span class="toc-number">2.5.</span> <span class="toc-text">5.DNS(Domain Name System) 应用层协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-P2P"><span class="toc-number">2.6.</span> <span class="toc-text">6.P2P</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-UDP-amp-amp-TCP"><span class="toc-number">2.7.</span> <span class="toc-text">7.UDP &amp;&amp; TCP</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-传输层"><span class="toc-number">3.</span> <span class="toc-text">3.传输层</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-定义与作用域"><span class="toc-number">3.1.</span> <span class="toc-text">1.定义与作用域</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-多路复用与多路分解"><span class="toc-number">3.2.</span> <span class="toc-text">2.多路复用与多路分解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-UDP"><span class="toc-number">3.3.</span> <span class="toc-text">3.UDP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-定义"><span class="toc-number">3.3.1.</span> <span class="toc-text">1.定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-功能内容"><span class="toc-number">3.3.2.</span> <span class="toc-text">2.功能内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-UDP与TCP的优势"><span class="toc-number">3.3.3.</span> <span class="toc-text">3.UDP与TCP的优势</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-可靠数据传输原理"><span class="toc-number">3.4.</span> <span class="toc-text">4.可靠数据传输原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-可靠数据传输协议-reliable-data-gransfer-protool-实现"><span class="toc-number">3.4.1.</span> <span class="toc-text">1.可靠数据传输协议 reliable data gransfer protool 实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#v1-0-经完全可靠信道的可靠数据传输"><span class="toc-number">3.4.1.1.</span> <span class="toc-text">v1.0 经完全可靠信道的可靠数据传输</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#v2-0-经具有bit差错信道的可靠数据传输-gt-停止等待协议：stop-and-wait"><span class="toc-number">3.4.1.2.</span> <span class="toc-text">v2.0 经具有bit差错信道的可靠数据传输 &gt; 停止等待协议：stop-and-wait</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#v3-0可能出错或丢包的信道上的可靠数据传输-gt-比特交替协议alternating-bit-protocol"><span class="toc-number">3.4.1.3.</span> <span class="toc-text">v3.0可能出错或丢包的信道上的可靠数据传输 &gt; 比特交替协议alternating-bit protocol</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#滑动窗口协议-sliding-window-protocol"><span class="toc-number">3.4.1.4.</span> <span class="toc-text">滑动窗口协议 sliding-window protocol</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-TCP"><span class="toc-number">3.5.</span> <span class="toc-text">5.TCP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-定义-1"><span class="toc-number">3.5.1.</span> <span class="toc-text">1.定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-功能"><span class="toc-number">3.5.2.</span> <span class="toc-text">2.功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-参数"><span class="toc-number">3.5.3.</span> <span class="toc-text">3.参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-快速重传"><span class="toc-number">3.5.4.</span> <span class="toc-text">4.快速重传</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3次握手-establish-connection"><span class="toc-number">3.5.5.</span> <span class="toc-text">5. 3次握手 establish connection</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-4次挥手-disconnect"><span class="toc-number">3.5.6.</span> <span class="toc-text">6. 4次挥手 disconnect</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-拥塞控制算法"><span class="toc-number">3.6.</span> <span class="toc-text">6.拥塞控制算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-慢启动"><span class="toc-number">3.6.1.</span> <span class="toc-text">1.慢启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-拥塞避免"><span class="toc-number">3.6.2.</span> <span class="toc-text">2.拥塞避免</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-快速恢复"><span class="toc-number">3.6.3.</span> <span class="toc-text">3.快速恢复</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-其他运输层协议"><span class="toc-number">3.7.</span> <span class="toc-text">7.其他运输层协议</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-网络层"><span class="toc-number">4.</span> <span class="toc-text">4.网络层</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-概述"><span class="toc-number">4.1.</span> <span class="toc-text">1.概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-功能"><span class="toc-number">4.1.1.</span> <span class="toc-text">1.功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-协议"><span class="toc-number">4.1.2.</span> <span class="toc-text">2.协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-虚电路和数据报网络"><span class="toc-number">4.2.</span> <span class="toc-text">2.虚电路和数据报网络</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-虚电路网络"><span class="toc-number">4.2.1.</span> <span class="toc-text">1.虚电路网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-数据报网络"><span class="toc-number">4.2.2.</span> <span class="toc-text">2.数据报网络</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-路由器工作"><span class="toc-number">4.3.</span> <span class="toc-text">3.路由器工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-路由选择算法"><span class="toc-number">4.3.1.</span> <span class="toc-text">1.路由选择算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-因特网中的路由选择"><span class="toc-number">4.3.2.</span> <span class="toc-text">2.因特网中的路由选择</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-AS内部路由选择"><span class="toc-number">4.3.2.1.</span> <span class="toc-text">1.AS内部路由选择</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-路由选择信息协议（Routing-Information-Protocol，RIP"><span class="toc-number">4.3.2.1.1.</span> <span class="toc-text">1.路由选择信息协议（Routing Information Protocol，RIP)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-开放最短路优先-Open-Shortest-Path-First-OSPF"><span class="toc-number">4.3.2.1.2.</span> <span class="toc-text">2.开放最短路优先(Open Shortest Path First,OSPF)</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-AS间路由选择"><span class="toc-number">4.3.2.2.</span> <span class="toc-text">2.AS间路由选择</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-IP协议"><span class="toc-number">4.4.</span> <span class="toc-text">4.IP协议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-IP数据报格式"><span class="toc-number">4.4.1.</span> <span class="toc-text">1.IP数据报格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-IP数据报分片"><span class="toc-number">4.4.2.</span> <span class="toc-text">2.IP数据报分片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-IPv4编址"><span class="toc-number">4.4.3.</span> <span class="toc-text">3.IPv4编址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-IP分配"><span class="toc-number">4.4.4.</span> <span class="toc-text">4.IP分配</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-组织获取一块地址"><span class="toc-number">4.4.4.1.</span> <span class="toc-text">1.组织获取一块地址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-组织内分配IP"><span class="toc-number">4.4.4.2.</span> <span class="toc-text">2.组织内分配IP</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-ICMP"><span class="toc-number">4.5.</span> <span class="toc-text">5.ICMP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-IPv6"><span class="toc-number">4.6.</span> <span class="toc-text">6.IPv6</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-数据报格式"><span class="toc-number">4.6.1.</span> <span class="toc-text">1.数据报格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-IPv6兼容IPv4的方法"><span class="toc-number">4.6.2.</span> <span class="toc-text">2.IPv6兼容IPv4的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-双栈（dual-stack）方法"><span class="toc-number">4.6.2.1.</span> <span class="toc-text">1.双栈（dual-stack）方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-隧道-tunneling"><span class="toc-number">4.6.2.2.</span> <span class="toc-text">2.隧道(tunneling)</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-链路层"><span class="toc-number">5.</span> <span class="toc-text">5.链路层</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-链路层提供的服务"><span class="toc-number">5.1.</span> <span class="toc-text">1.链路层提供的服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-差错检测和纠正技术"><span class="toc-number">5.2.</span> <span class="toc-text">2.差错检测和纠正技术</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-多路访问协议-channel-partition-protocol"><span class="toc-number">5.3.</span> <span class="toc-text">3.多路访问协议(channel partition protocol)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-信道划分协议"><span class="toc-number">5.3.1.</span> <span class="toc-text">1.信道划分协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-随机接入协议-random-access-protocol"><span class="toc-number">5.3.1.1.</span> <span class="toc-text">2.随机接入协议(random access protocol)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-轮流协议（taking-turns-protocol）"><span class="toc-number">5.3.1.2.</span> <span class="toc-text">3.轮流协议（taking-turns protocol）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-链路层寻址"><span class="toc-number">5.3.1.3.</span> <span class="toc-text">4.链路层寻址</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-MAC地址"><span class="toc-number">5.3.1.3.1.</span> <span class="toc-text">1.MAC地址</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-地址解析协议（Address-Resolution-Protocol-ARP"><span class="toc-number">5.3.1.3.2.</span> <span class="toc-text">2.地址解析协议（Address Resolution Protocol, ARP)</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-路由器和交换机比较"><span class="toc-number">5.3.1.4.</span> <span class="toc-text">3.路由器和交换机比较</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-数据中心网络"><span class="toc-number">5.4.</span> <span class="toc-text">4.数据中心网络</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-无线网路和移动网络"><span class="toc-number">6.</span> <span class="toc-text">6.无线网路和移动网络</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-WiFi-802-11-无线LAN"><span class="toc-number">6.1.</span> <span class="toc-text">1.WiFi:802.11 无线LAN</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-建立连接"><span class="toc-number">6.1.1.</span> <span class="toc-text">1.建立连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-MAC协议"><span class="toc-number">6.1.2.</span> <span class="toc-text">2.MAC协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-相同子网中的移动性"><span class="toc-number">6.1.3.</span> <span class="toc-text">3.相同子网中的移动性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-802-11中的高级特色"><span class="toc-number">6.1.4.</span> <span class="toc-text">4.802.11中的高级特色</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-蓝牙和ZigBee"><span class="toc-number">6.1.5.</span> <span class="toc-text">5.蓝牙和ZigBee</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3G-amp-amp-4G"><span class="toc-number">6.1.6.</span> <span class="toc-text">6.3G &amp;&amp; 4G</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-移动通讯-路由选择"><span class="toc-number">6.1.7.</span> <span class="toc-text">7.移动通讯 路由选择</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7-多媒体网络"><span class="toc-number">7.</span> <span class="toc-text">7.多媒体网络</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-多媒体网络应用的类型"><span class="toc-number">7.1.</span> <span class="toc-text">1.多媒体网络应用的类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-流式储存视频（2-amp-amp-3常见）"><span class="toc-number">7.2.</span> <span class="toc-text">2.流式储存视频（2 &amp;&amp; 3常见）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-内容分发网"><span class="toc-number">7.3.</span> <span class="toc-text">3.内容分发网</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-丢包处理"><span class="toc-number">7.4.</span> <span class="toc-text">4.丢包处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-实时会话式应用的协议"><span class="toc-number">7.5.</span> <span class="toc-text">5.实时会话式应用的协议</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#8-计算机网络安全"><span class="toc-number">8.</span> <span class="toc-text">8.计算机网络安全</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-原则"><span class="toc-number">8.1.</span> <span class="toc-text">1.原则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-HTTPS"><span class="toc-number">8.2.</span> <span class="toc-text">2.HTTPS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-网路安全层：IPsec"><span class="toc-number">8.3.</span> <span class="toc-text">3.网路安全层：IPsec</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-无线LAN安全"><span class="toc-number">8.4.</span> <span class="toc-text">4.无线LAN安全</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-防火墙"><span class="toc-number">8.5.</span> <span class="toc-text">5.防火墙</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 20
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span><a class="archive-post-title" href= "/2020/11/19/网游加速器原理/" >网游加速器原理、技术与实现</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/30</span><a class="archive-post-title" href= "/2017/11/30/关于死锁的几个经典问题/" >关于死锁的几个经典问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/03</span><a class="archive-post-title" href= "/2017/09/03/howRuntimeWorks/" >彻底理解Runtime</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/29</span><a class="archive-post-title" href= "/2017/06/29/Runloop/" >Runloop</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2017/05/08/Computer-Networking-A-Top-Down-Approach-NOTES/" >计算机网络 自顶向下方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/19</span><a class="archive-post-title" href= "/2017/04/19/GCD-queue-and-sync-async/" >GCD队列与同步异步的组合</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/02</span><a class="archive-post-title" href= "/2017/01/02/iOS-Core-Animation/" >iOS Core Animation</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2016 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/20</span><a class="archive-post-title" href= "/2016/11/20/Design-Pattern-Odyssey/" >大话设计模式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/Algorithms/" >Algorithms</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/30</span><a class="archive-post-title" href= "/2016/09/30/操作系统原理/" >操作系统原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/08</span><a class="archive-post-title" href= "/2016/09/08/Effective-Objective-C-2-0/" >Effective Objective-C 2.0 编写高质量iOS与OS X代码的52个有效方法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/03</span><a class="archive-post-title" href= "/2016/08/03/SwiftGrammar/" >SwiftGrammar</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/22</span><a class="archive-post-title" href= "/2016/05/22/Computer-Systems-A-Programmer-s-Perspective/" >深入理解计算机系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/2016/04/22/Pro-multithreading-and-memory-management-for-iOS-and-OS-X/" >Object-C 高级编程 iOS和OS X多线程和内存管理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/12</span><a class="archive-post-title" href= "/2016/03/12/git/" >Git</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2015 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/25</span><a class="archive-post-title" href= "/2015/06/25/special-kind-of-pointer/" >几种特殊指针的含义区别</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/08</span><a class="archive-post-title" href= "/2015/05/08/InstallShadowsocks/" >部署Shadowsocks</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/30</span><a class="archive-post-title" href= "/2015/03/30/SQL查询实现方式/" >SQL查询实现方式</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/11</span><a class="archive-post-title" href= "/2015/03/11/SQL/" >SQL</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/01</span><a class="archive-post-title" href= "/2015/01/01/How-does-the-program-run/" >程序是怎样跑起来的</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="app"><span class="iconfont-archer">&#xe606;</span>app</span>
+    
+        <span class="sidebar-tag-name" data-tags="async"><span class="iconfont-archer">&#xe606;</span>async</span>
+    
+        <span class="sidebar-tag-name" data-tags="sync"><span class="iconfont-archer">&#xe606;</span>sync</span>
+    
+        <span class="sidebar-tag-name" data-tags="queue"><span class="iconfont-archer">&#xe606;</span>queue</span>
+    
+        <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存管理"><span class="iconfont-archer">&#xe606;</span>内存管理</span>
+    
+        <span class="sidebar-tag-name" data-tags="SQL"><span class="iconfont-archer">&#xe606;</span>SQL</span>
+    
+        <span class="sidebar-tag-name" data-tags="pointer"><span class="iconfont-archer">&#xe606;</span>pointer</span>
+    
+        <span class="sidebar-tag-name" data-tags="id"><span class="iconfont-archer">&#xe606;</span>id</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSObject"><span class="iconfont-archer">&#xe606;</span>NSObject</span>
+    
+        <span class="sidebar-tag-name" data-tags="id<NSObject>"><span class="iconfont-archer">&#xe606;</span>id<NSObject></span>
+    
+        <span class="sidebar-tag-name" data-tags="void *"><span class="iconfont-archer">&#xe606;</span>void *</span>
+    
+        <span class="sidebar-tag-name" data-tags="nil"><span class="iconfont-archer">&#xe606;</span>nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="Nil"><span class="iconfont-archer">&#xe606;</span>Nil</span>
+    
+        <span class="sidebar-tag-name" data-tags="NSNull"><span class="iconfont-archer">&#xe606;</span>NSNull</span>
+    
+        <span class="sidebar-tag-name" data-tags="deadLock"><span class="iconfont-archer">&#xe606;</span>deadLock</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机系统"><span class="iconfont-archer">&#xe606;</span>计算机系统</span>
+    
+        <span class="sidebar-tag-name" data-tags="消息"><span class="iconfont-archer">&#xe606;</span>消息</span>
+    
+        <span class="sidebar-tag-name" data-tags="load"><span class="iconfont-archer">&#xe606;</span>load</span>
+    
+        <span class="sidebar-tag-name" data-tags="Shadowsocks"><span class="iconfont-archer">&#xe606;</span>Shadowsocks</span>
+    
+        <span class="sidebar-tag-name" data-tags="CentOS"><span class="iconfont-archer">&#xe606;</span>CentOS</span>
+    
+        <span class="sidebar-tag-name" data-tags="AWS root"><span class="iconfont-archer">&#xe606;</span>AWS root</span>
+    
+        <span class="sidebar-tag-name" data-tags="Swift"><span class="iconfont-archer">&#xe606;</span>Swift</span>
+    
+        <span class="sidebar-tag-name" data-tags="Git"><span class="iconfont-archer">&#xe606;</span>Git</span>
+    
+        <span class="sidebar-tag-name" data-tags="proxy"><span class="iconfont-archer">&#xe606;</span>proxy</span>
+    
+        <span class="sidebar-tag-name" data-tags="加速器"><span class="iconfont-archer">&#xe606;</span>加速器</span>
+    
+        <span class="sidebar-tag-name" data-tags="OS"><span class="iconfont-archer">&#xe606;</span>OS</span>
+    
+        <span class="sidebar-tag-name" data-tags="计算机网络"><span class="iconfont-archer">&#xe606;</span>计算机网络</span>
+    
+        <span class="sidebar-tag-name" data-tags="Runloop"><span class="iconfont-archer">&#xe606;</span>Runloop</span>
+    
+        <span class="sidebar-tag-name" data-tags="runtime"><span class="iconfont-archer">&#xe606;</span>runtime</span>
+    
+        <span class="sidebar-tag-name" data-tags="Core Animation"><span class="iconfont-archer">&#xe606;</span>Core Animation</span>
+    
+        <span class="sidebar-tag-name" data-tags="Algorithms"><span class="iconfont-archer">&#xe606;</span>Algorithms</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Hayato"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
